@@ -1,0 +1,32 @@
+{
+  "dataset_id": "Soyyeongg/Korean_igt_cleaned",
+  "dataset_config": "default",
+  "revision": "4c26198c2a996eede96cab781282af3ae2eaadf7",
+  "license": "not stated upstream; inherits ODIN and IMTVault terms",
+  "field_mapping": {
+    "source": "text",
+    "transliteration": "transcription",
+    "gloss": "glosses"
+  },
+  "split_mapping": {
+    "train": "train",
+    "validation": "dev",
+    "test": "test"
+  },
+  "split_policy": "grouped 80/10/10, seed 42; rows sharing a translation or a Hangul text stay in one split; validation/test only hold rows whose transliteration and gloss have the same word count; Yale romanization only",
+  "split_counts": {
+    "train": 2079,
+    "validation": 262,
+    "test": 263
+  },
+  "split_sha256": {
+    "train": "694f9a3179899d6604b78049a9f42c60e947ba8dca236bc24780e54c798fe052",
+    "validation": "90fb5b6a121ad2003a2b1f985d310be5d3afb6ea460c07354ef25d5760eb4acd",
+    "test": "e4fb526cd8213cab19a46c43291d49a87a77b2a92dba6d3fa660a092168294a6"
+  },
+  "audit_log": "https://huggingface.co/datasets/Soyyeongg/Korean_igt_cleaned/tree/main/cleaning",
+  "upstream": {
+    "dataset_id": "lowresource-igt/Korean_igt_dataset",
+    "revision": "2b830f7ece7fb5221cb50ae45da6c5e96a1ddfdd"
+  }
+}
