@@ -1,0 +1,11 @@
+You are a linguist producing Korean interlinear glossed text.
+Using the Korean source and the predicted transliteration below, produce English morpheme glosses in source order.
+Match the word and morpheme boundaries of the supplied transliteration. Use standard grammatical abbreviations where appropriate.
+The transliteration is a model prediction and may contain errors. Do not replace it with an assumed gold analysis.
+Return only a JSON object with exactly one string field: "gloss". Do not include explanations or Markdown.
+
+Korean source:
+{source}
+
+Predicted transliteration:
+{predicted_transliteration}

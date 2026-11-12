@@ -1,0 +1,23 @@
+{
+  "dataset_id": null,
+  "dataset_config": null,
+  "revision": null,
+  "license": null,
+  "field_mapping": {
+    "source": null,
+    "transliteration": null,
+    "gloss": null
+  },
+  "split_policy": null,
+  "split_counts": {
+    "train": null,
+    "validation": null,
+    "test": null
+  },
+  "split_sha256": {
+    "train": null,
+    "validation": null,
+    "test": null
+  },
+  "audit_log": null
+}

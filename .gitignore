@@ -1,0 +1,23 @@
+# Credentials and environments
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+# Local data and model artifacts
+data/raw/
+data/processed/
+data/cache/
+checkpoints/
+adapters/
+wandb/
+*.safetensors
+*.pt
+*.bin
+# Large run outputs
+results/**/predictions*.jsonl
+results/**/raw_outputs*.jsonl
+.DS_Store

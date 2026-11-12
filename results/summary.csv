@@ -1,0 +1,1 @@
+run_id,model_size,strategy,adaptation,seed,selection_metric,checkpoint,gloss_word_accuracy,gloss_morpheme_accuracy,gloss_mer,gloss_chrfpp,transliteration_chrfpp,parse_failure_rate,truncation_rate

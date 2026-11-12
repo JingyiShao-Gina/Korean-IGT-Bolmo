@@ -1,0 +1,85 @@
+{
+  "experiment": "lora",
+  "models": [
+    {
+      "size": "1B",
+      "model_id": null,
+      "revision": null
+    },
+    {
+      "size": "7B",
+      "model_id": null,
+      "revision": null
+    }
+  ],
+  "dataset_manifest": "data/manifest.template.json",
+  "strategies": [
+    "all_in_one",
+    "two_stage"
+  ],
+  "adapter": {
+    "r": 16,
+    "lora_alpha": 32,
+    "lora_dropout": 0.05,
+    "bias": "none",
+    "task_type": "CAUSAL_LM",
+    "target_modules": null,
+    "candidate_target_modules": [
+      "q_proj",
+      "v_proj"
+    ],
+    "verify_architecture_before_run": true
+  },
+  "training": {
+    "learning_rate": 0.0002,
+    "num_train_epochs": 3,
+    "per_device_train_batch_size": 1,
+    "gradient_accumulation_steps": 16,
+    "effective_batch_size_single_gpu": 16,
+    "max_seq_length": 1024,
+    "optimizer": "adamw_torch",
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.03,
+    "lr_scheduler_type": "linear",
+    "gradient_checkpointing": true,
+    "precision": "auto_record_resolved_dtype",
+    "quantization": null,
+    "seed": 42,
+    "mask_prompt_tokens": true,
+    "save_strategy": "epoch",
+    "eval_strategy": "epoch"
+  },
+  "pilots": {
+    "method": "one_factor_at_a_time",
+    "ranks": [
+      8,
+      16,
+      32
+    ],
+    "alpha_rule": "2 * rank",
+    "learning_rates": [
+      0.0001,
+      0.0002
+    ]
+  },
+  "checkpoint_selection": [
+    {
+      "metric": "validation_loss",
+      "direction": "min"
+    },
+    {
+      "metric": "validation_gloss_chrf++",
+      "direction": "max"
+    }
+  ],
+  "generation": {
+    "do_sample": false,
+    "num_beams": 1,
+    "max_new_tokens": 512
+  },
+  "repeat_seeds": [
+    42,
+    43,
+    44
+  ]
+}

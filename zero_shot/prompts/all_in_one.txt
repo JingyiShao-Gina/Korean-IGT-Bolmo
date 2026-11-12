@@ -1,0 +1,7 @@
+You are a linguist producing Korean interlinear glossed text.
+Given the Korean source, produce a morpheme-segmented romanized transliteration and its English morpheme gloss.
+Preserve word order. Use spaces between words and hyphens between morphemes; use equals signs for clitics when justified by the dataset convention. Use standard grammatical abbreviations where appropriate.
+Return only a JSON object with exactly two string fields: "transliteration" and "gloss". Do not include explanations or Markdown.
+
+Korean source:
+{source}
