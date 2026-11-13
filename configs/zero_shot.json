@@ -1,36 +1,44 @@
 {
   "experiment": "zero_shot",
-  "prompt_version": "v1",
+  "prompt_version": "v2",
+  "prompt_source": "Korean IGT Experimental Protocol V3, section 2 (agenda 17 Nov)",
   "models": [
     {
       "size": "1B",
-      "model_id": null,
-      "revision": null
-    },
-    {
-      "size": "7B",
-      "model_id": null,
-      "revision": null
+      "model_id": "allenai/Bolmo-1B",
+      "revision": "452690a8cfab1dd1ec27b74f2667632f17a21b46"
     }
   ],
-  "dataset_manifest": "data/manifest.template.json",
+  "dataset_manifest": "data/manifest.json",
+  "eval_split": "test",
+  "smoke_test": {
+    "split": "dev",
+    "limit": 10
+  },
   "strategies": [
     "all_in_one",
-    "two_stage"
+    "step_by_step"
   ],
   "prompts": {
     "all_in_one": "zero_shot/prompts/all_in_one.txt",
-    "stage_1": "zero_shot/prompts/transliteration.txt",
-    "stage_2": "zero_shot/prompts/gloss.txt"
+    "step_1_transliteration": "zero_shot/prompts/transliteration.txt",
+    "step_2_gloss": "zero_shot/prompts/gloss.txt"
+  },
+  "input_fields": {
+    "original_script": "text",
+    "translation": "translation"
+  },
+  "gold_fields": {
+    "transliteration": "transcription",
+    "gloss": "glosses"
   },
   "generation": {
     "do_sample": false,
     "num_beams": 1,
-    "max_new_tokens": 512
+    "max_new_tokens": 768,
+    "max_new_tokens_unit": "bytes (Bolmo is byte-level)",
+    "stop_rule": "step prompts: first complete line; all-in-one: transliteration line + Gloss line"
   },
   "seed": 42,
-  "input_fields": [
-    "source"
-  ],
   "save_raw_outputs": true
 }

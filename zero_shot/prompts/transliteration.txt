@@ -1,7 +1,7 @@
-You are a linguist analyzing Korean morphology.
-Produce a morpheme-segmented romanized transliteration of the Korean source.
-Preserve word order. Use spaces between words, hyphens between morphemes, and equals signs for clitics when justified by the dataset convention.
-Return only a JSON object with exactly one string field: "transliteration". Do not include explanations or Markdown.
+You are a linguist specializing in Korean transcription.
+Original Korean script: {original_script}
+English translation: {translation}
 
-Korean source:
-{source}
+Predict the transliteration of the Korean script.
+Do not output a gloss or explanation.
+Transliteration:

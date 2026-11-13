@@ -1,7 +1,15 @@
-You are a linguist producing Korean interlinear glossed text.
-Given the Korean source, produce a morpheme-segmented romanized transliteration and its English morpheme gloss.
-Preserve word order. Use spaces between words and hyphens between morphemes; use equals signs for clitics when justified by the dataset convention. Use standard grammatical abbreviations where appropriate.
-Return only a JSON object with exactly two string fields: "transliteration" and "gloss". Do not include explanations or Markdown.
+You are a linguist specializing in interlinear glossed text (IGT).
+Language: Korean
+Original Korean script: {original_script}
+English translation: {translation}
 
-Korean source:
-{source}
+Predict (1) the transliteration of the Korean script and
+(2) the corresponding morpheme-level gloss.
+Preserve word and morpheme order and use consistent IGT labels.
+Do not explain your answer.
+
+Output format:
+Transliteration: ...
+Gloss: ...
+
+Transliteration:
