@@ -106,8 +106,31 @@ def parse_all_in_one(completion: str) -> tuple[str, str, str]:
 # ----------------------------------------------------------------------------- generation
 
 
+REQUIRED_TRANSFORMERS = "4.57.3"  # version Bolmo was tested with (model card)
+
+
+def check_dependencies() -> None:
+    """Fail early, with a fix, instead of deep inside Bolmo's remote code."""
+    import importlib.util
+
+    import transformers
+
+    problems = []
+    if importlib.util.find_spec("xlstm") is None:
+        problems.append("xlstm is not installed")
+    if transformers.__version__ != REQUIRED_TRANSFORMERS:
+        problems.append(f"transformers {transformers.__version__} is loaded, need {REQUIRED_TRANSFORMERS}")
+    if problems:
+        raise RuntimeError(
+            "; ".join(problems)
+            + f'.\nFix: run  !pip install "transformers=={REQUIRED_TRANSFORMERS}" "xlstm==2.0.4"'
+            + "  then Runtime -> Restart session, and run the notebook again from the top."
+        )
+
+
 class Generator:
     def __init__(self, model_id: str, revision: str, max_new_tokens: int, device: str | None = None):
+        check_dependencies()
         import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer, StoppingCriteria
 
