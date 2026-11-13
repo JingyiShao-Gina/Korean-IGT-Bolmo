@@ -1,6 +1,6 @@
 {
   "experiment": "zero_shot",
-  "prompt_version": "v2",
+  "prompt_version": "v3",
   "prompt_source": "Korean IGT Experimental Protocol V3, section 2 (agenda 17 Nov)",
   "models": [
     {

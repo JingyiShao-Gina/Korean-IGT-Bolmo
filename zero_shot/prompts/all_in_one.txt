@@ -7,9 +7,7 @@ Predict (1) the transliteration of the Korean script and
 (2) the corresponding morpheme-level gloss.
 Preserve word and morpheme order and use consistent IGT labels.
 Do not explain your answer.
-
-Output format:
-Transliteration: ...
-Gloss: ...
+Answer in two lines: the first line starts with "Transliteration:",
+the second line starts with "Gloss:".
 
 Transliteration:

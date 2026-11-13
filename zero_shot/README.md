@@ -1,6 +1,6 @@
 # Zero-shot protocol (Bolmo 1B)
 
-Owner: Gina. Agenda 17 Nov: complete zero-shot with Bolmo 1B in two settings, all-in-one and step-by-step. Prompts follow Korean IGT Experimental Protocol V3, section 2 (prompt version `v2`).
+Owner: Gina. Agenda 17 Nov: complete zero-shot with Bolmo 1B in two settings, all-in-one and step-by-step. Prompts follow Korean IGT Experimental Protocol V3, section 2 (prompt version `v3`).
 
 ## Task
 - Input: original Korean script (`text`) and English translation (`translation`).
@@ -26,3 +26,7 @@ Open `zero_shot/zero_shot_bolmo.ipynb` in Colab with a GPU runtime. Run the smok
 Failed or truncated rows are kept as they are. They are not repaired or retried, and the evaluator scores an unusable prediction as empty. A run metadata JSON next to the CSVs records the model/dataset revisions, prompt hashes, package versions, GPU and runtime.
 
 Prompt changes made after looking at outputs require a new `prompt_version`, and they must be tuned on dev only, never test.
+
+## Prompt versions
+- `v2`: V3 protocol prompts; the all-in-one prompt showed `Transliteration: ...` / `Gloss: ...` as a format example.
+- `v3` (current): dev smoke test (10 examples) showed Bolmo 1B copying the `...` placeholders literally in 9/10 all-in-one outputs. The format example was replaced by a written instruction. Step-by-step prompts are unchanged.
