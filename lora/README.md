@@ -30,6 +30,8 @@ Fixed for all runs: dropout 0.05, 3 epochs, effective batch size 16 (1 x 16 grad
 
 Checkpoints are saved and evaluated **every 0.5 epoch**: all-in-one 2079 examples -> 390 optimizer steps, checkpoints at 65, 130, ..., 390; two-stage 4158 examples (2 per row) -> 780 steps, checkpoints at 130, 260, ..., 780. Six checkpoints per run.
 
+Between checkpoints, a **quick resume save** (`resume/`, adapter + optimizer state, overwritten every 20 optimizer steps) limits what a Colab disconnect costs to at most 20 steps. It is never evaluated and is not a selection candidate. On restart, `train` first evaluates any checkpoint whose evaluation was cut off, then continues from the newest of the last checkpoint and the quick save. Tested: a run resumed this way ends with exactly the same adapter as an uninterrupted run.
+
 ## Training setup and why
 
 - **Same prompts as zero-shot.** Inputs use the frozen v3 templates in `zero_shot/prompts/` (script + translation), so LoRA and zero-shot differ only in the weights. The target is exactly what the zero-shot parser reads back: all-in-one ` <transliteration>\nGloss: <gloss>`, two-stage ` <transliteration>` and ` <gloss>`.
@@ -54,6 +56,7 @@ Each run writes to `MyDrive/korean-igt-lora/<run_id>/`, for example `bolmo-1b_al
 | `metrics.csv` | **Per checkpoint: `val_loss`, `val_gloss_chrfpp`, `val_transliteration_chrfpp`**, two-stage loss parts, parse-failure and truncation rates, evaluation time. |
 | `dev_predictions/step-NNNNNN.csv` | Dev predictions behind each chrF++ value. |
 | `checkpoints/step-NNNNNN/` | LoRA adapter + optimizer state (resume point). Not committed. |
+| `resume/` | Quick resume save every 20 steps (overwritten). Not committed. |
 | `selection.json` | Checkpoint selected by min validation loss and by max validation gloss chrF++. |
 | `predictions/*_test.csv` | Test predictions of both selected checkpoints. Same columns as the zero-shot CSVs; two-stage uses the step-by-step columns. |
 

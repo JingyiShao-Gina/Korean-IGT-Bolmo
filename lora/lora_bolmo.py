@@ -434,7 +434,19 @@ class RunDir:
 
     def checkpoints(self) -> list[int]:
         return sorted(int(p.name.split("-")[1]) for p in self.ckpt_root.glob("step-*")
-                      if (p / "trainer_state.pt").exists())
+                      if not p.name.endswith(".tmp") and (p / "trainer_state.pt").exists())
+
+    @property
+    def resume_dir(self) -> Path:
+        return self.path / "resume"
+
+    def resume_step(self) -> int | None:
+        """Step of the quick resume save, if a complete one exists."""
+        f = self.resume_dir / "trainer_state.pt"
+        if not f.exists():
+            return None
+        import torch
+        return int(torch.load(f, map_location="cpu", weights_only=False)["step"])
 
     def _read(self, name: str) -> list[dict]:
         p = self.path / name
@@ -575,14 +587,42 @@ def cmd_train(args, cfg) -> Path:
     if tr["gradient_checkpointing"]:
         model.base.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
 
-    # ---- resume
+    def load_adapter(src: Path) -> None:
+        set_peft_model_state_dict(model.peft, load_file(str(src / "adapter_model.safetensors"), device=model.device))
+
+    def load_state(src: Path) -> dict:
+        return torch.load(src / "trainer_state.pt", map_location="cpu", weights_only=False)
+
+    def save_state(dst: Path, step: int, epoch: float, t_start: float) -> None:
+        """Adapter + optimizer/scheduler/RNG state, written to a temp folder and renamed when complete."""
+        tmp = dst.with_name(dst.name + ".tmp")
+        shutil.rmtree(tmp, ignore_errors=True)
+        model.peft.save_pretrained(str(tmp))
+        torch.save({"optimizer": opt.state_dict(), "scheduler": sched.state_dict(), "step": step, "epoch": epoch,
+                    "torch_rng": torch.get_rng_state(),
+                    "cuda_rng": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None,
+                    "python_rng": random.getstate(), "elapsed_seconds": time.time() - t_start},
+                   tmp / "trainer_state.pt")
+        shutil.rmtree(dst, ignore_errors=True)
+        tmp.rename(dst)
+
+    # ---- resume: from the newest of the evaluated checkpoints and the quick resume save
     step, elapsed0 = 0, 0.0
-    done = run.checkpoints()
-    if done:
-        step = done[-1]
-        ck = run.ckpt(step)
-        set_peft_model_state_dict(model.peft, load_file(str(ck / "adapter_model.safetensors"), device=model.device))
-        state = torch.load(ck / "trainer_state.pt", map_location="cpu", weights_only=False)
+    evaluated = {int(m["step"]) for m in run.metrics()}
+    for st in run.checkpoints():  # a session died during this checkpoint's evaluation
+        if st not in evaluated:
+            print(f"Evaluating checkpoint {st}, which has no metrics yet")
+            load_adapter(run.ckpt(st))
+            evaluate_checkpoint(model, run, st, load_state(run.ckpt(st))["epoch"], dev_rows, dev_enc,
+                                args.strategy, templates, cfg)
+    sources = [(st, run.ckpt(st)) for st in run.checkpoints()]
+    quick = run.resume_step()
+    if quick is not None:
+        sources.append((quick, run.resume_dir))
+    if sources:
+        step, src = max(sources, key=lambda x: x[0])
+        load_adapter(src)
+        state = load_state(src)
         opt.load_state_dict(state["optimizer"])
         sched.load_state_dict(state["scheduler"])
         torch.set_rng_state(state["torch_rng"])
@@ -591,11 +631,9 @@ def cmd_train(args, cfg) -> Path:
         random.setstate(state["python_rng"])
         elapsed0 = state.get("elapsed_seconds", 0.0)
         run.trim_log(step)
-        print(f"Resumed from step {step}")
-        evaluated = {int(m["step"]) for m in run.metrics()}
-        if step not in evaluated:  # session died during this checkpoint's evaluation
-            evaluate_checkpoint(model, run, step, state["epoch"], dev_rows, dev_enc, args.strategy, templates, cfg)
+        print(f"Resumed from step {step} ({'quick resume save' if src == run.resume_dir else 'checkpoint'})")
 
+    resume_every = 0 if args.smoke else int(tr.get("resume_every_steps", 0))
     t_start = time.time() - elapsed0
     while step < total_steps:
         model.base.train()
@@ -620,18 +658,11 @@ def cmd_train(args, cfg) -> Path:
             print(f"  step {step}/{total_steps}  epoch {epoch:.2f}  loss {loss_total / n_tok:.4f}  "
                   f"lr {lr_used:.2e}  ({time.time() - t_start:.0f}s)", flush=True)
         if step in ckpt_steps:
-            ck = run.ckpt(step)
-            tmp = ck.with_name(ck.name + ".tmp")
-            shutil.rmtree(tmp, ignore_errors=True)
-            model.peft.save_pretrained(str(tmp))
-            torch.save({"optimizer": opt.state_dict(), "scheduler": sched.state_dict(), "step": step, "epoch": epoch,
-                        "torch_rng": torch.get_rng_state(),
-                        "cuda_rng": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None,
-                        "python_rng": random.getstate(), "elapsed_seconds": time.time() - t_start},
-                       tmp / "trainer_state.pt")
-            shutil.rmtree(ck, ignore_errors=True)
-            tmp.rename(ck)  # a checkpoint only counts once it is complete
+            save_state(run.ckpt(step), step, epoch, t_start)  # a checkpoint only counts once it is complete
             evaluate_checkpoint(model, run, step, epoch, dev_rows, dev_enc, args.strategy, templates, cfg)
+        elif resume_every and step % resume_every == 0:
+            # Quick resume point only (not evaluated, not a selection candidate): limits what a disconnect costs.
+            save_state(run.resume_dir, step, epoch, t_start)
     print(f"Training done: {run.path}")
     return run.path
 

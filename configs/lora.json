@@ -45,6 +45,8 @@
     "seed": 42,
     "mask_prompt_tokens": true,
     "eval_every_epochs": 0.5,
+    "resume_every_steps": 20,
+    "resume_every_steps_note": "Quick resume save (adapter + optimizer state, overwritten each time, not evaluated) so a Colab disconnect loses at most 20 optimizer steps.",
     "two_stage_teacher_forcing": "stage-2 training and validation-loss examples use the gold transliteration; validation/test generation always chains the predicted transliteration"
   },
   "runs": {
