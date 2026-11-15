@@ -1,8 +1,20 @@
 # LoRA experiments (Bolmo 1B)
 
-Owner: Theo. Agenda 17 Nov: LoRA fine-tuning of Bolmo 1B in two settings, **all-in-one** and **two-stage** (transliteration -> gloss), rank / learning-rate comparisons, and validation loss + chrF++ for every checkpoint (Soyeong compares the two selection rules). 1B only; the 7B rows in the protocol are out of scope for now.
+Owner: Theo. Agenda 17 Nov: baseline LoRA fine-tuning of Bolmo 1B, hyperparameter experiments (learning rate, rank), validation loss + chrF++ for every checkpoint (Soyeong compares the two selection rules), and test predictions. 1B only.
 
-**Status:** code ready and tested on CPU with a tiny random Bolmo. No real training run yet; the first step on Colab is the smoke test (notebook section 4).
+Requirements follow `docs/Korean IGT – Experimental Plan & Baselines.pdf` (v1.1): section 6.1 baseline, 6.2 hyperparameter experiments, 6.3-6.4 the two training tasks, 6.5 procedure, 7.2 checkpoint selection, 9.2 results table. In that plan LoRA is the **two-stage** (step-by-step) setup; the all-in-one LoRA run is an extra baseline.
+
+**Status (15 Nov):**
+
+| Run | Strategy | Best val loss | Best val gloss chrF++ | Selected (loss / chrF++) | Test predictions |
+|---|---|---|---|---|---|
+| A baseline | two-stage | 0.5127 (step 780) | 56.64 (step 780) | 780 / 780 | done |
+| A baseline | all-in-one (extra) | 0.5298 (step 390) | 52.75 (step 390) | 390 / 390 | done |
+| B lr1e-4 | two-stage | - | - | - | to do (priority) |
+| C r8 | two-stage | - | - | - | optional |
+| D r32 | two-stage | - | - | - | optional |
+
+Both selection rules pick the same (last) checkpoint in both baselines; plan section 7.2 asks to report this agreement.
 
 ## What each file does
 
@@ -16,27 +28,26 @@ Owner: Theo. Agenda 17 Nov: LoRA fine-tuning of Bolmo 1B in two settings, **all-
 
 ## Runs
 
-One factor changed at a time against the baseline; each run is done for both strategies (10 runs in total).
+Plan section 6.2, one factor changed at a time against the baseline. The hyperparameter runs B-D use `--strategy two_stage`.
 
-| Run (`--run`) | LoRA rank | alpha | Learning rate | Source |
-|---|---|---|---|---|
-| `baseline` | 16 | 32 | 2e-4 | Protocol V4 section 4 |
-| `r8` | 8 | 16 | 2e-4 | rank pilot |
-| `r32` | 32 | 64 | 2e-4 | rank pilot |
-| `lr1e-4` | 16 | 32 | 1e-4 | LR pilot (V4 section 7A, LR-1) |
-| `lr5e-4` | 16 | 32 | 5e-4 | LR pilot (V4 section 7A, LR-3) |
+| Plan | Run (`--run`) | LoRA rank | alpha | Learning rate | Priority |
+|---|---|---|---|---|---|
+| A | `baseline` | 16 | 32 | 2e-4 | required |
+| B | `lr1e-4` | 16 | 32 | 1e-4 | required |
+| C | `r8` | 8 | 16 | 2e-4 | optional |
+| D | `r32` | 32 | 64 | 2e-4 | optional |
 
-Fixed for all runs: dropout 0.05, 3 epochs, effective batch size 16 (1 x 16 gradient accumulation), AdamW, weight decay 0.01, linear schedule with 3% warmup, gradient clipping 1.0, seed 42, gradient checkpointing. Repeat seeds 43 / 44 (`--seed`) only if time allows.
+Rank and alpha change together in C and D, so the effect of rank alone cannot be isolated (plan 6.2). Fixed for all runs: dropout 0.05, 3 epochs, effective batch size 16 (1 x 16 gradient accumulation), AdamW, weight decay 0.01, linear schedule with 3% warmup, gradient clipping 1.0, seed 42, gradient checkpointing. Repeat seeds 43 / 44 (`--seed`) only if time allows. On a T4 a two-stage run takes about 2 h 15 min, an all-in-one run about 1 h 50 min.
 
-Checkpoints are saved and evaluated **every 0.5 epoch**: all-in-one 2079 examples -> 390 optimizer steps, checkpoints at 65, 130, ..., 390; two-stage 4158 examples (2 per row) -> 780 steps, checkpoints at 130, 260, ..., 780. Six checkpoints per run.
+Checkpoints are saved and evaluated **every 0.5 epoch**: all-in-one 2079 examples -> 390 optimizer steps, checkpoints at 65, 130, ..., 390; two-stage 4158 examples (2 per row) -> 780 steps, checkpoints at 130, 260, ..., 780. Six checkpoints per run. The plan saves after each epoch; the end-of-epoch checkpoints (two-stage steps 260, 520, 780) are among the six, so a per-epoch comparison is a subset. All runs use the same schedule so they stay comparable.
 
 Between checkpoints, a **quick resume save** (`resume/`, adapter + optimizer state, overwritten every 20 optimizer steps) limits what a Colab disconnect costs to at most 20 steps. It is never evaluated and is not a selection candidate. On restart, `train` first evaluates any checkpoint whose evaluation was cut off, then continues from the newest of the last checkpoint and the quick save. Tested: a run resumed this way ends with exactly the same adapter as an uninterrupted run.
 
 ## Training setup and why
 
-- **Same prompts as zero-shot.** Inputs use the frozen v3 templates in `zero_shot/prompts/` (script + translation), so LoRA and zero-shot differ only in the weights. The target is exactly what the zero-shot parser reads back: all-in-one ` <transliteration>\nGloss: <gloss>`, two-stage ` <transliteration>` and ` <gloss>`.
+- **Same prompts as zero-shot.** Inputs use the frozen v3 templates in `zero_shot/prompts/` (script + translation), so LoRA and zero-shot differ only in the weights. These differ in wording from the templates printed in plan sections 6.3-6.4; the v3 templates are the ones the team used for the zero-shot test run. The target is exactly what the zero-shot parser reads back: all-in-one ` <transliteration>\nGloss: <gloss>`, two-stage ` <transliteration>` and ` <gloss>`.
 - **Loss only on the answer.** Each example is `<bos> prompt answer <eos>`; prompt bytes are not trained on. The `<eos>` teaches the model to stop, which the zero-shot model never did (it kept generating, which made Gina's runs slow).
-- **Two-stage = one adapter, two tasks** (Protocol V4 section 3): (script + translation -> transliteration) and (script + translation + **gold** transliteration -> gloss). Validation chrF++ and test predictions always chain the model's **predicted** transliteration into stage 2. This teacher-forcing / exposure mismatch is a known limitation to mention in the report.
+- **Two-stage = one adapter, two tasks** (plan sections 6.3-6.4): (script + translation -> transliteration) and (script + translation + **gold** transliteration -> gloss). Validation chrF++ and test predictions always chain the model's **predicted** transliteration into stage 2. This teacher-forcing / exposure mismatch is a known limitation to mention in the report.
 - **Where LoRA goes.** Bolmo-1B is byte-level: a 1-layer xLSTM byte encoder, a 16-layer global transformer over patches, and a 4-layer xLSTM byte decoder. LoRA is on `q_proj` / `v_proj` of the 16 global layers (32 modules, regex in the config). The runner fails if nothing matches and writes the matched names and trainable-parameter count to `run_meta.json`.
 - **Byte-level loss.** Bolmo predicts 520 classes: each byte twice, once as "byte" and once as "byte, then patch boundary". The training target is the next byte, in its boundary form wherever Bolmo's own boundary predictor places a boundary - the patching it uses at inference.
 - **Padding for xLSTM.** In training mode the xLSTM kernels need a sequence length divisible by 64, so each sequence is right-padded. All layers are causal, so this does not change any scored position (tested).
@@ -62,7 +73,7 @@ Each run writes to `MyDrive/korean-igt-lora/<run_id>/`, for example `bolmo-1b_al
 
 `export` copies everything except checkpoints and dev predictions into `results/lora/<run_id>/` for Git and for Soyeong's evaluation.
 
-## Not done yet / to check on the first GPU run
+## Not done yet
 
-- Runtime and memory on a T4 are unknown until the smoke test and the first checkpoint. If a full run takes too long, the 0.5-epoch dev generation is the expensive part; report any change of the evaluation schedule.
-- The real 1B model has not been loaded locally; the CPU tests use the same model code with a tiny random configuration.
+- Plan 6.2 runs B (required), C and D (optional) on two-stage, then the plan 9.2 table (best validation loss and best validation chrF++ per run).
+- Morpheme- and word-level accuracy of the test predictions (Soyeong, see `evaluation/README.md`).

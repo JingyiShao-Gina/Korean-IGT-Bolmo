@@ -9,7 +9,7 @@ Run from the repository root on a GPU machine (Colab):
     python lora/lora_bolmo.py predict --strategy all_in_one --run baseline --split test --rule both
     python lora/lora_bolmo.py export  --strategy all_in_one --run baseline           # copy small result files into results/lora/
 
---strategy: all_in_one | two_stage.   --run: a key of "runs" in configs/lora.json (baseline, r8, r32, lr1e-4, lr5e-4).
+--strategy: all_in_one | two_stage.   --run: a key of "runs" in configs/lora.json (baseline, r8, r32, lr1e-4).
 
 Everything for one run lives in <out-root>/<run_id>/ (on Colab: Google Drive, so a session restart loses nothing):
     run_meta.json            settings, matched LoRA modules, trainable parameter count, versions
@@ -105,7 +105,7 @@ def build_examples(rows: list[dict], strategy: str, templates: dict[str, str]) -
     all_in_one: one example per row; the target continues 'Transliteration:' with the
         transliteration line and the 'Gloss:' line, which rz.parse_all_in_one reads back.
     two_stage: two examples per row (transliteration task, gloss task). The gloss task is
-        conditioned on the GOLD transliteration (teacher forcing, Protocol V4 section 3).
+        conditioned on the GOLD transliteration (teacher forcing, plan section 6.4).
     """
     out = []
     for r in rows:

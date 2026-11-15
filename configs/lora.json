@@ -1,6 +1,6 @@
 {
   "experiment": "lora",
-  "protocol": "Korean IGT Experimental Protocol V4, sections 3, 4, 5 and 7 (agenda 17 Nov: 1B only)",
+  "protocol": "docs/Korean IGT – Experimental Plan & Baselines.pdf (v1.1), sections 6.1-6.5 and 7.2 (agenda 17 Nov: 1B only)",
   "model": {
     "size": "1B",
     "model_id": "allenai/Bolmo-1B",
@@ -45,6 +45,7 @@
     "seed": 42,
     "mask_prompt_tokens": true,
     "eval_every_epochs": 0.5,
+    "eval_every_epochs_note": "The plan saves after each epoch; every 0.5 epoch is a superset (epochs 1, 2, 3 are among the six checkpoints) and is kept for all runs so they stay comparable.",
     "resume_every_steps": 20,
     "resume_every_steps_note": "Quick resume save (adapter + optimizer state, overwritten each time, not evaluated) so a Colab disconnect loses at most 20 optimizer steps.",
     "two_stage_teacher_forcing": "stage-2 training and validation-loss examples use the gold transliteration; validation/test generation always chains the predicted transliteration"
@@ -53,10 +54,9 @@
     "baseline": {},
     "r8": {"r": 8, "lora_alpha": 16},
     "r32": {"r": 32, "lora_alpha": 64},
-    "lr1e-4": {"learning_rate": 0.0001},
-    "lr5e-4": {"learning_rate": 0.0005}
+    "lr1e-4": {"learning_rate": 0.0001}
   },
-  "runs_note": "One factor at a time against baseline (r16, alpha 32, lr 2e-4). r8/r32/lr1e-4 from lora/README.md; lr5e-4 from Protocol V4 section 7A.",
+  "runs_note": "Plan section 6.2: A baseline (r16, alpha 32, lr 2e-4), B lr1e-4, C r8 (alpha 16), D r32 (alpha 64). A and B have priority; C and D are optional extensions if compute allows. The plan's LoRA setup is the two-stage pipeline, so B-D run on two_stage; all_in_one LoRA is an extra baseline.",
   "checkpoint_selection": [
     {"metric": "val_loss", "direction": "min"},
     {"metric": "val_gloss_chrfpp", "direction": "max"}
