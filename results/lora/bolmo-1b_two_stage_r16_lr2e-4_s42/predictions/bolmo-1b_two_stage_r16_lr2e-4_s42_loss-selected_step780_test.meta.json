@@ -1,0 +1,77 @@
+{
+  "run_id": "bolmo-1b_two_stage_r16_lr2e-4_s42",
+  "strategy": "two_stage",
+  "selection": "loss-selected",
+  "step": 780,
+  "split": "test",
+  "limit": null,
+  "model": {
+    "size": "1B",
+    "model_id": "allenai/Bolmo-1B",
+    "revision": "452690a8cfab1dd1ec27b74f2667632f17a21b46"
+  },
+  "adapter": {
+    "r": 16,
+    "lora_alpha": 32,
+    "lora_dropout": 0.05,
+    "bias": "none",
+    "target_modules_regex": "model\\.layers\\.\\d+\\.self_attn\\.(q_proj|v_proj)",
+    "target_modules_note": "Bolmo-1B = byte-level local encoder/decoder (xLSTM) around a 16-layer global transformer. LoRA goes on q_proj/v_proj of the 16 global layers only (32 modules); the regex excludes the boundary predictor's q_proj_layer and the xLSTM q/k/v. The runner fails if the match count is 0 and records the matched names.",
+    "verify_architecture_before_run": true
+  },
+  "training": {
+    "learning_rate": 0.0002,
+    "num_train_epochs": 3,
+    "per_device_train_batch_size": 1,
+    "gradient_accumulation_steps": 16,
+    "effective_batch_size_single_gpu": 16,
+    "max_seq_bytes": 1536,
+    "max_seq_bytes_note": "Bolmo is byte-level. Longest train example is 1470 bytes (3 of 2079 exceed 1024), dev/test max 896, so 1536 keeps every example untruncated.",
+    "optimizer": "adamw_torch",
+    "weight_decay": 0.01,
+    "max_grad_norm": 1.0,
+    "warmup_ratio": 0.03,
+    "lr_scheduler_type": "linear",
+    "gradient_checkpointing": true,
+    "precision": "bf16 on GPUs with compute capability >= 8 (A100, L4), else float32 (T4)",
+    "quantization": null,
+    "seed": 42,
+    "mask_prompt_tokens": true,
+    "eval_every_epochs": 0.5,
+    "resume_every_steps": 20,
+    "resume_every_steps_note": "Quick resume save (adapter + optimizer state, overwritten each time, not evaluated) so a Colab disconnect loses at most 20 optimizer steps.",
+    "two_stage_teacher_forcing": "stage-2 training and validation-loss examples use the gold transliteration; validation/test generation always chains the predicted transliteration"
+  },
+  "generation": {
+    "do_sample": false,
+    "num_beams": 1,
+    "batch_size": 8,
+    "max_new_bytes": {
+      "all_in_one": 512,
+      "transliteration": 256,
+      "gloss": 256
+    },
+    "max_new_bytes_note": "Longest gold answer: train gloss 265 bytes, dev/test gloss 116 bytes. Training appends an end-of-sequence byte, so the model learns to stop."
+  },
+  "prompt_version": "v3",
+  "gloss_chrfpp": 56.4464,
+  "transliteration_chrfpp": 54.176,
+  "chrf_signature": "nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.6.0",
+  "git_sha": "b8281d599a380295bd1943856403920b8967db9a",
+  "runtime_seconds": 243.7,
+  "versions": {
+    "python": "3.13.16",
+    "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+    "torch": "2.14.1+cu130",
+    "transformers": "4.57.3",
+    "datasets": "4.8.5",
+    "xlstm": "2.0.3",
+    "pandas": "2.2.3",
+    "gpu": "Tesla T4"
+  },
+  "n_examples": 263,
+  "parse_status_counts": {
+    "ok": 263
+  },
+  "truncation_rate": 0.0
+}
