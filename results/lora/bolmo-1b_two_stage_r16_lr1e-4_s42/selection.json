@@ -1,0 +1,17 @@
+{
+  "loss": {
+    "step": "780",
+    "epoch": "3.0",
+    "val_loss": "0.632448",
+    "val_gloss_chrfpp": "52.6342",
+    "val_transliteration_chrfpp": "43.3733"
+  },
+  "chrf": {
+    "step": "650",
+    "epoch": "2.5012",
+    "val_loss": "0.642079",
+    "val_gloss_chrfpp": "52.8209",
+    "val_transliteration_chrfpp": "43.0729"
+  },
+  "same_checkpoint": false
+}
