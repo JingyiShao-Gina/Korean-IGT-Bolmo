@@ -1,0 +1,526 @@
+id,text,translation,gold_transliteration,gold_gloss,pred_transliteration,pred_gloss,parse_status,truncated,raw_output,n_new_tokens
+glossa4867-60,손님이 두 분 그 와인을 마셨다.,Two guests drank the wine.,sonnimi twu pwun ku wainul masyessta .,guest-NOM two CL that wine-ACC drink-PST-DECL,Sonnimi twup pwun kwulunul masessta.,guest-NOM two guest-CLF wine-ACC drank-PST-DECL,ok,False," Sonnimi twup pwun kwulunul masessta.
+Gloss: guest-NOM two guest-CLF wine-ACC drank-PST-DECL",92
+glossa4867-68,와인을 손님이 두 병 마셨다.,Guests drank two bottles of wine.,wainul sonnimi twu pyeng masyessta .,wine-ACC guest-NOM two CL drink-PST-DECL,Wainul sonnimi twup phyeng massacassehita.,Guest-ACC guest-NOM two bottle-NOM drink,ok,False," Wainul sonnimi twup phyeng massacassehita.
+Gloss: Guest-ACC guest-NOM two bottle-NOM drink",91
+glossa5376-15,미용사가 유나를 원망스럽게 하려고 결심했다.,The hairdresser decided to make Yuna resentful.,miyongsaka Yunalul wenmangsulepkey halyeko kyelsimhayssta .,hairdresser-NOM Yuna-ACC be.resentful-ADVR do-CNJ decide-PST-DECL,Myungyaka Yunala.lul wonmanskela keyelo haliesso cilhayssta.,Myung.hairst.NOM Yuna.ACC hairdresser-ACC resentful-decide-PST-DECL,ok,False," Myungyaka Yunala.lul wonmanskela keyelo haliesso cilhayssta.
+Gloss: Myung.hairst.NOM Yuna.ACC hairdresser-ACC resentful-decide-PST-DECL",136
+glossa5414-6,존은 책(을) 빌린 것을 돌려주었다,John returned the book he borrowed.,Johnun chayk(ul) pillin kesul toliecwuessta,John-TOP book-ACC borrow-REL.PST thing-ACC return-AUX-PST-DECL,Johnun chayk(ul) pplinen kesul tolole.copussta,John-TOP book-ACC borrow-ACC return-PST-DECL,ok,False," Johnun chayk(ul) pplinen kesul tolole.copussta
+Gloss: John-TOP book-ACC borrow-ACC return-PST-DECL",99
+langsci152-b9963645d5,저 일을 누가 막겠니.,Who would be able to block that?,ce ilul nwuka makkeyssni .,that thing-ACC who-NOM block-will-Q,ce ilul nuka makkessteni.,I the one = NOM block-CONN-PST-DECL,ok,False," ce ilul nuka makkessteni.
+Gloss: I the one = NOM block-CONN-PST-DECL",69
+langsci174-60f7db0fda,니 어데 갔노?,Where did you go?,ni etey kassno ?,2SG where go-PST-Q.PLAIN,nin ehan konnyo?,N-ACC go-PRS-DECL,ok,False," nin ehan konnyo?
+Gloss: N-ACC go-PRS-DECL",42
+langsci259-8afb08a9b3,미미는 아무것도 먹고 싶지 않았다.,Mimi did not feel like eating anything.,Miminun amwukesto mekko siphci anhassta .,Mimi-TOP anything-also eat-CONN wish-CONN not-PST-DECL,Miminenun amwutessto mekko sipessti anassta.,Mimi-TOP anything-even eat-CONN feel-CONN do-PST-DECL,ok,False," Miminenun amwutessto mekko sipessti anassta.
+Gloss: Mimi-TOP anything-even eat-CONN feel-CONN do-PST-DECL",106
+langsci299-d12d82c4d3,(옛날에) 비비가 한/어떤 여자를 만났다,(A long time ago) Bibi met a woman.,(yesnaley) Bibika han/etten yecalul mannassta,long.time-LOC Bibi-NOM one/some woman-ACC meet.PAST-DECL,(yenyaley) Bibika han/ettenyengylulus mananayssta,(old time.) Bibi-NOM woman-ACC met-PST-DECL,ok,False," (yenyaley) Bibika han/ettenyengylulus mananayssta
+Gloss: (old time.) Bibi-NOM woman-ACC met-PST-DECL",101
+odin_kor_21_unseg,메리가 존은 어제 만났다.,Mary met John yesterday (and Bill today).,Maryka Johnun ecey mannassta.,Mary-NOM John-TOP yesterday meet-PST-DECL,Maryka Johnun eces mandassta.,Mary-NOM John-ACC yesterday met-PST-DECL,ok,False," Maryka Johnun eces mandassta.
+Gloss: Mary-NOM John-ACC yesterday met-PST-DECL",78
+odin_kor_36_unseg,존이 그들과 협상을 하였다,John made a negotiation with them.,Johni kutulkwa hyepsangul hayessta,John-NOM them-with negotiation-ACC do-PST-Ending,Johni kutulkwukuy hyepsangul hayessta,John-NOM they-NOM negotiation-ACC make-PST-DECL,ok,False," Johni kutulkwukuy hyepsangul hayessta
+Gloss: John-NOM they-NOM negotiation-ACC make-PST-DECL",93
+odin_kor_37_unseg,존이 그들과의 협상을 하였다,John made a negotiation with them.,Johni kutulkwauy hyepsangul hayessta,John-NOM them-with-GEN negotiation-ACC do-PST-Ending,Johni kutulkwukuy hyepsangul haystaa,John-NOM they-PL-NOM negotiation-ACC do-PST-DECL,ok,False," Johni kutulkwukuy hyepsangul haystaa
+Gloss: John-NOM they-PL-NOM negotiation-ACC do-PST-DECL",93
+odin_kor_42_unseg,영희가 친구의 오빠를 사랑한다,Yenghuy loves her friend's brother.,Yenghuyka chingwuuy oppalul salanghanta,Yenghuy-NOM friend-GEN brother-ACC loves,Yenghuyka chinwuyuy oppotlal salanghanta,Y.-NOM friend-NOM friend-rel-ACC brother-ACC love-DECL,ok,False," Yenghuyka chinwuyuy oppotlal salanghanta
+Gloss: Y.-NOM friend-NOM friend-rel-ACC brother-ACC love-DECL",103
+odin_kor_83_unseg,사람 두 명이 가방 세 개씩을 운반했다,Two men carried three ssik suitcases.,salam twu myengi kapang sey kay ssikul wunpanhaessta,man two cl-NOM suitcase three cl ssik-ACC carry-PST-DECL,Saram twumi myang ibang sey kakeysul upnanhayssta,person two men two suitcases three suitcases-ACC carried-PST-DECL,ok,False," Saram twumi myang ibang sey kakeysul upnanhayssta
+Gloss: person two men two suitcases three suitcases-ACC carried-PST-DECL",123
+odin_kor_94_unseg,메리가 존을 사랑한다고 나는 생각한다.,I think that Mary loves John.,Maryka Johnul salanghantako nanun saynggakhanta.,Mary-NOM John-ACC love-DECL-that I-TOP think-DECL,Maryka Johnul salangkantoko nanun sakkakhango .,Mary-NOM John-ACC love-CONN think-CONN I-NOM think-CONN do-PST-DECL,ok,False," Maryka Johnul salangkantoko nanun sakkakhango .
+Gloss: Mary-NOM John-ACC love-CONN think-CONN I-NOM think-CONN do-PST-DECL",123
+odin_kor_95_unseg,메리가 밥을 먹을 때 나는 자고 있었다.,"When Mary ate boiled rice, I was sleeping.",Maryka papul mekul ttae nanun cakoissessta.,Mary-NOM rice-ACC eat when I-TOP sleep-was-DECL,Maryka papul mekuless tanta naun kaco issta.,Mary-NOM rice-ACC eat-ACC when I-NOM sleep-CONN sleep-CONN be-PST-DECL,ok,False," Maryka papul mekuless tanta naun kaco issta.
+Gloss: Mary-NOM rice-ACC eat-ACC when I-NOM sleep-CONN sleep-CONN be-PST-DECL",123
+odin_kor_118_unseg,고모가 고종사촌을 가끔 재웠다,My aunt put my cousin to sleep sometimes.,Komoka kocong.sachonul kakkum caywuessta,aunt-NOM cousin-ACC sometimes put.to.sleep-PST-DECL,cokomay kaysakcolun kakpwun caywuessta,cousin-NOM cousin-ACC sometimes sleep-PST-DECL,ok,False," cokomay kaysakcolun kakpwun caywuessta
+Gloss: cousin-NOM cousin-ACC sometimes sleep-PST-DECL",93
+odin_kor_120_unseg,고종사촌을 고모는 가끔 가리라고 기대한다,My aunt expects my cousin to go sometimes.,Kocong.sachonul komonun kakkum kalilako kitay.hanta,cousin-ACC aunt-TOP sometimes go-Cmp expect-PRS-DECL,kongcansul konmun kayklintako kaitahaneyhanta,cousin-NOM cousin-ACC sometimes go-HON-expect-PST-DECL,ok,False," kongcansul konmun kayklintako kaitahaneyhanta
+Gloss: cousin-NOM cousin-ACC sometimes go-HON-expect-PST-DECL",108
+odin_kor_146_unseg,순이가 다섯개 국어를 한다,Swuni can speak five languages.,Swunika taseskay kwukelul hanta,Swuni-NOM five-Clasf nation-language-ACC do-PRS-DECL,Swunika tesykeykukweul hanta,S.-NOM five-lang-NOM language-ACC speak-COMP do-PST-DECL,ok,False," Swunika tesykeykukweul hanta
+Gloss: S.-NOM five-lang-NOM language-ACC speak-COMP do-PST-DECL",93
+odin_kor_152_unseg,나는 존에게 그가 그것을 할 것을 명했다.,"I ordered John that he do it, and not anyone else.",Nanun Johneykey kuka kukesul hal kesul myeng.hayssta,I-TOP John-DAT he-NOM it-ACC do-FUT thing-ACC order-PST-DECL,nanun Johneykey kukka kukkesul hal kesul myehsta.,I-TOP John-DAT that-NOM that-ACC do-PST-DECL,ok,False," nanun Johneykey kukka kukkesul hal kesul myehsta.
+Gloss: I-TOP John-DAT that-NOM that-ACC do-PST-DECL",102
+odin_kor_172_unseg,어머니께서 현명하게도 선생님께 아이가 책을 읽었다고 말씀하셨다,The mother cleverly told the teacher that the child had read the book.,Emenikkeyse hyenmyeng.hakeyto sensayngnimkkey aika chaykul ilkesstako malssum.hasiessta,mother-HNom cleverly teacher-DAT child-NOM book-ACC read-PST-DECL-QUOT say-HON-PST-DECL,Emenikeyse hymymykhaykeyto senyangnimkkey aikey chaykul ilkesstaycko malsumhassta,mother-HNom teacher-HNom child-NOM book-ACC read-Cmp told-Cmp say-Hon-PST-DECL,ok,False," Emenikeyse hymymykhaykeyto senyangnimkkey aikey chaykul ilkesstaycko malsumhassta
+Gloss: mother-HNom teacher-HNom child-NOM book-ACC read-Cmp told-Cmp say-Hon-PST-DECL",168
+odin_kor_266_unseg,문이 한시간동안이 열려 있다,The door remained open for an hour.,Mwuni hansikantongani yelie issta,door-NOM one-hour-during-NOM open-PASS be-DECL,muni hansikani yelloy chasseissta,door-NOM one-hour-for-NOM remain-CONN exist-PRS-DECL,ok,False," muni hansikani yelloy chasseissta
+Gloss: door-NOM one-hour-for-NOM remain-CONN exist-PRS-DECL",94
+odin_kor_269_unseg,비가 한 시간동안을 왔다,It rained for an hour.,Pika han sikantonganul oassta,rain-NOM one hour-for-ACC come-PST-DECL,pika hansikanul ossta,rain-NOM hour-for-ACC do-PST-DECL,ok,False," pika hansikanul ossta
+Gloss: rain-NOM hour-for-ACC do-PST-DECL",63
+odin_kor_270_unseg,비가 한 시간 동안이 왔다,It rained for an hour.,Pika han sikantongani oassta,rain-NOM one hour-for-NOM come-PST-DECL,pika han sikan tongani assta,rain-NOM one hour-for be.dying-Caus-PST-DECL,ok,False," pika han sikan tongani assta
+Gloss: rain-NOM one hour-for be.dying-Caus-PST-DECL",81
+odin_kor_295_unseg,나는 유명한 교수님께서 오랫동안을 이대에서 가르쳐 온 사실이 좋아요.,I like the fact that famous professors have been teaching at this university for a long time.,Nanun ywumyenghan kyoswunimkkeyse olaytonganul itayhakeyse kaluchye on sasili cohayo,I-TOP famous professor-HON-HNom long.time-for-ACC this-university-at teach come-PST fact-NOM like-PRS-End,Nanun yummynghan kwosuwnimkkeyse olangtonganul iaicaysea ceyase kaluley ossali cohayo.,I-TOP famous prof-NOM university-at this university-for long time fact like-INTERJEL-DECL,ok,False," Nanun yummynghan kwosuwnimkkeyse olangtonganul iaicaysea ceyase kaluley ossali cohayo.
+Gloss: I-TOP famous prof-NOM university-at this university-for long time fact like-INTERJEL-DECL",184
+odin_kor_296_unseg,나는 유명한 교수님께서 오랫동안 이 대학교에서 가르쳐 온 사실이 좋아요.,I like the fact that famous professors have been teaching at this university for a long time.,Nanun ywumyenghan kyoswunimkkeyse olaytongani itayhakeyse kaluchye on sasili cohayo,I-TOP famous professor-HON-HNom long.time-for-NOM this-university-at teach come-PST fact-NOM like-PRS-End,Nanun yumyenghan kwosuwnimkkeyse olangtongan ilay takhakkoyese kalkuley ossen saili cohayo.,I-TOP famous-professor-NOM long-time university-at teach-CONN do-PRS-DECL,ok,False," Nanun yumyenghan kwosuwnimkkeyse olangtongan ilay takhakkoyese kalkuley ossen saili cohayo.
+Gloss: I-TOP famous-professor-NOM long-time university-at teach-CONN do-PRS-DECL",173
+odin_kor_297_unseg,나는 유명한 교수님께서 오랫동안 이대학교에서 가르쳐 온 사실이 좋아요,I like the fact that famous professors have been teaching at this university for a long time.,Nanun ywumyenghan kyoswunimkkeyse olaytongan itayhakeyse kaluchye on sasili cohayo,I-TOP famous professor-HON-HNom long.time-for this-university-at teach come-PST fact-NOM like-PRS-End,Nanun yummynghan kwosuwnimsey olangtongan iayata hakyokey kaylule ossen saisi cohayo,I-TOP famous-professor-NOM university-at teach-CONN long-time fact-like be-like-DECL,ok,False," Nanun yummynghan kwosuwnimsey olangtongan iayata hakyokey kaylule ossen saisi cohayo
+Gloss: I-TOP famous-professor-NOM university-at teach-CONN long-time fact-like be-like-DECL",177
+odin_kor_299_unseg,오랫동안 나는 유명한 교수님께서 이 대학에서 가르쳐 온 사실이 좋아요,I like the fact that famous professors have been teaching at this university for a long time.,Olaytongani nanun ywumyenghan kyoswunimkkeyse itayhakeyse kaluchye on sasili cohayo,long.time-for-NOM I-TOP famous professor-HON-HNom this-university-at teach come-PST fact-NOM like-PRS-End,Olangtongan nanun yumyenghan kwosuwnimsen kissei ilay tayhaksese kalkuley ossen saisili cohayo,long-time-NOM I-NOM famous professor-HNom this university-at teach-Cmp be like-DECL,ok,False," Olangtongan nanun yumyenghan kwosuwnimsen kissei ilay tayhaksese kalkuley ossen saisili cohayo
+Gloss: long-time-NOM I-NOM famous professor-HNom this university-at teach-Cmp be like-DECL",186
+odin_kor_300_unseg,오랫동안 나는 유명한 교수님께서 이 대학에서 가르쳐 온 사실이 좋아요.,I like the fact that famous professors have been teaching at this university for a long time.,Olaytongan nanun ywumyenghan kyoswunimkkeyse itayhakeyse kaluchye on sasili cohayo,long.time-for I-TOP famous professor-HON-HNom this-university-at teach come-PST fact-NOM like-PRS-End,olangtangnan nanun yumyenghan kwosuwnimsengkissei ilay thakase kolasse osstan saylili cohayo.,long-time-NOM I-NOM famous prof-NOM university-at teach-Cmp be like-DECL,ok,False," olangtangnan nanun yumyenghan kwosuwnimsengkissei ilay thakase kolasse osstan saylili cohayo.
+Gloss: long-time-NOM I-NOM famous prof-NOM university-at teach-Cmp be like-DECL",174
+odin_kor_301_unseg,고모가 고종사촌을 가끔 기다리게 했다,My aunt sometimes made my cousin wait.,Komoka kocong.sachonul kakkum kitalikey hayssta,aunt-NOM cousin-ACC sometimes wait-Adv do-PST-DECL,cokomay kaycoksangcelul kakelunki talikey hayssta,aunt-NOM cousin-ACC sometimes wait-COMP do-PST-DECL,ok,False," cokomay kaycoksangcelul kakelunki talikey hayssta
+Gloss: aunt-NOM cousin-ACC sometimes wait-COMP do-PST-DECL",109
+odin_kor_302_unseg,고모가 고종사촌을 가끔 갈리라고 기대했다,My aunt sometimes expected my cousin to go.,Komoka kocong.sachonul kakkum kalilako kitay.hayssta,aunt-NOM cousin-ACC sometimes go-Cmp expect-PST-DECL,comoka coksangcelul kakplilacokalo kitayhaysssta,cousin-NOM cousin-ACC sometimes go-COMP expect-COMP do-PST-DECL,ok,False," comoka coksangcelul kakplilacokalo kitayhaysssta
+Gloss: cousin-NOM cousin-ACC sometimes go-COMP expect-COMP do-PST-DECL",120
+odin_kor_317_unseg,선생님께서 학생들을 가게 어제 하시었다,The teacher made the students go yesterday.,Sensayngnimkkeyse haksayngtulul kakey ecey hasiessta,teacher-HNom student-Plur-ACC go-Adv yesterday do-SHon-PST-DECL,sensayngnimkkeyse haksayngtul kake ecey ecey hasiesse,teacher-HNom student-Plur-ACC go-Cmp yesterday do-PST-DECL,ok,False," sensayngnimkkeyse haksayngtul kake ecey ecey hasiesse
+Gloss: teacher-HNom student-Plur-ACC go-Cmp yesterday do-PST-DECL",120
+odin_kor_319_unseg,"그래, 읽어 봤어","Yes, I tried to read it.","Kulay, ilke poasse","yes, read-Cmp see-PST-DecAbr","kulay, ile kohpe","that one, read it-DECL",ok,False," kulay, ile kohpe
+Gloss: that one, read it-DECL",47
+odin_kor_321_unseg,"그래, 읽어","Yes, I read.","Kulay, ilke","yes, read-Cmp","kulay, ile",that-NOM read-DECL,ok,False," kulay, ile
+Gloss: that-NOM read-DECL",37
+odin_kor_323_unseg,선생님께서 아이에게 책을 읽고 과자를 먹게 하셨다,The teacher made the child read a book and eat a cookie.,Sensayngnimkkeyse aieykey chaykul ilkko kwacalul mekkey hasiessta,teacher-HNom child-DAT book-ACC read-CONJ cookie-ACC eat-Adv do-HON-PST-DECL,sensenimkkeyse aieykey chaykul ilkkoko kwacalul mekkey hasita,teacher-HNom child-DAT book-ACC read-COMP cookie-ACC eat-COMP do-HON-PST-DECL,ok,False," sensenimkkeyse aieykey chaykul ilkkoko kwacalul mekkey hasita
+Gloss: teacher-HNom child-DAT book-ACC read-COMP cookie-ACC eat-COMP do-HON-PST-DECL",147
+odin_kor_349_unseg,어머니께서 아이를 춤추게 하셨다,Mother made the child dance.,Emenikkeyse ailul chwum.chwukey hasiessta,mother-HNom child-ACC dance-Adv do-HON-PST-DECL,Emenikey aiselul chwuchwukey hasseyessta,mother-HNom child-ACC dance-COMP do-PST-DECL,ok,False," Emenikey aiselul chwuchwukey hasseyessta
+Gloss: mother-HNom child-ACC dance-COMP do-PST-DECL",93
+odin_kor_350_unseg,어머니께서 아이를 하시었다 춤추게,Mother made the child dance.,Emenikkeyse ailul hasiessta chwum.chwukey,mother-HNom child-ACC do-HON-PST-DECL dance-Adv,Emenikey aiselul hasissa chwunchukkey,mother-HNom child-ACC dance-COMP dance,ok,False," Emenikey aiselul hasissa chwunchukkey
+Gloss: mother-HNom child-ACC dance-COMP dance",84
+odin_kor_353_unseg,그 어려운 수업,the difficult class,ku elyewun swuep,the difficult-Adj class,ku eleywun swumay,the difficult class-NOM class-ending,ok,False," ku eleywun swumay
+Gloss: the difficult class-NOM class-ending",62
+odin_kor_354_unseg,그 수업 어려운,the difficult class,ku swuep elyewun,the class difficult-Adj,ku swum eylewun,the difficult class-NOM difficult-NOM-DECL,ok,False," ku swum eylewun
+Gloss: the difficult class-NOM difficult-NOM-DECL",66
+odin_kor_355_unseg,수업 그 어려운,the difficult class,swuep ku elyewun,class the difficult-Adj,swuteng ku elyelengun,the difficult class-NOM difficult-NOM-DECL,ok,False," swuteng ku elyelengun
+Gloss: the difficult class-NOM difficult-NOM-DECL",72
+odin_kor_372_unseg,아이들이 나에게 이야기를 하게들 했다,The children had me tell them a story.,Aituli naeykey iyakilul hakeytul hayssta,child-Plur-NOM I-DAT story-ACC tell-Adv-Plur do-PST-DECL,Aituli naykey iayaci yakyilul hakeytultay hayssta,child-PL-NOM I-DAT story-ACC tell-COMP do-PST-DECL,ok,False," Aituli naykey iayaci yakyilul hakeytultay hayssta
+Gloss: child-PL-NOM I-DAT story-ACC tell-COMP do-PST-DECL",108
+odin_kor_382_unseg,칼로 아이가 고기를 칼로 썰었다,"With a knife, the child cut the meat with a knife.",Khallo aika kokilul khallo sselessta,knife-with child-NOM meat-ACC knife-with cut-PST-DECL,Kalo aika kokilul kalo sayessta,knife NOM meat with knife do-PST-DECL,ok,False," Kalo aika kokilul kalo sayessta
+Gloss: knife NOM meat with knife do-PST-DECL",77
+odin_kor_394_unseg,어머니가 아이에게 책을 빨리 읽게 했다,Mother made the child read the book quickly.,Emenika aieykey chaykul ppalli ilkkey hayssta,mother-NOM child-DAT book-ACC quickly read-Adv do-PST-DECL,Emenika aieykey chaykul ppli iklukey hayssta,mother-NOM child-DAT book-ACC quickly read-COMP do-PST-DECL,ok,False," Emenika aieykey chaykul ppli iklukey hayssta
+Gloss: mother-NOM child-DAT book-ACC quickly read-COMP do-PST-DECL",112
+odin_kor_395_unseg,빨리 어머니가 아이에게 책을 읽게 했다,Mother made the child read the book quickly.,Ppalli emenika aieykey chaykul ilkkey hayssta,quickly mother-NOM child-DAT book-ACC read-Adv do-PST-DECL,pali emenika aieykey chaykul ilke hayssta,quickly mother-NOM child-DAT book-ACC read-Quick do-PST-DECL,ok,False," pali emenika aieykey chaykul ilke hayssta
+Gloss: quickly mother-NOM child-DAT book-ACC read-Quick do-PST-DECL",110
+odin_kor_400_unseg,어머니가 아이에게 책을 빨리 읽혔다,Mother made the child read the book quickly.,Emenika aieykey chaykul ppalli ilkhiessta,mother-NOM child-DAT book-ACC quickly read-Caus-PST-DECL,Emenika aieykey chaykul ppli ilkeychiessta,mother-NOM child-DAT book-ACC quickly read-COMP do-PST-DECL,ok,False," Emenika aieykey chaykul ppli ilkeychiessta
+Gloss: mother-NOM child-DAT book-ACC quickly read-COMP do-PST-DECL",110
+odin_kor_401_unseg,어머니가 아이에게 빨리 책을 읽혔다,Mother made the child read the book quickly.,Emenika aieykey ppalli chaykul ilkhiessta,mother-NOM child-DAT quickly book-ACC read-Caus-PST-DECL,Emenika aieykey phwery chaykul ilkeyessta,mother-NOM child-DAT quickly book-ACC read-PST-DECL,ok,False," Emenika aieykey phwery chaykul ilkeyessta
+Gloss: mother-NOM child-DAT quickly book-ACC read-PST-DECL",101
+odin_kor_402_unseg,빨리 어머니가 아이에게 책을 읽혔다,Mother made the child read the book quickly.,Ppalli emenika aieykey chaykul ilkhiessta,quickly mother-NOM child-DAT book-ACC read-Caus-PST-DECL,pali emenika aieykey chaykul ilkeychiessta,quick mother-NOM child-DAT book-ACC read-Cmp do-PST-DECL,ok,False," pali emenika aieykey chaykul ilkeychiessta
+Gloss: quick mother-NOM child-DAT book-ACC read-Cmp do-PST-DECL",107
+odin_kor_418_unseg,어머니가 아이가 책을 빨리 읽게 했다,Mother made the child read the book quickly.,Emenika aika chaykul ppalli ilkkey hayssta,mother-NOM child-NOM book-ACC quickly read-Adv do-PST-DECL,Emenika aika chaykul ppalli ilkkey hayssta,mother-NOM child-NOM book-ACC quickly read-Cmp do-PST-DECL,ok,False," Emenika aika chaykul ppalli ilkkey hayssta
+Gloss: mother-NOM child-NOM book-ACC quickly read-Cmp do-PST-DECL",109
+odin_kor_429_unseg,살인자는 사람을 죽게 한 자이다,A murderer is someone who has caused a person to die.,Salincanun salamul cwukkey han caita,murderer-TOP person-ACC kill-Adv do-PST person-be-DECL,Salincaun salamul sukkey han caitaita,murderer-TOP person-ACC die-Caus-PST-NOM do-Cmp do-Cmp-NOM die-Cmp-DECL,ok,False," Salincaun salamul sukkey han caitaita
+Gloss: murderer-TOP person-ACC die-Caus-PST-NOM do-Cmp do-Cmp-NOM die-Cmp-DECL",117
+odin_kor_461_unseg,나는 학교에 안 안 갔다,I didn't not go to school.,Nanun hakkyoey an an kassta,I-TOP school-DIR Neg Neg go-PST-DECL,nanun hakkyoey an an kassta,I-TOP school-to not go-PST-DECL,ok,False," nanun hakkyoey an an kassta
+Gloss: I-TOP school-to not go-PST-DECL",67
+odin_kor_471_unseg,나는 한국말을 공부 안 했다,I did not study Korean.,Nanun hankwukmalul kongpwu an hayssta,I-TOP Korean-language-ACC study Neg do-PST-DECL,Nanun hankwumakwul kongpwuta anita,I-TOP Korean-ACC study-Adv do-PST-DECL,ok,False," Nanun hankwumakwul kongpwuta anita
+Gloss: I-TOP Korean-ACC study-Adv do-PST-DECL",81
+odin_kor_474_unseg,한시에 비행기로 서울에서 떠났다,At one o'clock I left Seoul by plane.,Hansiey pihayngkilo Sewuleyse ttenassta,one-o'clock-at plane-Inst Seoul-from leave-PST-DECL,Hanesie phikangkilor Seoulesyese ttessta,one.time plane-by plane-by Seoul-by leave-PST-DECL,ok,False," Hanesie phikangkilor Seoulesyese ttessta
+Gloss: one.time plane-by plane-by Seoul-by leave-PST-DECL",99
+odin_kor_480_unseg,나는 존이 천재였다고 믿었다,I believed John to be have been a genius.,Nanun Johniul chencayesstako mitessta,I-TOP John-NOM-ACC genius-PST-DECL-QUOT believe-PST-DECL,Nanun Johni chenjayeyessta ko mitessta,I-TOP John-NOM genius-be be.prob.PRS-DECL,ok,False," Nanun Johni chenjayeyessta ko mitessta
+Gloss: I-TOP John-NOM genius-be be.prob.PRS-DECL",88
+odin_kor_490_unseg,순이가 민수를 책을 주었다,Swuni gave Minswu a book.,Swunika Minswulul chaykul cwuessta,Swuni-NOM Minswu-ACC book-ACC give-PST-DECL,Swunika Minswulul chaykul cwuessta,S-NOM M-DAT book-ACC give-PST-DECL,ok,False," Swunika Minswulul chaykul cwuessta
+Gloss: S-NOM M-DAT book-ACC give-PST-DECL",77
+odin_kor_491_unseg,순이가 민수에게 책을 주었다,Swuni gave Minswu a book.,Swunika Minswueykey chaykul cwuessta,Swuni-NOM Minswu-DAT book-ACC give-PST-DECL,Swunika Minswueykey chaykul cwuessta,S-NOM M-DAT book-ACC give-PST-DECL,ok,False," Swunika Minswueykey chaykul cwuessta
+Gloss: S-NOM M-DAT book-ACC give-PST-DECL",79
+odin_kor_502_unseg,철수가 순이를 머리를 빗기고 있다,Chelswu is combing Swuni's hair.,Chelswuka Swunilul melilul piskiko issta,Chelswu-NOM Swuni-ACC hair-ACC comb-Cmp be-DECL,Chelswuka Swunilul melilul ppakiko issta,C.-NOM S.-ACC hair-ACC comb-COMP exist-PRS-DECL,ok,False," Chelswuka Swunilul melilul ppakiko issta
+Gloss: C.-NOM S.-ACC hair-ACC comb-COMP exist-PRS-DECL",96
+odin_kor_505_unseg,내가 한 시에 비행기로 서울에서 떠났다,At one o'clock I left Seoul by plane.,Nayka hansiey pihayngkilo Sewuleyse ttenassta,I-NOM one-o'clock-at plane-Inst Seoul-from leave-PST-DECL,Nayka han siey phipangkilor seoul.yese ttessta,I-NOM one time plane-by Seoul-by leave-PST-DECL,ok,False," Nayka han siey phipangkilor seoul.yese ttessta
+Gloss: I-NOM one time plane-by Seoul-by leave-PST-DECL",102
+odin_kor_530_unseg,선생님께서 아이 공을 던지셨어요,The teacher threw the child a ball.,Sensayngnimkkeyse ai kongul tencisiesseyo,teacher-HNom child ball-ACC throw-SHon-PST-End,sensayngnimkkeyse aikkongul thengcissey,teacher-HON-HON-NOM child-ACC throw-COMP-PST-DECL,ok,False," sensayngnimkkeyse aikkongul thengcissey
+Gloss: teacher-HON-HON-NOM child-ACC throw-COMP-PST-DECL",97
+odin_kor_531_unseg,나는 그 학생이 천재라고 믿었다,I believed the student was a genius.,Nanun ku haksayngi chencayilako mitessta,I-TOP that student-NOM genius-be-Cmp believe-PST-DECL,Nanun ku haksayngi chenjaylako mitessta,I-TOP that student-NOM genius-be believe-PST-DECL,ok,False," Nanun ku haksayngi chenjaylako mitessta
+Gloss: I-TOP that student-NOM genius-be believe-PST-DECL",97
+odin_kor_532_unseg,나는 그 학생을 천재라고 믿었다,I believed the student was a genius.,Nanun ku haksayngul chencayilako mitessta,I-TOP that student-ACC genius-be-Cmp believe-PST-DECL,Nanun ku haksayngul chenjaykalo mitessta,I-TOP that student-ACC genius-be believe-PST-DECL,ok,False," Nanun ku haksayngul chenjaykalo mitessta
+Gloss: I-TOP that student-ACC genius-be believe-PST-DECL",98
+odin_kor_534_unseg,나는 그 학생을이 천재라고 믿었다,I believed the student was a genius.,Nanun ku haksaynguli chencayilako mitessta,I-TOP that student-ACC-NOM genius-be-Cmp believe-PST-DECL,Nanun ku haksaynguli chenjaylo mitessta,I-TOP that student-ACC genius-NOM believe-PST-DECL,ok,False," Nanun ku haksaynguli chenjaylo mitessta
+Gloss: I-TOP that student-ACC genius-NOM believe-PST-DECL",98
+odin_kor_549_unseg,순이가 강아지가 달아났다,Swuni's puppy ran away.,Swunika kangacika talanassta,Swuni-NOM puppy-NOM run.away-PST-DECL,Swunika kangacika talassta,S-NOM puppy-NOM run-away-PST-DECL,ok,False," Swunika kangacika talassta
+Gloss: S-NOM puppy-NOM run-away-PST-DECL",68
+odin_kor_555_unseg,선생님께서 돈이 필요하시다,The teacher needs money.,Sensayngnimkkeyse toni philyo.hasita,teacher-HNom money-NOM need-HON-DECL,sensayngnimkkeyse toni phyolosita,teacher-HON-HON-money-need-HON-DECL,ok,False," sensayngnimkkeyse toni phyolosita
+Gloss: teacher-HON-HON-money-need-HON-DECL",77
+odin_kor_556_unseg,선생님이 돈이 필요하시다,The teacher needs money.,Sensayngnimi toni philyo.hasita,teacher-NOM money-NOM need-HON-DECL,sensayngnimi toni phyosyolita,teacher-NOM money-NOM need-COMP-DECL,ok,False," sensayngnimi toni phyosyolita
+Gloss: teacher-NOM money-NOM need-COMP-DECL",74
+odin_kor_560_unseg,순이가 어머니께서 편찮으시다,Swuni's mother is sick.,Swunika emenikkeyse phyenchanhusita,Swuni-NOM mother-HNom be.sick-HON-DECL,Swunika emenikkeyse phyenchansiessta,Swuni-NOM mother-HON-S.TOP sick-HON-DECL,ok,False," Swunika emenikkeyse phyenchansiessta
+Gloss: Swuni-NOM mother-HON-S.TOP sick-HON-DECL",85
+odin_kor_561_unseg,순이가 어머니가 편찮으시다,Swuni's mother is sick.,Swunika emenika phyenchanhusita,Swuni-NOM mother-NOM be.sick-HON-DECL,Swunika emenika phyenchansiesta,Swuni-NOM mother-NOM sick-IND,ok,False," Swunika emenika phyenchansiesta
+Gloss: Swuni-NOM mother-NOM sick-IND",69
+odin_kor_579_unseg,마술사가 나를 순이를 좋게 했다,The sorcerer made me like Swuni.,Maswulsaka nalul Swunilul cohkey hayssta,sorcerer-NOM me-ACC Swuni-ACC like-Adv do-PST-DECL,Masalsaka nalul Swunilul cohakay hayssta,sorcerer-NOM I-ACC Swuni-ACC like-COMP do-PST-DECL,ok,False," Masalsaka nalul Swunilul cohakay hayssta
+Gloss: sorcerer-NOM I-ACC Swuni-ACC like-COMP do-PST-DECL",99
+odin_kor_584_unseg,마술사가 나에게 돈을 있게 했다,The sorcerer made me have money.,Maswulsaka naeykey tonul isskey hayssta,sorcerer-NOM me-ACC money-ACC have-Adv do-PST-DECL,Masalsaka naeykey tonul issetkey hayssta,sorcerer-NOM I-DAT money-ACC be.have-Cmp do-PST-DECL,ok,False," Masalsaka naeykey tonul issetkey hayssta
+Gloss: sorcerer-NOM I-DAT money-ACC be.have-Cmp do-PST-DECL",101
+odin_kor_600_unseg,내가 집에 돌아갔다,I returned home.,Nayka cipey tola kassta,I-NOM home-DIR turn-Cmp go-PST-DECL,nayka cipey oalata,I-NOM home-DAT return-PST-DECL,ok,False," nayka cipey oalata
+Gloss: I-NOM home-DAT return-PST-DECL",57
+odin_kor_610_unseg,아버지는 아이에게 마당에서 놀게 했다,The father told/asked the child to play in the yard.,Apecinun aieykey matangeyse nolkey hayssta,Father-TOP child-DAT yard-LOC play-Adv do-PST-DECL,Apecinun aieykey manakase nolkey nokeyssta,father-TOP child-DAT yard-in play-COMP do-PST-DECL,ok,False," Apecinun aieykey manakase nolkey nokeyssta
+Gloss: father-TOP child-DAT yard-in play-COMP do-PST-DECL",101
+odin_kor_611_unseg,아버지는 아이가 마당에서 놀게 했다,The father arranged for/permitted the child to play in the yard.,Apecinun aika matangeyse nolkey hayssta,Father-TOP child-NOM yard-LOC play-Adv do-PST-DECL,apecinun aikayka mangakeyse nolkey hayssta,father-TOP child-NOM yard-LOC play-COMP do-PST-DECL,ok,False," apecinun aikayka mangakeyse nolkey hayssta
+Gloss: father-TOP child-NOM yard-LOC play-COMP do-PST-DECL",102
+odin_kor_621_unseg,고모가 고종사촌한테는 가끔 기다리게 했다,My aunt sometimes made my cousin wait.,Komoka kocong.sachonhantheynun kakkum kitalikey hayssta,aunt-NOM cousin-DAT-TOP sometimes wait-Adv do-PST-DECL,cokomay kayconsistanhanteun kakelunki talikey hayssta,aunt-NOM cousin-NOM sometimes wait-CONJ do-PST-DECL,ok,False," cokomay kayconsistanhanteun kakelunki talikey hayssta
+Gloss: aunt-NOM cousin-NOM sometimes wait-CONJ do-PST-DECL",113
+odin_kor_667_unseg,아이들이 자나들 보지요들,"It seems that the children are sleeping, doesn't it?",Aituli canatul pociyotul,child-Plur-NOM sleep-Cmp-Plur seem-Cmp-End-Plur,aituli canana tul poycissy tul,child-PL-NOM sleep-PERF seem-PST-PERF seem-PST-DECL,ok,False," aituli canana tul poycissy tul
+Gloss: child-PL-NOM sleep-PERF seem-PST-PERF seem-PST-DECL",90
+odin_kor_716_unseg,집이 민수에 의하여 지어졌다,The house was built by Minswu.,Cipi Minswuey.uyhaye cie ciessta,house-NOM Minswu-by build-Cmp PasAux-PST-DECL,cipi Minswuey uhyey ciessehiessta,house-NOM Minswu-by by build-PST-DECL,ok,False," cipi Minswuey uhyey ciessehiessta
+Gloss: house-NOM Minswu-by by build-PST-DECL",79
+odin_kor_737_unseg,순이가 강도에게 돈을 강탈 당했다,Swuni had her money taken away by a robber.,Swunika kangtoeykey tonul kangthal tang.hayssta,Swuni-NOM robber-by money-ACC take.away suffer-PST-DECL,Swunika kangtoyey kaytonul kangtal tanghayssta,Swuni-NOM robber-DAT money-ACC robber-take do-PST-DECL,ok,False," Swunika kangtoyey kaytonul kangtal tanghayssta
+Gloss: Swuni-NOM robber-DAT money-ACC robber-take do-PST-DECL",109
+odin_kor_766_unseg,수가 어머니가 예쁘시다,Sue's mother is pretty.,Sueka emenika yeyppusita,Sue-NOM mother-NOM pretty-HON-DECL,Suka emenika yeypusika,Sue-NOM mother-NOM be.pretty-CONN-DECL,ok,False," Suka emenika yeypusika
+Gloss: Sue-NOM mother-NOM be.pretty-CONN-DECL",69
+odin_kor_768_unseg,순이가 어머니께서 편찮으시다,It's Swuni whose mother is sick.,Swunika emenikkeyse phyenchanhusita,Swuni-NOM mother-HNom be.sick-HON-DECL,Swunika emenikeysse phyenchesse,Swuni-NOM mother-HON-SPEC sick-HON-PST-DECL,ok,False," Swunika emenikeysse phyenchesse
+Gloss: Swuni-NOM mother-HON-SPEC sick-HON-PST-DECL",83
+odin_kor_772_unseg,선생님께서 돈이 필요하시다,The teacher needs money.,Sensayngnimkkeyse toni philyo.hasita,teacher-HNom money-NOM need-SHon-DECL,sensayngnimkkeyse toni phyolosita,teacher-HON-HON-money-need-HON-DECL,ok,False," sensayngnimkkeyse toni phyolosita
+Gloss: teacher-HON-HON-money-need-HON-DECL",77
+odin_kor_836_unseg,내가 선생님께 책을 드렸다,I gave the book to the teacher.,Nayka sensayngimkkey chaykul tuliessta,I-NOM teacher-HDat book-ACC Hon.give-PST-DECL,Nayka sensayngnimkkey chaykul tuleyssta,I-NOM teacher-HON book-ACC give-PST-DECL,ok,False," Nayka sensayngnimkkey chaykul tuleyssta
+Gloss: I-NOM teacher-HON book-ACC give-PST-DECL",88
+odin_kor_838_unseg,내가 선생님께 책을 주었다,I gave the book to the teacher.,Nayka sensayngimkkey chaykul cwuessta,I-NOM teacher-HDat book-ACC give-PST-DECL,Nayka sensayngnimkke chaykul cwuessta,I-NOM teacher-HON book-ACC give-PST-DECL,ok,False," Nayka sensayngnimkke chaykul cwuessta
+Gloss: I-NOM teacher-HON book-ACC give-PST-DECL",86
+odin_kor_844_unseg,파티에 가 드렸다,I went to the party for them.,Phathiey ka tuliessta,party-DAT go-Cmp give-PST-DECL,Patteye kay tuleyssta,party-LOC go-to-PST-DECL,ok,False," Patteye kay tuleyssta
+Gloss: party-LOC go-to-PST-DECL",54
+odin_kor_852_unseg,자기가 갔으면서도 민수는 아니라고 주장한다,"Although he himself went there, Minswu claims that it's not the case.",Cakika kassumyenseto Minswunun anilako cwucang.hanta,self-NOM go-PST-although Minswu-TOP it's.not.the.case claim-PRS-DECL,Caki ka cakesumeyto Minswunun aniamako cwujanchanta,he-NOM went-if also M.-NOM not be-CONN claim-PRS-DECL,ok,False," Caki ka cakesumeyto Minswunun aniamako cwujanchanta
+Gloss: he-NOM went-if also M.-NOM not be-CONN claim-PRS-DECL",113
+odin_kor_876_unseg,내가 남학생에게는 셋을 책을 읽게 했다.,I made three male students read a book.,Nayka namhaksayngeykeynun seysul chaykul ilkkey hayssta,I-NOM male-student-DAT-TOP three-ACC book-ACC read-Adv do-PST-DECL,Nayka namhaksayngeykeynun seysul chaykul ilke hayssta.,I-NOM male student-DAT-NOM three-ACC book-ACC read-COMP do-PST-DECL,ok,False," Nayka namhaksayngeykeynun seysul chaykul ilke hayssta.
+Gloss: I-NOM male student-DAT-NOM three-ACC book-ACC read-COMP do-PST-DECL",130
+odin_kor_1137_unseg,나는 한 시간 동안을 걸었다,I walked for an hour,Nanun han sikantonganul kelessta,I-TOP one hour-period-ACC walk-PST-DECL,Nanun han sikan tonganul kesseliessta,I-TOP one hour-for walk-PST-DECL,ok,False," Nanun han sikan tonganul kesseliessta
+Gloss: I-TOP one hour-for walk-PST-DECL",78
+odin_kor_1151_unseg,나는 테니스를 어제 한 시간 동안을 쳤다,Yesterday I played tennis for one hour,Nanun tennislul ecey han sikantonganul chiessta,I-TOP tennis-ACC yesterday one hour-for-ACC played,Nanun tennislul eces han sikansontanul ciessta,I-TOP tennis-ACC yesterday one hour-for play-PST-DECL,ok,False," Nanun tennislul eces han sikansontanul ciessta
+Gloss: I-TOP tennis-ACC yesterday one hour-for play-PST-DECL",108
+odin_kor_1168_unseg,존은 메리가 이사할 것을 도왔다,"John helped Mary, who would be moving.",Johnun Maryka isahal kesul topessta,J.-TOP M.-NOM move-REL.FUT kes-ACC help-PST-DECL,Johnun Maryka isasilhal kesul towaessta,John-TOP Mary-NOM move-Adv do-PST-DECL,ok,False," Johnun Maryka isasilhal kesul towaessta
+Gloss: John-TOP Mary-NOM move-Adv do-PST-DECL",86
+odin_kor_1171_unseg,존은 도둑이 도망가지 않는 것을 보았다,John saw the thief while he was not running away.,Johnun totwuki tomangkaci annun kesul poessta,J.-TOP thief-NOM run.away-COMP neg-REL kes-ACC see-PST-DECL,Johnun tokwi tomamkaci anun kesul posiessta,John-TOP thief-NOM run-away-CONN not see-PST-DECL,ok,False," Johnun tokwi tomamkaci anun kesul posiessta
+Gloss: John-TOP thief-NOM run-away-CONN not see-PST-DECL",101
+odin_kor_1194_unseg,소년이 아이를 목욕시켜 놓은 것이 물을 무서워 한다,The child who the boy just finished bathing is scared of water.,sonyeni ailul mokyokshikie nohun kesi mwulul mwusepe hanta,boy-NOM child-ACC bathe-COMP aux-REL.prf kes-NOM water-ACC scare-COMP do-PST-DECL,Sonniei ailul mokkuksikey nonhay konun kesi mulul mwusehan hata,boy-NOM boy-ACC bathing-COMP finish-COMP scared-of water-ACC scared,ok,False," Sonniei ailul mokkuksikey nonhay konun kesi mulul mwusehan hata
+Gloss: boy-NOM boy-ACC bathing-COMP finish-COMP scared-of water-ACC scared",139
+odin_kor_1218_unseg,내가 친구들한테는 셋한테 카드를 보냈다.,I sent greeting cards to three friends.,Nayka chinkwutulhantheynun seyshanthey cardul ponayessta.,I-NOM friend-PL-DAT-CONTR three-DAT card-ACC sent,Nayka chinkwutulutuhanththe nun seykhanththe cardul popnessta.,I-NOM friend-PL-NOM three-PL-ACC greeting-card-ACC send-PST-DECL,ok,False," Nayka chinkwutulutuhanththe nun seykhanththe cardul popnessta.
+Gloss: I-NOM friend-PL-NOM three-PL-ACC greeting-card-ACC send-PST-DECL",135
+odin_kor_1232_unseg,나는 어제 그 책을 샀다.,I bought THE BOOK YESTERDAY.,Nanun ecey ku chaykul sassta.,I-TOP yesterday the book-ACC bought,Nanun eceyey kuk chaykul sseyta.,I-TOP yesterday book-ACC bought-PST-DECL,ok,False," Nanun eceyey kuk chaykul sseyta.
+Gloss: I-TOP yesterday book-ACC bought-PST-DECL",81
+odin_kor_1262_unseg,존은 철수에게를 돈을 빌려주었다고 믿는다.,John believes that he lent money to Chelswu.,Johnun Chelswueykeylul tonul pilyecwuesstako mitnunta.,J-TOP C-DAT-ACC money-ACC lent-COMP believes,Johnun Chelswueykeylul tonul peliesseyustacessta ko mitnunta.,John-TOP Chelswu-DAT-to money-ACC lent-COMP believe-COMP-PST-DECL,ok,False," Johnun Chelswueykeylul tonul peliesseyustacessta ko mitnunta.
+Gloss: John-TOP Chelswu-DAT-to money-ACC lent-COMP believe-COMP-PST-DECL",135
+odin_kor_1277_unseg,민수가 손이 크다.,Minswu's hands are big .,Minswuka soni khuta.,M-NOM hand-NOM big,Minswuka soni kuta.,Minswu-NOM hand-NOM big-DECL,ok,False," Minswuka soni kuta.
+Gloss: Minswu-NOM hand-NOM big-DECL",56
+odin_kor_1333_unseg,메리가 무엇을 샀다,Mary bought something.,Maryka mwuesul sassta,Mary-NOM something-ACC bought-DECL,Maryka mwuesul ssessa,Mary-NOM something-ACC bought,ok,False," Maryka mwuesul ssessa
+Gloss: Mary-NOM something-ACC bought",59
+odin_kor_1335_unseg,민수는 영희가 무엇을 먹었다고 생각하니,What does Minswu think that Younghee ate?,Minswunun Youngheeka mwueslul mekesstako sayngkakhani,Minswu-TOP Younghee-NOM wh-ACC ate-COMP think-qm,Minswunun Youngheeka mosul mekessta kok sanskakhangani,Minswu-TOP Younghee-NOM what-ACC eat-COMP think-COMP-PS,ok,False," Minswunun Youngheeka mosul mekessta kok sanskakhangani
+Gloss: Minswu-TOP Younghee-NOM what-ACC eat-COMP think-COMP-PS",118
+odin_kor_1338_unseg,나는 민수가 무엇을 제일 좋아하는지 안다,I know what Minswu likes best.,nanun Minswuka mwuesul ceyil coahanunci anta,I-TOP Minswu-NOM what-ACC best like-qm know-DECL,Nanun Minswuka mwuesselul ceyil cohanunciin anita,I-TOP Minswu-NOM what-ACC best like-best be.know-COMP do-PRS-DECL,ok,False," Nanun Minswuka mwuesselul ceyil cohanunciin anita
+Gloss: I-TOP Minswu-NOM what-ACC best like-best be.know-COMP do-PRS-DECL",123
+odin_kor_1344_unseg,민수는 영희가 무엇을 먹었다고 생각하니,What does Minswu think that Younghee ate?,Minswunun Youngheeka mwueslul mekesstako sayngkakhani,Minswu-TOP Younghee-NOM what-ACC ate-COMP think-qm,Minswunun Youngheeka mosul mekessta kok sanskakhangani,Minswu-TOP Younghee-NOM what-ACC eat-COMP think-COMP-PS,ok,False," Minswunun Youngheeka mosul mekessta kok sanskakhangani
+Gloss: Minswu-TOP Younghee-NOM what-ACC eat-COMP think-COMP-PS",118
+odin_kor_1401_unseg,내가 민호를 친구로/를 삼았다,I took Minho as a friend.,nayka Minholul chinkwulo/lul samassta,I-NOM Minho-ACC friend-inst/ACC took,Nayka Minholul cinkwululo/ul sal.assta,I-NOM Minho-ACC friend-as/ACC take-PST-DECL,ok,False," Nayka Minholul cinkwululo/ul sal.assta
+Gloss: I-NOM Minho-ACC friend-as/ACC take-PST-DECL",90
+odin_kor_1420_unseg,내가 인호를 친구로 만들었다/삼았다,I made Inho a friend/I took Inho as a friend.,nayka Inholul chinkwulo mantulessta/samassta,I-NOM Inho-ACC friend-DIR made/took,Nayka Inholul cinkwululo mantantengssta/sam.hassta,I-NOM Inho-ACC friend-ACC make-PST/DECL,ok,False," Nayka Inholul cinkwululo mantantengssta/sam.hassta
+Gloss: I-NOM Inho-ACC friend-ACC make-PST/DECL",98
+odin_kor_1462_unseg,내 기분이 좋다.,I am glad.,nae kipuni cohta.,1.SG mood-NOM good-DECL,nay kikwuni cokta.,I N-ACC glad-PS,ok,False," nay kikwuni cokta.
+Gloss: I N-ACC glad-PS",42
+odin_kor_1479_unseg,빨리 와라.,Come quickly.,Ppalli oala.,quickly come-IMP,pali wala.,quickly come-S.PRS-DECL,ok,False," pali wala.
+Gloss: quickly come-S.PRS-DECL",42
+odin_kor_1482_unseg,빨리 와.,Come quickly.,ppalli oa.,quickly come-IMP,pali wa.,quickly come-S.PRS-DECL,ok,False," pali wa.
+Gloss: quickly come-S.PRS-DECL",40
+odin_kor_1483_unseg,빨리 오라.,Come quickly.,ppalli ola.,quickly come-la,pali ora.,quickly come-S.PRS-DECL,ok,False," pali ora.
+Gloss: quickly come-S.PRS-DECL",41
+odin_kor_1484_unseg,빨리 오.,Come quickly.,ppalli o.,quickly come,pali o.,quickly come-INT,ok,False," pali o.
+Gloss: quickly come-INT",32
+odin_kor_1493_unseg,키가 커라. 그리고 농구 선수가 될 수 있다.,"Be tall, and you can become a basketball player.",Khika khela. kuliko nongku senswuka toyl swuissta.,height-NOM big and basketball player-NOM become can-DECL,Kika ckala. kuliko nhankwu sensula kata thall suta.,K.-NOM be tall-and be basketball player-CONJ be can-DECL,ok,False," Kika ckala. kuliko nhankwu sensula kata thall suta.
+Gloss: K.-NOM be tall-and be basketball player-CONJ be can-DECL",116
+odin_kor_1498_unseg,키가 커라. 그러면 농구 선수가 될 수 있다.,"Be tall. If you are, you can become a basketball player.",Khika khela. kulemyen nongku senswuka toyl swuissta.,height-NOM big then basketball player-NOM become can-DECL,Kika cekla. kuempleyemy nhangqw senwuka ptelp swusta.,K.-NOM be tall-if you be basketball player-CONN be possible-DECL,ok,False," Kika cekla. kuempleyemy nhangqw senwuka ptelp swusta.
+Gloss: K.-NOM be tall-if you be basketball player-CONN be possible-DECL",126
+odin_kor_1510_unseg,메리가 트럭을 짐을 실었다.,Mary loaded luggage on trucks.,Maryka truckul cimul silessta.,Mary-NOM truck-ACC luggage-ACC load-PST-DECL,Maryka tkwelul cimul tessta.,Mary-NOM truck-ACC luggage-ACC load-PST-DECL,ok,False," Maryka tkwelul cimul tessta.
+Gloss: Mary-NOM truck-ACC luggage-ACC load-PST-DECL",81
+odin_kor_1520_unseg,존이 두 번을 외쳤다.,John yelled twice.,Johni twupenul oychessta.,John-NOM two.times-ACC yell-PST-DECL,Johni twup nuenul oasiecchita.,John-NOM two times-ACC yelled-HON-PST-DECL,ok,False," Johni twup nuenul oasiecchita.
+Gloss: John-NOM two times-ACC yelled-HON-PST-DECL",81
+odin_kor_1533_unseg,존이 학생을 세명이 술을 잘 마신다고 믿었다.,John believed three students to drink wine a lot.,Johni haksayngul seymyengi swulul cal macintako mitessta.,John-NOM student-ACC three-CLASS-NOM wine-ACC well drink-DECL-COMP believe-PST-DECL,Johni haksayngul seymyngi swulul cal masinta kongoko mit.hayssta.,John-NOM student-ACC 3-CL-NOM wine-ACC drink-COMP believe-COMP do-PST-DECL,ok,False," Johni haksayngul seymyngi swulul cal masinta kongoko mit.hayssta.
+Gloss: John-NOM student-ACC 3-CL-NOM wine-ACC drink-COMP believe-COMP do-PST-DECL",148
+odin_kor_1546_unseg,인호가 그 아이를 친구로/를 삼았다.,Inho made that child (as) a friend.,Inhoka ku ailul chinkwulo/lul samassta.,Inho-NOM that child-ACC friend-INSTR/ACC make-PST-DECL,Inhoka ku ailul cinqwulo/ul samassta.,Inho-NOM that child-ACC friend-to/as make-PST-DECL,ok,False," Inhoka ku ailul cinqwulo/ul samassta.
+Gloss: Inho-NOM that child-ACC friend-to/as make-PST-DECL",96
+odin_kor_1564_unseg,메리가 둘을 학생들을 불렀다,Mary called two students.,Maryka twulul haksayngtulul pwullessta,M.-NOM two-ACC student-PL-ACC call-PST-DECL,Maryka twtulul haksayngtulul puliessta,M.-NOM two-ACC student-PL-ACC call-PST-DECL,ok,False," Maryka twtulul haksayngtulul puliessta
+Gloss: M.-NOM two-ACC student-PL-ACC call-PST-DECL",90
+odin_kor_1566_unseg,메리가 두 학생들을 불렀다,Mary called two students.,Maryka twu haksayngtulul pwullessta,M.-NOM two student-PL-ACC call-PST-DECL,Maryka twuh haksayngtulul pwlulliessta,Mary-NOM two student-PL-ACC call-PST-DECL,ok,False," Maryka twuh haksayngtulul pwlulliessta
+Gloss: Mary-NOM two student-PL-ACC call-PST-DECL",88
+odin_kor_1575_unseg,메리가 학생들을 둘을 소환했다,Mary called two students.,Maryka haksayngtulul twulul sohwanhayssta,M.-NOM student-PL-ACC two-ACC call-PST-DECL,Maryka haksayngtul twulul sopho.hwansaessta,Mary-NOM student-PL-ACC two-ACC call-PST-DECL,ok,False," Maryka haksayngtul twulul sopho.hwansaessta
+Gloss: Mary-NOM student-PL-ACC two-ACC call-PST-DECL",97
+odin_kor_1596_unseg,학생들이 둘이 소환되었다,Two students were called.,Haksayngtuli twuli sohwantoyessta,student-PL-NOM two-NOM call-PASS-PST-DECL,Haksayngtuli twuli sophwangwuessta,student-PL-NOM two-NOM call-PST-DECL,ok,False," Haksayngtuli twuli sophwangwuessta
+Gloss: student-PL-NOM two-NOM call-PST-DECL",79
+odin_kor_1597_unseg,두 학생들이 소환되었다,Two students were called.,Twu haksayngtuli sohwantoyessta,Two student-PL-NOM call-PASS-PST-DECL,twu haksayngtuli sohwangwuessta,two student-PL-NOM call-PST-DECL,ok,False," twu haksayngtuli sohwangwuessta
+Gloss: two student-PL-NOM call-PST-DECL",72
+odin_kor_1612_unseg,아이들이 장난감을 빨리들 조립했다,The children constructed a toy/toys quickly.,aituli changnankkamul ppallitul choriphatta,child-PL-NOM toy-ACC quickly-AgrS constructed,Aituli cangnakangul ppli.toyul co.cholpita,child-PL-NOM toy-ACC quickly.toy-ACC construct-PST-DECL,ok,False," Aituli cangnakangul ppli.toyul co.cholpita
+Gloss: child-PL-NOM toy-ACC quickly.toy-ACC construct-PST-DECL",106
+odin_kor_1683_unseg,순희가 눈이 크다,Swunhi's eyes are big.,Swunhika nwuni khuta,S.-NOM eye-NOM big-DECL,Swunhika nuni kuta,Swunhi-NOM eye-NOM big-DECL,ok,False," Swunhika nuni kuta
+Gloss: Swunhi-NOM eye-NOM big-DECL",54
+odin_kor_1691_unseg,철수가 순이가 울게 했다,Chelswu made Swuni cry.,Chelswuka Swunika ulkey haessta,C.-NOM S.-NOM cry-COMP do-PST-DECL,Chelswuka Swunika wukkey hayssta,C.-NOM S.-NOM cry-COMP do-PST-DECL,ok,False," Chelswuka Swunika wukkey hayssta
+Gloss: C.-NOM S.-NOM cry-COMP do-PST-DECL",75
+odin_kor_1700_unseg,무슨 일이 일어났니?,What happened ?,mwusenili ilenaessni ?,what-NOM happen-PST-Q,mwusin ili ilassentaeni ?,linguist-SPEC what happened ?,ok,False," mwusin ili ilassentaeni ?
+Gloss: linguist-SPEC what happened ?",63
+odin_kor_1744_unseg,존은 누구에게/를 밥을 먹였니?,Who did John make eat the rice ?,Johnun nwukwueykey/lul paplul mekiessni ?,J.-TOP who-DAT rice-ACC eat-CAUS-PST-Q,Johnun nukwueykey/lul papul mekiesstateci ?,John-TOP who-NOM/DAT/ACC rice-ACC eat-PST-DECL,ok,False," Johnun nukwueykey/lul papul mekiesstateci ?
+Gloss: John-TOP who-NOM/DAT/ACC rice-ACC eat-PST-DECL",98
+odin_kor_1765_unseg,두 시간을 잠자다,sleep for two hours,twu sikanul camcata,two hours-ACC sleep-DECL,twus sikanul camassta,two hours-ACC sleep-PRS-DECL,ok,False," twus sikanul camassta
+Gloss: two hours-ACC sleep-PRS-DECL",58
+odin_kor_1779_unseg,{ 빗속을 / 빗길을 } 자동차가 과속으로 달렸다,The car ran at overspeed in the rain / on the rainy road.,{ pissokul / piskilul } catongchaka kwasokulo talliessta,rain-inside-ACC rain-road-ACC car-NOM overspeed-by run-PST-DECL,{ ppsokul / ppskilul } caytongchaka koskokululo tallenta,rain.NOM run-at (at) rain.location (at) car.NOM rain.location (at) run-at-PST-DECL,ok,False," { ppsokul / ppskilul } caytongchaka koskokululo tallenta
+Gloss: rain.NOM run-at (at) rain.location (at) car.NOM rain.location (at) run-at-PST-DECL",147
+odin_kor_1781_unseg,빗속에서 / 빗길에서 자동차가 과속으로 달렸다,The car oversped in the rain / on the rainy road.,{ pissokeyse / piskileyse } catongchaka kwasokulo talliessta,rain-inside-LOC rain-road-LOC car-NOM overspeed-by run-PST-DECL,ppsoksey / ppskey cantaka koskokuluy taliessta,rain.location / rain.location auto-car-NOM rain-on rain-on do-PST-DECL,ok,False," ppsoksey / ppskey cantaka koskokuluy taliessta
+Gloss: rain.location / rain.location auto-car-NOM rain-on rain-on do-PST-DECL",125
+odin_kor_1851_unseg,나는 서울(에)보다 부산에/를 (더) 자주 갔다,I went to Pusan (LOC/ACC) more often than Seoul (LOC/(*) ??ACC).,nanun Seoul(ey)pota Pusaney/lul (te) cacwu kaessta,I-TOP S.-(LOC)-than P.-LOC/ACC more often go-PST-DECL,nanun Seoul(ey)pata Pusaney/lul (te) cacu kassta,I-TOP Seoul(LOC)more than Pusan(LOC)ACC more often went-PST-DECL,ok,False," nanun Seoul(ey)pata Pusaney/lul (te) cacu kassta
+Gloss: I-TOP Seoul(LOC)more than Pusan(LOC)ACC more often went-PST-DECL",121
+odin_kor_1853_unseg,내가 유미에게/를 팔에/를 주사를 놓았다,I gave Yumi a shot in the arm.,nayka Yumieykey/lul phaley/ul cwusalul nohessta,I-NOM Y.-DAT/-ACC arm-DAT/-ACC shot-ACC give-PST-DECL,Nayka Yumieyeykey/lul paley/e/lul cwusalul nosshessta,I-NOM Yumi-DAT/ACC arm-DAT/ACC give-ACC give-PST-DECL,ok,False," Nayka Yumieyeykey/lul paley/e/lul cwusalul nosshessta
+Gloss: I-NOM Yumi-DAT/ACC arm-DAT/ACC give-ACC give-PST-DECL",115
+odin_kor_1878_unseg,나는 선생님을/에게 가시게 했다,I made the teacher leave.,nanun sensayngnimlul/eykey kasikey haessta,I-TOP teacher-ACC/DAT go-HON-COMP do-PST-DECL,Nanun sensayngnimul/eykey kasikey hayssta,I-TOP teacher-ACC/ACC leave-COMP do-PST-DECL,ok,False," Nanun sensayngnimul/eykey kasikey hayssta
+Gloss: I-TOP teacher-ACC/ACC leave-COMP do-PST-DECL",94
+odin_kor_1893_unseg,나는 선생님을 가시게 했으나 가시지 않았다,"I made the teacher leave, but he did not.",nanun sensayngnimlul kasikey haessuna kasici anessta,I-TOP teacher-ACC go-HON-COMP do-PST-but go-HON-COMP not-PST-DECL,Nanun sensayngnimul kasikasiykey hayssta,I-TOP teacher-ACC leave-CONN do-CONN but not-CONN-PST-DECL,ok,False," Nanun sensayngnimul kasikasiykey hayssta
+Gloss: I-TOP teacher-ACC leave-CONN do-CONN but not-CONN-PST-DECL",107
+odin_kor_1895_unseg,나는 선생님에게 가시게 했으나 가시지 않았다,"I made the teacher leave, but he did not.",nanun sensayngnimeykey kasikey haessuna kasici anessta,I-TOP teacher-DAT go-HON-COMP do-PST-but go-HON-COMP not-PST-DECL,Nanun sensayngnim eykey kasike hassessta,I-TOP teacher-DAT leave-COMP do-COMP but do-not-COMP-PST-DECL,ok,False," Nanun sensayngnim eykey kasike hassessta
+Gloss: I-TOP teacher-DAT leave-COMP do-COMP but do-not-COMP-PST-DECL",110
+odin_kor_1916_unseg,그 식당이 내가 가고 싶다,I want to go to the restaurant.,ku siktangi nayka kako siphta,the restaurant-NOM I-NOM go-COMP want-DECL,ku siktangi nayka kako phiessta,that restaurant-NOM I-NOM go-COMP want-DECL,ok,False," ku siktangi nayka kako phiessta
+Gloss: that restaurant-NOM I-NOM go-COMP want-DECL",83
+odin_kor_1929_unseg,공을 혁이가 던져,Hyuck throws a ball.,kongul Hyuckika tencie,ball-ACC Hyuck-NOM throw-DECL,Kongul Hyuckika thente,ball-NOM Hyuck-NOM throw-PST-DECL,ok,False," Kongul Hyuckika thente
+Gloss: ball-NOM Hyuck-NOM throw-PST-DECL",64
+odin_kor_1948_unseg,그는 차를 타고 갔다,He rode the car and went.,kunun chalul thako kassta,he-TOP car-ACC ride-CONN go-PST-DECL,kunun chalul takata katassta,he-TOP car-ACC ride-CONN go-PST-DECL,ok,False," kunun chalul takata katassta
+Gloss: he-TOP car-ACC ride-CONN go-PST-DECL",73
+odin_kor_1950_unseg,돌이는 그 여자가 아름답다고 생각한다.,Toli thinks that the woman is pretty.,Tolinun ku yecaka alumtaptako sayngkakhanta,Toli-TOP the woman-NOM pretty-CONN think-PRS-DECL,Toliun ku yeysaka aimpandako sayngkakhanta.,Toli-TOP that woman-NOM pretty-HON-DECL,ok,False," Toliun ku yeysaka aimpandako sayngkakhanta.
+Gloss: Toli-TOP that woman-NOM pretty-HON-DECL",91
+odin_kor_1959_unseg,철수는 한 시간 동안 그 전기불을 껐다,*Chulsoo turned off the light for one hour.,Chelswunun hansikantongan ku cenkipwullul kkessta,Chelswu-TOP one.hour-for the light-ACC turn.off-PST-DECL,Chelswun hansitang kun kulul kuluta,Chelswun-TOP one hour-for the light-ACC turn-off-PST-DECL,ok,False," Chelswun hansitang kun kulul kuluta
+Gloss: Chelswun-TOP one hour-for the light-ACC turn-off-PST-DECL",101
+odin_kor_1962_unseg,그들이 한 시간 동안 결혼했다,*They married for one hour.,ku.tuli hansikantongan kyelhonhayssta,they-NOM one.hour-for marriage-do-PST-DECL,kutuli hansikan hayenghassta,they-NOM one hour-for marry-PST-DECL,ok,False," kutuli hansikan hayenghassta
+Gloss: they-NOM one hour-for marry-PST-DECL",73
+odin_kor_1971_unseg,그 옷이 한 시간 동안 말랐다.,The clothes dried for an hour.,ku osi hansikantongan malassta.,the clothes-NOM one.hour-for dry-PST-DECL,Kuy osi hansikan mallalta.,the clothes-NOM one hour-for dry-PST-DECL,ok,False," Kuy osi hansikan mallalta.
+Gloss: the clothes-NOM one hour-for dry-PST-DECL",76
+odin_kor_1976_unseg,어머니가 아이에게/를 옷을 입혔다,Mother made the baby wear the clothes.,emenika aieykey/lul osul iphiessta,mother-NOM baby-DAT/ACC clothes-ACC wear-CAUS-PST-DECL,Emenika aieykey/lul osul iphiessta,mother-NOM baby-DAT/NOM clothes-ACC wear-Caus-PST-DECL,ok,False," Emenika aieykey/lul osul iphiessta
+Gloss: mother-NOM baby-DAT/NOM clothes-ACC wear-Caus-PST-DECL",97
+odin_kor_2019_unseg,내가 개를 한 시간 만에 무서워했다.,I started to fear the dog after an hour.,Nayka kaylul hansikanmaney mwusewehayssta,I-NOM dog-ACC one.hour-in fear-do-PST-DECL,Nayka kaylul hansikang manengeyes mwusehayessta.,I-NOM dog-ACC hour-after fear-COMP do-PST-DECL,ok,False," Nayka kaylul hansikang manengeyes mwusehayessta.
+Gloss: I-NOM dog-ACC hour-after fear-COMP do-PST-DECL",103
+odin_kor_2021_unseg,내가 개가 무서웠다,I had feared the dog.,Nayka kayka mwuseweissta,I-NOM dog-NOM fear-PERF-DECL,Nayka kayka mwusewussta,I-NOM dog-NOM fear-PST-DECL,ok,False," Nayka kayka mwusewussta
+Gloss: I-NOM dog-NOM fear-PST-DECL",59
+odin_kor_2030_unseg,순희가 개가 무서웠다,Soonhi feared the dog.,Swunhika kayka mwusewessta,Swunhi-NOM dog-NOM fear-PST-DECL,Swunhika kayka mwusewussta,Swunhi-NOM dog-NOM fear-COMP-PST-DECL,ok,False," Swunhika kayka mwusewussta
+Gloss: Swunhi-NOM dog-NOM fear-COMP-PST-DECL",72
+odin_kor_2036_unseg,순희가 개를 무서워했다,Soonhi feared the dog.,Swunhika kaylul mwusewehayssta,Swunhi-NOM dog-ACC fear-do-PST-DECL,Swunhika kaylul mwusehayessta,Swunhi-NOM dog-ACC fear-COMP-PST-DECL,ok,False," Swunhika kaylul mwusehayessta
+Gloss: Swunhi-NOM dog-ACC fear-COMP-PST-DECL",75
+odin_kor_2043_unseg,순희가 개가 무서웠다,Soonhi feared the dog.,Swunhika kayka mwusewessta,Swunhi-CFM dog-NOM fear-PST-DECL,Swunhika kayka mwusewussta,Swunhi-NOM dog-NOM fear-COMP-PST-DECL,ok,False," Swunhika kayka mwusewussta
+Gloss: Swunhi-NOM dog-NOM fear-COMP-PST-DECL",72
+odin_kor_2063_unseg,할아버님께서 학교에 가신다,Grandfather (HON) goes (HON) to school.,halapenimkkeyse hakkyoey kasinta,grandfather(HON)-NOM(HON) school-to go-SH-PRS-DECL,Halapencimsem hakkyoey kasinta,grandfather-HON-to school-to go-HON-DECL,ok,False," Halapencimsem hakkyoey kasinta
+Gloss: grandfather-HON-to school-to go-HON-DECL",79
+odin_kor_2070_unseg,밥을 먹고 있었었다,(I) had been eating the dinner.,paplul mekko.issessessta,dinner-ACC eat-CONT-PERF-PST-DECL,papul mekko issessta,dinner-ACC eat-CONN-PST-DECL,ok,False," papul mekko issessta
+Gloss: dinner-ACC eat-CONN-PST-DECL",57
+odin_kor_2090_unseg,(전엔) 이 꽃이 붉었더냐 ?,Was this flower red before ?[Did you hear it ?].,(ceneyn) i kkosi pwulkesstatenya ?,before this flower-NOM red-PST-Hearsay-Q,(cen) i kkui pwuntessa nasy ?,before this flower be red-HON-PST-Q-Q-Q,ok,False," (cen) i kkui pwuntessa nasy ?
+Gloss: before this flower be red-HON-PST-Q-Q-Q",77
+odin_kor_2091_unseg,(5분 전에) 아버지께서 신문을 보시었다더이다,Father(HON) read(HON) the newspaper (five minutes ago) [I heard it].,(opwunceney) apecikkeyse sinmwunul posiesstateita,five.minutes.ago father-NOM newspaper-ACC see-SH-PST-Hearsay-POL-DECL,(5pun ceney) apecikey sinesse sinmwunul posiessta,father-HON newspaper-ACC read-HON-PST-DECL,ok,False," (5pun ceney) apecikey sinesse sinmwunul posiessta
+Gloss: father-HON newspaper-ACC read-HON-PST-DECL",100
+odin_kor_2134_unseg,돌이는 그 여자가 아름답다고 생각한다,Toli thinks that the woman is pretty.,Tolinun ku yecaka alumtaptako sayngkakhanta,Toli-TOP the woman-NOM pretty-DECL-CONN think-PRS-DECL,Toliun ku yeysaka aimpitako sayngkakhanta,Toli-TOP that woman-NOM pretty-HON-DECL,ok,False," Toliun ku yeysaka aimpitako sayngkakhanta
+Gloss: Toli-TOP that woman-NOM pretty-HON-DECL",89
+odin_kor_2151_unseg,아버지는 신문을 읽으셨고 어머니는 무엇을 하셨냐?,"Father read the newspapers, and what did mother do ?",apecinun sinmwunul ilkusiessko emeniun mwueslul hasiessnya ?,father-TOP newspaper-ACC read-SH-PST-CONN mother-TOP what-ACC do-SH-PST-Q,apecinun sinmwunlul ilkesstayko emeninun mwuesul hassnasseyla ?,father-TOP newspaper-ACC read-CONN mother-TOP what-ACC do-CONN-Q,ok,False," apecinun sinmwunlul ilkesstayko emeninun mwuesul hassnasseyla ?
+Gloss: father-TOP newspaper-ACC read-CONN mother-TOP what-ACC do-CONN-Q",136
+odin_kor_2156_unseg,비가 오고 바람이 불었겠다,(I guess that ) it was raining while the wind was blowing.,pika oko palami pwulesskeyssta,rain-NOM fall-CONN wind-NOM blow-PST-PRESUM-DECL,pika oko palami pul essessta,rain-NOM while wind-NOM blow-CONN while be.POSS-DECL,ok,False," pika oko palami pul essessta
+Gloss: rain-NOM while wind-NOM blow-CONN while be.POSS-DECL",89
+odin_kor_2159_unseg,사또가 뜨고 나팔이 불었다,It is too late.,satto(ka) ttuko naphal(i) pwulessta,province.governor-NOM arrive-CONN trumpet-NOM sound-PST-DECL,Satayka toko napi pali pwulissta,too late-NOM too late-PST-DECL,ok,False," Satayka toko napi pali pwulissta
+Gloss: too late-NOM too late-PST-DECL",71
+odin_kor_2189_unseg,철수가 눈을 감고 의자에 앉아있었다,Chulsoo stayed on the chair while closing (his) eyes.,Chelswuka nwunlul kamko uycaey ancaissessta,Chelswu-NOM eye-ACC close-CONN chair-at sit-be-PST-DECL,Chelswuka nulul kamkol uykayey asenaissta,Chelswuka eye-ACC close-while stay-PST-DECL,ok,False," Chelswuka nulul kamkol uykayey asenaissta
+Gloss: Chelswuka eye-ACC close-while stay-PST-DECL",93
+odin_kor_2197_unseg,철수가 차를 길가에 세워놓다,Chulsoo parked the car at the sidewalk.,Chelswuka chalul kilkaey seywuenohta,Chelswu-NOM car-ACC sidewalk-at stop-CONN-put-DECL,Chelswuka chalul kilkay sewenaessta,Chelswu-NOM car-ACC sidewalk-at park-at-PST-DECL,ok,False," Chelswuka chalul kilkay sewenaessta
+Gloss: Chelswu-NOM car-ACC sidewalk-at park-at-PST-DECL",92
+odin_kor_2198_unseg,빵을 먹어보자,Let's try to eat the bread.,ppanglul mekepoca,bread-ACC eat-CONN-see-PROP,ppangul mekkessehita,bread-ACC eat-CONN-PST-DECL,ok,False," ppangul mekkessehita
+Gloss: bread-ACC eat-CONN-PST-DECL",56
+odin_kor_2203_unseg,아이가 기어 내게 온다,Baby comes to me crawling,aika kie naeykey onta,baby-NOM crawl-CONN I-to come-PRS-DECL,aika kiki naykey ontayta,baby-NOM crawl to come-PST-DECL,ok,False," aika kiki naykey ontayta
+Gloss: baby-NOM crawl to come-PST-DECL",64
+odin_kor_2251_unseg,어머니가 아들에게 자장가를 불러주었다,The mother sang a lullaby for the son.,emenika atuleykey cacangkalul pwulecwuessta,mother-NOM son-DAT lullaby-ACC sing-give-PST-DECL,Emenika attileeykey cakangkalulaul pulkessta,mother-NOM son-DAT son-DAT lullaby-ACC sing-PST-DECL,ok,False," Emenika attileeykey cakangkalulaul pulkessta
+Gloss: mother-NOM son-DAT son-DAT lullaby-ACC sing-PST-DECL",105
+odin_kor_2270_unseg,순희가 여자인 것이 확실하다,It is certain that Swunhi is female.,Swunhika yecainkesi hwaksilhata,Swunhi-NOM female-be-PRS-COMP-NOM certain-DECL,Swunhika yeyecinta sissta,Swunhi-NOM female thing-be certain-DECL,ok,False," Swunhika yeyecinta sissta
+Gloss: Swunhi-NOM female thing-be certain-DECL",73
+odin_kor_2299_unseg,철수는 미아가 무섭다,Chelswu is afraid of Mia,Chelswunun Miaka mwusepta,Chelswu-TOP Mia-NOM be-afraid-of-DECL,Chelswun munayka mwusepta,C.-TOP Mia-NOM afraid-DECL,ok,False," Chelswun munayka mwusepta
+Gloss: C.-TOP Mia-NOM afraid-DECL",60
+odin_kor_2301_unseg,철수는/가 미아를 무서워한다,Chelswu is afraid of Mia,Chelswunun/ka Mialul mwusephanta,Chelswu-TOP/NOM Mia-NOM be-afraid-of-do-ASP-DECL,Chelswunun/ka Mia.lul mwusehanka,C.-TOP/M-NOM Mia.-ACC afraid-DOT-DECL,ok,False," Chelswunun/ka Mia.lul mwusehanka
+Gloss: C.-TOP/M-NOM Mia.-ACC afraid-DOT-DECL",78
+odin_kor_2304_unseg,나는 와이키키가 경치가 좋다고 생각한다,I think that Waikiki has good landscape,Nanun Waikhikhika kyongchika cohtako sayngkakhanta,I-TOP Waikiki-NOM landscape-NOM good-DECL-QUOT think-ASP-DECL,Nanun Waikika kaki chachika cotta kongo saphkanka,I-TOP Waikiki-NOM landscape-NOM good-COMP think-PRS-DECL,ok,False," Nanun Waikika kaki chachika cotta kongo saphkanka
+Gloss: I-TOP Waikiki-NOM landscape-NOM good-COMP think-PRS-DECL",114
+odin_kor_2329_unseg,먹을게요/겁니다,He will (probably) eat.,mekulkeeyo/kemnida,eat-IRR-KES-BE/KES-BE,mekulkeyyo/kuntessti,eat-ACC/prob.possibly-DECL,ok,False," mekulkeyyo/kuntessti
+Gloss: eat-ACC/prob.possibly-DECL",55
+odin_kor_2330_unseg,먹을것이에요/것입니다,He will (probably) eat.,mekulkesieyo/kesimnida,eat-IRR-KES-BE,mekulhiesstay/khiesstay/khiesstay,eat-ACC-PRS/PRS-IND,ok,False," mekulhiesstay/khiesstay/khiesstay
+Gloss: eat-ACC-PRS/PRS-IND",61
+odin_kor_2347_unseg,순민은 좋은 집을 자기 아파트를 팔고 샀다.,"Sunmi bought a good house, having sold her apartment.",Swunminun cohun cipul caki aphathulul phalko sassta.,Sunmi-TOP good house-ACC self's apartment-ACC sell-CONV buy-PST-DECL,Sunminun cokun cipul caki apateul pako ssessa.,Sunmi-TOP good house-ACC sell-PST-ACC apartment,ok,False," Sunminun cokun cipul caki apateul pako ssessa.
+Gloss: Sunmi-TOP good house-ACC sell-PST-ACC apartment",102
+odin_kor_2355_unseg,미카가 학교에 못 가지 않았다.,It is not the case that Mica couldn't go to school.,Mica ka hakkyo ey mos kaci anhassta.,Mica NOM school to cannot go-SUSP NEG-PST-IND,Mica ka hakkyo ey moch kakessay ansessta.,Mica NOM school-to not go can not do-DECL,ok,False," Mica ka hakkyo ey moch kakessay ansessta.
+Gloss: Mica NOM school-to not go can not do-DECL",91
+odin_kor_2356_unseg,어머니께서 딸이 안 먹게 하셨다.,The mother made the daughter not eat.,Emeni kkeyse ttal i an mekkey hasiessta.,mother NOM daughter NOM NEG eat-COMP do-HON-PST-IND,Emenikkeyse taili an mekke hasseyessta.,mother-HNom daughter-NOM not eat-Cmp do-PST-DECL,ok,False," Emenikkeyse taili an mekke hasseyessta.
+Gloss: mother-HNom daughter-NOM not eat-Cmp do-PST-DECL",96
+odin_kor_2357_unseg,어머니께서 딸을 먹게 안 하셨다.,The mother didn't make the daughter eat.,Emeni kkeyse ttal ul mekkey an hasiessta.,mother NOM daughter ACC eat-COMP NEG do-HON-PST-IND,Emenikeytes talul mekkey an hasseyessta.,mother-HNom daughter-ACC eat-COMP not do-PST-DECL,ok,False," Emenikeytes talul mekkey an hasseyessta.
+Gloss: mother-HNom daughter-ACC eat-COMP not do-PST-DECL",98
+odin_kor_2360_unseg,어머니께서 딸을 먹게 안 하셨다.,The mother didn't make the daughter eat.,Emeni kkeyse ttal ul mekkey an hasiessta.,mother NOM daughter ACC NEG eat-COMP do-HON-PST-IND,Emenikeytes talul mekkey an hasseyessta.,mother-HNom daughter-ACC eat-COMP not do-PST-DECL,ok,False," Emenikeytes talul mekkey an hasseyessta.
+Gloss: mother-HNom daughter-ACC eat-COMP not do-PST-DECL",98
+odin_kor_2368_unseg,엄마가 아이에게 신발을 (빨리) 신겼다.,Mother (quickly) put the shoes on the child.,Emmaka aieykey sinpalul (ppali) sinkiessta.,mother-NOM child-DAT shoes-ACC (quickly) put.on-CAUS-PST-DECL,Emamka aieykey sinpalul (pali) sinkessta.,mother-NOM child-DAT shoe-ACC quickly put-CAUS-PST-DECL,ok,False," Emamka aieykey sinpalul (pali) sinkessta.
+Gloss: mother-NOM child-DAT shoe-ACC quickly put-CAUS-PST-DECL",105
+odin_kor_2400_unseg,존의 바지가 더러워졌다.,John's pants got dirty.,Johnuy pacika teleweciessta.,J.-GEN pants-NOM get.dirty.,Johnuy pachika tellewuessta.,John-NOM pants-NOM dirty-PST-DECL,ok,False," Johnuy pachika tellewuessta.
+Gloss: John-NOM pants-NOM dirty-PST-DECL",70
+odin_kor_2470_unseg,존이 물고기를 신선하게 먹었다,John ate the fish fresh,Johni mwulkokilul sinsenhakey mekessta,John-NOM fish-ACC fresh-KEY eat-PST-PLAIN,Johni mwulkokilul sinengshaneka mekessta,John-NOM fish-ACC fresh eat-PST-DECL,ok,False," Johni mwulkokilul sinengshaneka mekessta
+Gloss: John-NOM fish-ACC fresh eat-PST-DECL",85
+odin_kor_2553_unseg,존이 빌과 즐거운 대화를 하였다.,John had a pleasant talk with Bill,Johni Billkwa culkuwun tayhwalul hayessta.,John-NOM Bill-with pleasant talk-ACC do-PST-DECL,Johni philkwa cukewun tayhalul hayessta.,John-NOM Bill-NOM pleasant talk-ACC have-PST-DECL,ok,False," Johni philkwa cukewun tayhalul hayessta.
+Gloss: John-NOM Bill-NOM pleasant talk-ACC have-PST-DECL",98
+odin_kor_2562_unseg,존이 집으로 그것을 원하였다.,(e.g. What about walking?) John wanted to do it to his house.,Johni cipulo kukesul wenhayessta.,John-NOM house-to it-ACC want-PST-DECL,Johni cipuluy kukesul wonengiessta.,John-NOM house-to that-ACC walk-PST-DECL,ok,False," Johni cipuluy kukesul wonengiessta.
+Gloss: John-NOM house-to that-ACC walk-PST-DECL",84
+odin_kor_2580_unseg,(남자들은 다 똑같애.),Guys are all the same.,(namcatulun ta ttokkhatay.),man-PL-TOP all same-DECL,(namcatulun tattkapkaessa.),guys-NOM all same-DECL,ok,False," (namcatulun tattkapkaessa.)
+Gloss: guys-NOM all same-DECL",58
+odin_kor_2592_unseg,"존이 이 문제라도 풀면, 그를 혼내지 않을게.","If John solves even this problem, I will not admonish him.","Johni i mwunceylato phwulmyen, kulul honnayci.ahnulkkey.",J.-NOM this problem-even solve-if he-ACC admonish-NEG-DECL,"Johni i munyeca tolo philmeyn, ku lul honaci anulkey.",John-NOM this problem-ACC solve-if he-ACC admonish-COMP do-IMPERF-DECL,ok,False," Johni i munyeca tolo philmeyn, ku lul honaci anulkey.
+Gloss: John-NOM this problem-ACC solve-if he-ACC admonish-COMP do-IMPERF-DECL",132
+odin_kor_2608_unseg,존이 침이 마르게 메리를 칭찬했다,John praised Mary his tongue dry,Johni chimi malukey Marylul chingchanhayssta,John-N tongue-N dry-KEY Mary-ACC praise-PST-IND,Johni chini mayulke Marylul chakchanghayssta,John-NOM tongue-NOM dry-ACC praise-PST-DECL,ok,False," Johni chini mayulke Marylul chakchanghayssta
+Gloss: John-NOM tongue-NOM dry-ACC praise-PST-DECL",96
+odin_kor_2628_unseg,철이는 영희를 밥을 지금 한다고 생각한다,Cheli thinks that Yenghi is cooking now.,Chelinun Yenghilul papul cikum hantako sayngkakhanta,C-TOP Y-ACC meal-ACC now do-COMP think,Chelinun Yenghilul papul cikum hanako sachkakhanga,C-TOP Y-ACC cook-ACC now be.PRS-DECL,ok,False," Chelinun Yenghilul papul cikum hanako sachkakhanga
+Gloss: C-TOP Y-ACC cook-ACC now be.PRS-DECL",95
+odin_kor_2633_unseg,빨리 와!,Come quickly!,ppalli oa!,quickly come-a,pali wa!,quickly come-S.PRS-DECL,ok,False," pali wa!
+Gloss: quickly come-S.PRS-DECL",40
+odin_kor_2635_unseg,그들가,they,kutulka,he-PL-NOM,kutulaka,they-PL-NOM (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (T,ok,False," kutulaka
+Gloss: they-PL-NOM (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (TOP) (T",511
+odin_kor_2669_unseg,아버지는 학자(가/는/도) 아니다,My father is not a scholar.,apecinun hakca(ka/nun/to) anita,father-TOP scholar(-NOM/-TOP/-FOC) NCOP-DECL,Apecinun hakca(ka/nun/to) aninami,father-TOP scholar-TOP not-be-PST-DECL,ok,False," Apecinun hakca(ka/nun/to) aninami
+Gloss: father-TOP scholar-TOP not-be-PST-DECL",80
+odin_kor_2672_unseg,그 사람이 미국에서 공부 한 학생이기는 학생이다,That person is a student who studied in America (but he still doesn't speak English well).,ku salami mikwukeyse kongpwu han haksayngikinun haksayngita,that person-NOM America-at study do-PST student-COP-NMLZ-TOP student-COP-DECL,ku salami mikwukese kongpwu han haksayngikini kon haksaynta,that person-NOM America-in study-HON one student-HON-NOM study-HON-DECL,ok,False," ku salami mikwukese kongpwu han haksayngikini kon haksaynta
+Gloss: that person-NOM America-in study-HON one student-HON-NOM study-HON-DECL",139
+odin_kor_2673_unseg,철수가 부자였어,Chelswu was rich (a rich man).,chelswuka pwucaiesse,chelswu-NOM rich-COP-PST-DECL,Chelswuka pwucaciaie,C.-NOM rich-PST-DECL,ok,False," Chelswuka pwucaciaie
+Gloss: C.-NOM rich-PST-DECL",49
+odin_kor_2677_unseg,철수가 부자는 부자가 아니다,Chelswu is truly (not) rich.,chelswuka pwucanun pwucaka anita,chelswu-NOM rich-TOP rich-NOM NCOP-DECL,Chelswuka pwucanun pwucaka aninani,C.-NOM rich-NOM rich-NOM not-be-DECL,ok,False," Chelswuka pwucanun pwucaka aninani
+Gloss: C.-NOM rich-NOM rich-NOM not-be-DECL",79
+odin_kor_2714_unseg,길동이 심청에게 꽃을 주었다,Kildong gave flowers to Simcheng,Kildongi Simchengeyke kkocul cuessta,Kildong-NM Simcheng-DAT Flower-ACC give-PST-DECL,Kildongi Simchengeyey kokul cwuessta,Kildong-NOM Simcheng-loc to.flower-ACC give-PST-DECL,ok,False," Kildongi Simchengeyey kokul cwuessta
+Gloss: Kildong-NOM Simcheng-loc to.flower-ACC give-PST-DECL",97
+odin_kor_2741_unseg,민수는 누구를 보았니?,Who did Minsu see?,Minsunun nukulûl poassni?,Minsu-TOP who-ACC see-PST-Q,Minsunun nukwulul puloassta?,Minsu-TOP who-ACC see-PST-QL,ok,False," Minsunun nukwulul puloassta?
+Gloss: Minsu-TOP who-ACC see-PST-QL",65
+odin_kor_2753_unseg,유난히 맛이 썩 좋았습니다.,"Particularly, the taste of (it) was pretty good.",yunanhi masi ssek chohasssupnita.,particularly taste-NOM quite good-PST-End,Yunhanghi maysi chesseko assimpsstata.,particularly taste-NOM be.good-PRS-DECL,ok,False," Yunhanghi maysi chesseko assimpsstata.
+Gloss: particularly taste-NOM be.good-PRS-DECL",86
+odin_kor_2770_unseg,순이는 인호를 만났다,"As for Swuni, she met Inho",Swuninun Inholul mannassta,Swuni.Top Inho.ACC met,Swunin Inholul manhassta,Swuni-TOP Inho-ACC met-PST-DECL,ok,False," Swunin Inholul manhassta
+Gloss: Swuni-TOP Inho-ACC met-PST-DECL",64
+odin_kor_2777_unseg,그것은 그에게 잊히지 않는다.,That thing is not being forgotten by him.,Ku kesun kueykey ichici anhnunta.,the/that thing-TOP he-DAT forget-hi-nominalizer not-PRS-DECL,Kukketun kueykey pithicikici annunta.,that-TOP him-by go-forget-not-PST-DECL,ok,False," Kukketun kueykey pithicikici annunta.
+Gloss: that-TOP him-by go-forget-not-PST-DECL",84
+odin_kor_2810_unseg,위원회 가 철수 를 상 을 주었다.,The committee gave a prize to Chelswu.,Wuywenhoy ka Chelswu lul sang ul cwuessta.,committee NOM Chelswu ACC prize ACC give-PST-DECL,Wiyenghopo ka Chelswu lulang ul cwuessta.,committee-NOM to Chelswu to prize-ACC give-PST-DECL,ok,False," Wiyenghopo ka Chelswu lulang ul cwuessta.
+Gloss: committee-NOM to Chelswu to prize-ACC give-PST-DECL",101
+odin_kor_2831_unseg,그 직사각형의 수평 변은 길이가 5cm이다.,The horizontal line of that rectangle is 5cm long.,ku ciksakakhyenguy swupyeng pyenun kilika 5cm ita.,that rectangle-GEN horizontal line-TOP length-NOM 5cm be-DECL,ku ciksakaynguy swuypengun kilika 5cmie.ta.,that rectangle-line-NOM horizontal-line-NOM length-NOM be.long-be-DECL,ok,False," ku ciksakaynguy swuypengun kilika 5cmie.ta.
+Gloss: that rectangle-line-NOM horizontal-line-NOM length-NOM be.long-be-DECL",122
+odin_kor_2835_unseg,그 직사각형은 가로가 5cm 이다.,That rectangle is 5cm side-to-side.,ku ciksakakhyengun kaloka 5cm ita.,that rectangle-TOP side-to-side-NOM 5cm be-DECL,ku ciksakaykeyengun lolaka 5cm ita.,that rectangle-NOM side-to-side-DAT 5cm be-DECL,ok,False," ku ciksakaykeyengun lolaka 5cm ita.
+Gloss: that rectangle-NOM side-to-side-DAT 5cm be-DECL",91
+odin_kor_2848_unseg,"그 널빤지는 길이가 2m 이고, 너비가 30cm 이고 두께가 3cm 이다.","The board is 2m long, 30cm wide, and 3cm thick.","ku nelppancinun kilika 2m iko, nepika 30cm iko twukkeyka 3cm ita.",that board-TOP length-NOM 2m be-CONJ width-NOM 30cm be-CONJ thickness-NOM 3cm be-DECL,"ku nelphicintaun kilika 2m iko, nepika 30cm iko twukkeyka 3cm ita.",that board-NOM 2m-NOM the board-NOM 30cm-NOM the board-NOM 3cm-NOM be-DECL,ok,False," ku nelphicintaun kilika 2m iko, nepika 30cm iko twukkeyka 3cm ita.
+Gloss: that board-NOM 2m-NOM the board-NOM 30cm-NOM the board-NOM 3cm-NOM be-DECL",149
+odin_kor_2875_unseg,그 밥이 맵다.,That food is spicy.,Ku papi maypta.,that food-NOM be-spicy,ku papi mappa.,that food-NOM spicy-DECL,ok,False," ku papi mappa.
+Gloss: that food-NOM spicy-DECL",47
+odin_kor_2880_unseg,민아는 선생이다.,Mina is a teacher.,minanun sensayngita.,Mina-TOP teacher-be-DECL,Minanun sengayissta.,Mina-TOP teacher-DECL,ok,False," Minanun sengayissta.
+Gloss: Mina-TOP teacher-DECL",50
+odin_kor_2882_unseg,노래를 부르는 소녀,a/the girl who sings/is singing a song,nolaylul pwulunun sonye,song-ACC sing-PRS.IMPF-ATT girl,Nolaylul pwurenu sonye,sing-ACC girl-ACC sing-INTERJECT-S.PRS-DECL,ok,False," Nolaylul pwurenu sonye
+Gloss: sing-ACC girl-ACC sing-INTERJECT-S.PRS-DECL",74
+odin_kor_2883_unseg,학교에 가던 민아는 오락실로 직행했다.,"Mina, who was going to school, headed straight to the arcade.",hakkyoey katen minanun olaksillo cikhaynghayssta.,school-LOC go-S.PST-ATT Mina-TOP arcade-to head.straight-PERF-DECL,Hakkyoey kakessta Minaun othkilsilo kilhanghayssta.,school-to go-to Mina-TOP arcade-to head-straight go-PST-DECL,ok,False," Hakkyoey kakessta Minaun othkilsilo kilhanghayssta.
+Gloss: school-to go-to Mina-TOP arcade-to head-straight go-PST-DECL",120
+odin_kor_2885_unseg,저 집이 그 당시 셰익스피어가 살던 곳이다.,That house is the place where Shakespeare was living at that time.,ce cipi ku tangsi shakespeareka salten kosita.,that house-NOM that time Shakespeare-NOM live-S.PST-ATT place-be-DECL,ce cipi kuk tangsisi swaykengswikeyka salpen kosita.,that house-NOM that time Shakespeare-LOC living at-COMP be.PROP-DECL,ok,False," ce cipi kuk tangsisi swaykengswikeyka salpen kosita.
+Gloss: that house-NOM that time Shakespeare-LOC living at-COMP be.PROP-DECL",129
+odin_kor_2896_unseg,민아가 꽃병을 깼었어.,Mina broke/had broken the vase.,minaka kkochpyengul kkayssesse.,Mina-NOM vase-ACC break-PST-DECL,Minaka kokcwulungul kiessen.,Mina-NOM vase-ACC break-Caus-PST-DECL,ok,False," Minaka kokcwulungul kiessen.
+Gloss: Mina-NOM vase-ACC break-Caus-PST-DECL",74
+odin_kor_2897_unseg,미나가 미쳤었는데 지금은 제정신이다.,#Mina has gotten crazy but she is sane now.,minaka michyessnuntey cikumun ceycengsinita.,Mina-NOM gone.crazy-PERF-but now-TOP sanity-be-DECL,Mina ka mincessta ciente cientengsina ita.,Mina-NOM crazy-but now now sane-be-DECL,ok,False," Mina ka mincessta ciente cientengsina ita.
+Gloss: Mina-NOM crazy-but now now sane-be-DECL",90
+odin_kor_2899_unseg,미나가 미쳤었었는데 지금은 제정신이다.,Mina went crazy but she is sane now.,minaka michyessessnuntey cikumun ceycengsinita.,Mina-NOM get.crazy-PST-but now-TOP sanity-be-DECL,Minakina minikina keysstessta cinta cinene sininti ita.,Mina-NOM crazy-PASS-PST-but now be sane-DECL,ok,False," Minakina minikina keysstessta cinta cinene sininti ita.
+Gloss: Mina-NOM crazy-PASS-PST-but now be sane-DECL",108
+odin_kor_2918_unseg,방금 내가 가게에 갔었다.,I went to the store just now.,pangkum nayka kakeyey kassessta.,just.now/a.moment.ago I-NOM store-to go-PST-DECL,pangkem nayka kakey tassessta.,store-to I-NOM go-to-COMP just now do-PST-DECL,ok,False," pangkem nayka kakey tassessta.
+Gloss: store-to I-NOM go-to-COMP just now do-PST-DECL",85
+odin_kor_2932_unseg,이 그림을 누가 그렸었지?,Who painted this picture?,i kulimul nwuka kulyessessci?,this picture-ACC who-NOM paint-PST-INT,i kulmulul nuka kuliessta?,this picture-ACC who painted-Caus-PST-DECL,ok,False," i kulmulul nuka kuliessta?
+Gloss: this picture-ACC who painted-Caus-PST-DECL",77
+odin_kor_2933_unseg,준은 초콜릿을 먹었다.,Joon has eaten a chocolate.,jwunun chocolatelul mekessta.,Joon-TOP chocolate-ACC eat-PERF-DECL,Joonun cholkulul mekessta.,Joon-TOP chocolate-ACC eat-PST-DECL,ok,False," Joonun cholkulul mekessta.
+Gloss: Joon-TOP chocolate-ACC eat-PST-DECL",70
+odin_kor_2947_unseg,민아는 (태어날때부터) 항상 몸이 약했다.,Mina has always been weak by nature.,minanun (thayenalttaypuethe) hangsang momi yakhayssta.,Mina-TOP be.born-time-from always body-NOM be.weak-PERF-DECL,Minanun (tayenalpputatuta) hangsang momi yakyessta.,Mina-TOP (nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-n,ok,False," Minanun (tayenalpputatuta) hangsang momi yakyessta.
+Gloss: Mina-TOP (nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-nature-by-n",511
+odin_kor_2948_unseg,민아는 (태어날때부터) 항상 몸이 약했다.,Mina has always been weak (since she was born).,minanun (thayenalttaypuethe) hangsang momi yakhayssta.,Mina-TOP be.born-time-from always body-NOM be.weak-PERF-DECL,Minanun (tayelantalepwuteta) hangsang momi yakyessta.,Mina-TOP (since birth-period)-since always body-NOM weak-PST-DECL,ok,False," Minanun (tayelantalepwuteta) hangsang momi yakyessta.
+Gloss: Mina-TOP (since birth-period)-since always body-NOM weak-PST-DECL",127
+odin_kor_2949_unseg,지금도 약하지만.,She is still weak now.,cikumto yakhaciman.,now-also be.weak-though,Cikumto yakhhachi.maynan.,now-the weak-now-PST-DECL,ok,False," Cikumto yakhhachi.maynan.
+Gloss: now-the weak-now-PST-DECL",59
+odin_kor_2950_unseg,지금은 안약하지만.,She is not weak now though.,cikumun anyakhaciman.,now-TOP NEG-be.weak-though,Cikumun anyakhaycayanakan.,now-NOW not weak-HON-PST-DECL,ok,False," Cikumun anyakhaycayanakan.
+Gloss: now-NOW not weak-HON-PST-DECL",64
+odin_kor_2952_unseg,아인슈타인은 프린스턴을 방문했었다.,Einstein visited Princeton.,einsteinun princetonul pangmwunhayssessta.,Einstein-TOP Princeton-ACC visit-PST-DECL,Einsteinun Princetonul pangmunhayssta.,Einstein-TOP Princeton-ACC visited-PST-DECL,ok,False," Einsteinun Princetonul pangmunhayssta.
+Gloss: Einstein-TOP Princeton-ACC visited-PST-DECL",90
+odin_kor_2965_unseg,거기는 아까 비가 왔었다.,It rained there a while ago.,kekinun akka pika oassessta.,there-TOP a.while.ago rain-NOM come-PST-DECL,kikeynun akikey pika wass.hissta.,there-TEMP rain-NOM a while ago be.PST-DECL,ok,False," kikeynun akikey pika wass.hissta.
+Gloss: there-TEMP rain-NOM a while ago be.PST-DECL",85
+odin_kor_2976_unseg,그 당시 셰익스피어가 저 집에 살았었다.,Shakespeare lived in that house at that time.,ku tangsi shakespeareka ce cipey salassessta.,that time Shakespeare-NOM that house-LOC live-PST-DECL,ku tangsisey shakesseykeyka ce cipey salataessta.,that time Shakespeare-NOM that house-LOC live-PST-DECL,ok,False," ku tangsisey shakesseykeyka ce cipey salataessta.
+Gloss: that time Shakespeare-NOM that house-LOC live-PST-DECL",112
+odin_kor_2978_unseg,그때(는) 미나가/는 외롭더라.,[I noticed] Mina was lonely at that time.,kuttay(nun) minaka/nun oyloptela.,that-time(-TOP) Mina-NOM/TOP be.lonely-S.PST-DECL,kutte(n) minaka/nun owlen.thela.,that-time-TOP Mina-NOM/NOM lonely-DECL,ok,False," kutte(n) minaka/nun owlen.thela.
+Gloss: that-time-TOP Mina-NOM/NOM lonely-DECL",79
+odin_kor_3026_unseg,준이 분명히 /틀림없이 왔네.,Joon must have come.,jwuni pwunmyenghi /thullimepsi oassney.,Joon-NOM evidently /certainly come-PERF-S.PRS,Juni pwunmyenghi /toplimpessti wassne.,Joon-NOM clearly / not be-Adv-PST-DECL,ok,False," Juni pwunmyenghi /toplimpessti wassne.
+Gloss: Joon-NOM clearly / not be-Adv-PST-DECL",85
+odin_kor_3033_unseg,준이 틀림없이/ 필시/ 아마도 오겠네.,[I infer] certainly/probably/perhaps Joon will come.,jwuni thullimepsi/ philsi/ amado okeyssney.,Joon-NOM certainly probably perhaps come-MOD-S.PRS,Junsi tolmey/pilsi/amayto okette.,J.-NOM certainly/prob/presure/prob/perhaps come-INFERE.-INFER-DECL,ok,False," Junsi tolmey/pilsi/amayto okette.
+Gloss: J.-NOM certainly/prob/presure/prob/perhaps come-INFERE.-INFER-DECL",108
+odin_kor_3035_unseg,준이 중동에서 전쟁이 일어났다고 한다.,Joon says that war broke out in the Middle East.,jwuni cwungtongeyse cencayngi ilenasstako hanta.,Joon-NOM Middle.East-LOC war-NOM rise-PERF-DECL-COMP do-PRS.IMPF-DECL,Juni cwngtongyese centenkinyi ilekassta koko hanha.,J.-NOM Middle East-LOC war-NOM break-out-COMP say-PRS-DECL,ok,False," Juni cwngtongyese centenkinyi ilekassta koko hanha.
+Gloss: J.-NOM Middle East-LOC war-NOM break-out-COMP say-PRS-DECL",118
+odin_kor_3038_unseg,중동에서 전쟁이 일어났다더라.,They said that a war broke out in the Middle East.,cwungtongeyse cencayngi ilenasstatela.,Middle.East-LOC war-NOM rise-PERF-DECL-S.PST-DECL,Cungtongey enseyntengi ilesseckata.thelessta.,Middle East-LOC war-NOM come-out-PST-DECL,ok,False," Cungtongey enseyntengi ilesseckata.thelessta.
+Gloss: Middle East-LOC war-NOM come-out-PST-DECL",95
+odin_kor_3045_unseg,준이 미나가 떠났다더라.,Joon said that Mina left/had left.,jwuni minaka ttenasstatela.,Joon-NOM Mina-NOM leave-PERF-REP,Juni Mina ka ttenassta.thela.,Joon-NOM Mina-NOM leave-COMP-PST-DECL,ok,False," Juni Mina ka ttenassta.thela.
+Gloss: Joon-NOM Mina-NOM leave-COMP-PST-DECL",75
+odin_kor_3063_unseg,내가 돌아왔을 때 미나가 샤워를 했었었다.,Mina took a shower when I came back.,nayka tolaoassul ttay minaka syawelul hayssessessta.,I-NOM return-PERF-IR.ATT time Mina-NOM shower-ACC do-PERF-PST-DECL,Nayka tolaossa tals mia ka swayull hayssta.,I-NOM come-back when Mina-NOM shower-ACC do-PST-DECL,ok,False," Nayka tolaossa tals mia ka swayull hayssta.
+Gloss: I-NOM come-back when Mina-NOM shower-ACC do-PST-DECL",104
+odin_kor_3064_unseg,내가 돌아왔을 때 미나가 샤워를 했었다.,Mina took a shower when I came back.,nayka tolaoassul ttay minaka syawelul hayssessta.,I-NOM return-PERF-IR.ATT time Mina-NOM shower-ACC do-PST-DECL,Nayka tolaossa tals mehaka swayule hayssessta.,I-NOM come-back when Mina-NOM shower-ACC do-PST-DECL,ok,False," Nayka tolaossa tals mehaka swayule hayssessta.
+Gloss: I-NOM come-back when Mina-NOM shower-ACC do-PST-DECL",107
+odin_kor_3073_unseg,미나가 문을 연다.,Mina is opening the door.,minaka mwunul yenta.,Mina-NOM door-ACC open-PRS.IMPF-DECL,Minaka munul yentha.,Mina-NOM door-ACC open-PST-DECL,ok,False," Minaka munul yentha.
+Gloss: Mina-NOM door-ACC open-PST-DECL",60
+odin_kor_3077_unseg,민아가 준이 아프다고 말하더라.,Mina said that Joon was sick.,minaka jwuni aphutako malhatela.,Mina-NOM Joon-NOM be.sick-DECL-COMP say-S.PST-DECL,Minaka Jooni aphutessta kol.palessta.,Mina-NOM Joon-NOM sick-COMP say-HON-DECL,ok,False," Minaka Jooni aphutessta kol.palessta.
+Gloss: Mina-NOM Joon-NOM sick-COMP say-HON-DECL",86
+odin_kor_3102_unseg,집안에서가 순이에게 남편이 무섭다,It is in the house that Swuni is scared of her husband.,cipaneyseka Swunieykey namphyeni mwusepta,house-LOC-NOM S-DAT husband-NOM fearsome-DECL,cipaneyeseka Swunieyeykey namphey scan ta,house-LOC-NOM Swuni-DAT husband-NOM scared of do-PST-DECL,ok,False," cipaneyeseka Swunieyeykey namphey scan ta
+Gloss: house-LOC-NOM Swuni-DAT husband-NOM scared of do-PST-DECL",107
+odin_kor_3120_unseg,철이가 아버지가 부자이시다,"As for Cheli, his father is rich/It is Cheli whose father is rich.",Chelika apecika pwucaisita,C-NOM father-NOM rich.person-COP-HON-DECL,Chelika apecika pwucika isita,C.-NOM father-NOM rich-ACC be.topography-COMP be.topography-DECL,ok,False," Chelika apecika pwucika isita
+Gloss: C.-NOM father-NOM rich-ACC be.topography-COMP be.topography-DECL",102
+odin_kor_3212_unseg,존이 빌에게서 돈을 꾸었다,John borrowed some money from Bill,Johni Billeykeyse tonul kkwuessta,John-NOM Bill-LOC money-ACC borrowed,Johni pelekeyese tonul kkusessta,John-NOM Bill-DAT money-ACC borrow-PST-DECL,ok,False," Johni pelekeyese tonul kkusessta
+Gloss: John-NOM Bill-DAT money-ACC borrow-PST-DECL",84
+odin_kor_3225_unseg,지니는 아무 학생을 좋아한다,Jini likes any student.,Jininun amwu haksayngul cohahanta,Jini-TOP any student-ACC likes,Jiniun amhu haksayngul cohata,Jini-TOP any student-ACC like-do-PST-DECL,ok,False," Jiniun amhu haksayngul cohata
+Gloss: Jini-TOP any student-ACC like-do-PST-DECL",79
+odin_kor_3239_unseg,"비가 와도, 경기는 계속되었다","Even though it rained, the game continued.","pika oato, kyengkinun kyeysoktoyessta",rain-NOM come-though game-TOP continued,"pika watano, kyengkinun cyessen hayssessta",rain-NOM even though game-CONTINUED-PST-DECL,ok,False," pika watano, kyengkinun cyessen hayssessta
+Gloss: rain-NOM even though game-CONTINUED-PST-DECL",95
+odin_kor_3249_unseg,아무 학생도 파티에 오지 아니했다,"No matter what student x it may be, x did not come to the party",amwu haksayngto phathiey oci.anihaessta,any student-TO party-to come-not-do-PST-DECL,amwuksayngto phatye oci anihai hafessta,any student-NOM party-LOC come-CONJ not-COMP-PST-DECL,ok,False," amwuksayngto phatye oci anihai hafessta
+Gloss: any student-NOM party-LOC come-CONJ not-COMP-PST-DECL",101
+odin_kor_3250_unseg,아무라도/나 데려와,"I ORDER YOU, for some concessive choice function f, you take f(MAN) to me.",amwurato/na teylyeoa,any-RATO/-NA bring-IMP,Amwulo/na tendyway,any.to/NOM you take to me-DECL,ok,False," Amwulo/na tendyway
+Gloss: any.to/NOM you take to me-DECL",57
+odin_kor_3261_unseg,아무라도 만나는 것보다 집에 있는 것이 낫다,I'd better stay home rather than meeting anyone (outside).,amwurato mannanun kespota cipey issnun kesi nasta,anyone-RATO meet-REL thing-than home-at exist-REL thing-NOM better-DECL,Amwuto mananun kespotpa cipey unyen kesi nappa,any-one even meet-CONN home-location anyone-CONN better stay-CONN do-PST-DECL,ok,False," Amwuto mananun kespotpa cipey unyen kesi nappa
+Gloss: any-one even meet-CONN home-location anyone-CONN better stay-CONN do-PST-DECL",132
+odin_kor_3262_unseg,아무나 만나는 것보다 집에 있는 것이 낫다,I'd better stay home rather than meeting anyone (outside).,amwuna mannanun kespota cipey issnun kesi nasta,anyone-NA meet-REL thing-than home-at exist-REL thing-NOM better-DECL,Amwan mananun kespotpa cipey unyen kesi nappa,any anywhere meet-CONT anything outside be better-PRS-DECL,ok,False," Amwan mananun kespotpa cipey unyen kesi nappa
+Gloss: any anywhere meet-CONT anything outside be better-PRS-DECL",112
+odin_kor_3265_unseg,아무라도/나 올 거야,Anybody will come.,amwurato/na oul.keya,anyone-RATO/-NA come-will-DECL,Amwuto/na okeyya,anybody-NOM come-PST-DECL,ok,False," Amwuto/na okeyya
+Gloss: anybody-NOM come-PST-DECL",50
+odin_kor_3275_unseg,아무도 없다,No body exists.,amwuto epsta,anyone-TO not.exist-DECL,amwuto epsta,any body exists-PRS-DECL,ok,False," amwuto epsta
+Gloss: any body exists-PRS-DECL",45
+odin_kor_3276_unseg,아무라도/나 없다,No body exists.,amwurato/na epsta,anyone-TO not.exist-DECL,Amwultano/na essta,any.loc/no exist.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam,ok,False," Amwultano/na essta
+Gloss: any.loc/no exist.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam.dynam",511
+odin_kor_3327_unseg,용수가 순이에게 옷/소매를 잡혔다.,Yongsu had his clothes/sleeve grabbed by Suni.,Yongsuka Sunieykey os/somaylul caphiessta.,Yongsu-NOM Suni-DAT clothes/sleeve-ACC hold-PASS-PST-DECL,Yongsuka Sunieyiekey osomela mulul capassta.,Yongsu-NOM Suni-DAT clothes/NOM sleeve-ACC grab-PST-DECL,ok,False," Yongsuka Sunieyiekey osomela mulul capassta.
+Gloss: Yongsu-NOM Suni-DAT clothes/NOM sleeve-ACC grab-PST-DECL",109
+odin_kor_3333_unseg,용수가 영화 감독에게 사진을 찍혔다.,Yongsu was taken a picture by the movie-director.,Yongsuka yenghwa kamtokeykey sacinul ccikhiessta.,Yongsu-NOM movie director-DAT photo-ACC imprint-PASS-PST-DECL,Yongsuka yenghay kamtoyengukeyssul chichiessta.,Yongsu-NOM movie-director-ACC picture-ACC take-PST-DECL,ok,False," Yongsuka yenghay kamtoyengukeyssul chichiessta.
+Gloss: Yongsu-NOM movie-director-ACC picture-ACC take-PST-DECL",111
+odin_kor_3363_unseg,저 학생들에게는 문제가 대단히들 많다,Those students have a lot of problems.,Ce haksayngtuleykeynun mwunceyka taytanhitul manhta,Those students-DAT-TOP problem-NOM extremely-PL much-DECL,Keyhaysengtuleykeynun muncheyka tandhinthanthey tul manyta,I.HON-NOM student-Plur-DAT-NOM problem-NOM a.lot-DECL,ok,False," Keyhaysengtuleykeynun muncheyka tandhinthanthey tul manyta
+Gloss: I.HON-NOM student-Plur-DAT-NOM problem-NOM a.lot-DECL",120
+odin_kor_3378_unseg,집안에서가 순이에게 남편이 무섭다,It is in the house that Swuni is scared of her husband.,cipaneyseka Swunieykey namphyeni mwusepta,house-LOC-NOM S-DAT husband-NOM fearsome-DECL,cipaneyeseka Swunieyeykey namphey scan ta,house-LOC-NOM Swuni-DAT husband-NOM scared of do-PST-DECL,ok,False," cipaneyeseka Swunieyeykey namphey scan ta
+Gloss: house-LOC-NOM Swuni-DAT husband-NOM scared of do-PST-DECL",107
+odin_kor_3423_unseg,철이가 아버지가 부자이시다,"As for Cheli, his father is rich/It is Cheli whose father is rich.",Chelika apecika pwucaisita,C-NOM father-NOM rich-COP-HON-DECL,Chelika apecika pwucika isita,C.-NOM father-NOM rich-ACC be.topography-COMP be.topography-DECL,ok,False," Chelika apecika pwucika isita
+Gloss: C.-NOM father-NOM rich-ACC be.topography-COMP be.topography-DECL",102
+odin_kor_3448_unseg,의자에가 철이가 앉았다,It was in the chair that Cheli sat.,Uycaeyka Chelika ancassta,chair-LOC-NOM C-NOM sit-PST-DECL,yucaykey Chelika ansessta,chair-NOM C-NOM sit-Caus-PST-DECL,ok,False," yucaykey Chelika ansessta
+Gloss: chair-NOM C-NOM sit-Caus-PST-DECL",67
+odin_kor_3453_unseg,오스틴에서가 빌이 공부를 잘 했었다,It was while he was in Austin that Bill did well in his studies.,Austineyseka Billi kongpwulul cal hayssessta,A-LOC-NOM B-NOM study-ACC well do-PST-PERF-DECL,Ottoseneka Billi kongpwulululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululu,,missing_gloss,False, Ottoseneka Billi kongpwulululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululululu,511
+odin_kor_3456_unseg,철이는 영희를 밥을 지금 한다고 생각한다,Cheli believes of Yenghi that she is cooking now.,Chelinun Yenghilul papul cikum hantako sayngkakhanta,C-TOP Y-ACC meal-ACC now do-PRS-DECL-COMP think,Chelinun Yenghilul papul cikum hanako sachkakhanga,C-TOP Y-ACC cook-ACC now be.presued-CONN believe-PRS-DECL,ok,False," Chelinun Yenghilul papul cikum hanako sachkakhanga
+Gloss: C-TOP Y-ACC cook-ACC now be.presued-CONN believe-PRS-DECL",116
+odin_kor_3508_unseg,존이 세 명의 학생들에게 책을 주었다,John gave three students a book,Johni seymyenguy haksayngtuleykey chaykul cwuessta,John-NOM 3-CL-GEN student-PL-DAT book-ACC give-PST-DECL,Johni se myengi haksayngtuleykey chaykul cwuessta,John-NOM three-CL student-PL-DAT book-ACC give-PST-DECL,ok,False," Johni se myengi haksayngtuleykey chaykul cwuessta
+Gloss: John-NOM three-CL student-PL-DAT book-ACC give-PST-DECL",113
+odin_kor_3509_unseg,존이 학생들에게 세 명 책을 주었다,John gave three students a book,Johni haksayngtuleykey seymyeng chaykul cwuessta,John-NOM student-PL-DAT 3-CL book-ACC give-PST-DECL,Johni haksayngtuleykey sey myeng chaykul cwuessta,John-NOM student-PL-DAT 3-CL book-ACC give-PST-DECL,ok,False," Johni haksayngtuleykey sey myeng chaykul cwuessta
+Gloss: John-NOM student-PL-DAT 3-CL book-ACC give-PST-DECL",109
+odin_kor_3524_unseg,존이 아버지가 영어를 잘 하신다,John's father speaks English well,Johni apecika yengelul cal hasinta,John-NOM father-NOM English-ACC well do-HON-PRS-DECL,Johni apecika yengelul cal hassinta,John-NOM father-NOM English-ACC well do-HON-DECL,ok,False," Johni apecika yengelul cal hassinta
+Gloss: John-NOM father-NOM English-ACC well do-HON-DECL",92
+odin_kor_3531_unseg,아마도 존이 아버지가 우표를 모으신다,"Probably, John's father collects stamps",Amato Johni apecika wupyolul mousinta,Probably John-NOM father-NOM stamp-ACC collect-HON-PRS-DECL,Amamto Johni apecika wupylol mosessta,probably John-NOM father-NOM stamps-ACC collect-PST-DECL,ok,False," Amamto Johni apecika wupylol mosessta
+Gloss: probably John-NOM father-NOM stamps-ACC collect-PST-DECL",102
+odin_kor_3539_unseg,분명히 메리가 존을 다리를 잡았다,"Evidently, Mary grabbed John's leg",Pwunmyenghi Maryka Johnul talilul capassta,Evidently Mary-NOM John-ACC leg-ACC grabbed,Punmynghi Maryka Johnul talilul capassta,obviously Mary-NOM John-ACC leg-ACC grab-PST-DECL,ok,False," Punmynghi Maryka Johnul talilul capassta
+Gloss: obviously Mary-NOM John-ACC leg-ACC grab-PST-DECL",98
+odin_kor_3541_unseg,에스프레소 기계가 다시 손잡이가 부러졌다,The handle of the espresso machine was broken again,Espresso kikyeka tasi soncapika pwuleciessta,Espresso machine-NOM again handle-NOM break-PASS-PST-DECL,Espacesoleyska tisi sonpacieska pwuleysta,espresso machine-NOM handle-NOM broken-Cmp-PST-DECL,ok,False," Espacesoleyska tisi sonpacieska pwuleysta
+Gloss: espresso machine-NOM handle-NOM broken-Cmp-PST-DECL",101
+odin_kor_3545_unseg,메리가 존을 다리를 때렸다,Mary hit John's leg.,Maryka Johnul talilul ttayliessta,Mary-NOM John-ACC leg-ACC hit-PST-DECL,Maryka Johnul talla liessta,M.-NOM J.-ACC leg-ACC hit-PST-DECL,ok,False," Maryka Johnul talla liessta
+Gloss: M.-NOM J.-ACC leg-ACC hit-PST-DECL",70
+odin_kor_3549_unseg,메리가 존을 다시 발을 끝을 찼다,Mary kicked the end of John's foot again.,Maryka Johnul tasi palul kkusul chassta,Mary-NOM John-ACC again foot-ACC end-ACC kick-PST-DECL,Maryka Johnul tasi palul kkkul chassta,M.-NOM J.-ACC again foot-ACC end-ACC kick,ok,False," Maryka Johnul tasi palul kkkul chassta
+Gloss: M.-NOM J.-ACC again foot-ACC end-ACC kick",88
+odin_kor_3555_unseg,학생들이 사과를 아무도 먹지 않았다,No students ate apples,Haksayngtuli sakwalul amwuto mekcianhassta,Student-PL-NOM apple-ACC anyone eat-CI-not-PST-DECL,Haksayngtuli sakwalul amwuto mekcita ansta,student-PL-NOM apple-ACC any.top eat-Cmp Pas-PST-DECL,ok,False," Haksayngtuli sakwalul amwuto mekcita ansta
+Gloss: student-PL-NOM apple-ACC any.top eat-Cmp Pas-PST-DECL",104
+odin_kor_3557_unseg,학생들이 메리에게 세명만(이) 맥주를 주었다,Only three students gave Mary beer,Haksayngtuli Maryeykey seymyengman(i) maykcwulul cwuessta,Student-PL-NOM Mary-DAT 3-CL-only-NOM beer-ACC give-PST-DECL,Haksayngtuli Maryeykey seyemyengman(i) maykckwulul cwuessta,student-PL-NOM Mary-DAT three-Class-ACC beer-ACC give-PST-DECL,ok,False," Haksayngtuli Maryeykey seyemyengman(i) maykckwulul cwuessta
+Gloss: student-PL-NOM Mary-DAT three-Class-ACC beer-ACC give-PST-DECL",130
+odin_kor_3566_unseg,학생들이 열심히 모두(가)/다(들) 공을 찼다,All the students kicked a ball diligently,Haksayngtuli yelsimhi motwu(ka)/ta(tul) kongul chassta,Student-PL-NOM diligently all-NOM/all-PL ball-ACC kick-PST-DECL,Haksayngtuli yelsimhi motwu(ka)/ta(tul) kongul chassita,student-PL-NOM all-(CONJ) all-(CONJ) ball-ACC kick,ok,False," Haksayngtuli yelsimhi motwu(ka)/ta(tul) kongul chassita
+Gloss: student-PL-NOM all-(CONJ) all-(CONJ) ball-ACC kick",114
+odin_kor_3570_unseg,학생들이 분명히 모두(가)/다(들) 공을 받았다,"Evidently, all the students received a ball",Haksayngtuli pwunmyenghi motwu(ka)/ta(tul) kongul patassta,Student-PL-NOM evidently all-NOM/all-PL ball-ACC receive-PST-DECL,Haksayngtuli pwunmynghi motwu(ka)/tant(tu) kongul passta,student-PL-NOM all-all ball-ACC receive-PST-DECL,ok,False," Haksayngtuli pwunmynghi motwu(ka)/tant(tu) kongul passta
+Gloss: student-PL-NOM all-all ball-ACC receive-PST-DECL",113
+odin_kor_3575_unseg,학생들을 존이 아무도 가르치지 않았다,John taught no student,Haksayngtulul Johni amwuto kaluchicianhassta,Student-PL-ACC John-NOM anyone teach-CI-NEG-PST-DECL,Haksayngtul Johni amwuto luchicichi anchichessta,student-PL-ACC John-NOM any-do teach-PST-DECL,ok,False," Haksayngtul Johni amwuto luchicichi anchichessta
+Gloss: student-PL-ACC John-NOM any-do teach-PST-DECL",102
+odin_kor_3587_unseg,아무도 (어제) 학생들이 맥주를 마시지 않았다,No students drank beer yesterday,Amwuto (ecey) haksayngtuli maykcwulul masicianhassta,Anyone yesterday student-PL-NOM beer-ACC drink-CI-NEG-PST-DECL,Amwuto (ecey) haksayngtuli maykckwul masici anita,any.to (yesterday) student-PL-NOM beer-ACC drink-COMP not-PST-DECL,ok,False," Amwuto (ecey) haksayngtuli maykckwul masici anita
+Gloss: any.to (yesterday) student-PL-NOM beer-ACC drink-COMP not-PST-DECL",124
+odin_kor_3609_unseg,깡패들이 세명 존을 다리를 때렸다,Three gangsters hit John's leg,Kkangphaytuli seymyeng Johnul talilul ttayliessta,Gangster-PL-NOM 3-CL John-ACC leg-ACC hit-PST-DECL,Kankpetuli seymyeng Johnul talita,gangster-NOM three-CL gangster-ACC leg-ACC hit-PST-DECL,ok,False," Kankpetuli seymyeng Johnul talita
+Gloss: gangster-NOM three-CL gangster-ACC leg-ACC hit-PST-DECL",97
+odin_kor_3610_unseg,깡패들이 존을 세 명 다리를 때렸다,Three gangsters hit John's leg,Kkangphaytuli Johnul seymyeng talilul ttayliessta,Gangster-PL-NOM John-ACC 3-CL leg-ACC hit-PST-DECL,Kankpetul Johnul seymy talilul tayliessta,gangster-PL-NOM John-ACC three person gangster-ACC hit-PST-DECL,ok,False," Kankpetul Johnul seymy talilul tayliessta
+Gloss: gangster-PL-NOM John-ACC three person gangster-ACC hit-PST-DECL",113
+odin_kor_3611_unseg,존을 깡패들이 다리를 세명 때렸다,Three gangsters hit John's leg,Johnul kkangphaytuli talilul seymyeng ttayliessta,John-ACC gangster-PL-NOM leg-ACC 3-CL hit-PST-DECL,Johnul kangpitelul selmyng tayliessta,John-ACC gangster-PL-NOM three-CL leg-ACC three-CL hit-PST-DECL,ok,False," Johnul kangpitelul selmyng tayliessta
+Gloss: John-ACC gangster-PL-NOM three-CL leg-ACC three-CL hit-PST-DECL",109
+odin_kor_3612_unseg,깡패들이 존을 다리를 세명 때렸다,Three gangsters hit John's leg,Kkangphaytuli Johnul talilul seymyeng ttayliessta,Gangster-PL-NOM John-ACC leg-ACC 3-CL hit-PST-DECL,Kankpetul Johnul talilul seymyeng tayliessta,gangster-NOM John-ACC leg-ACC three-CL three-ACC hit-PST-DECL,ok,False," Kankpetul Johnul talilul seymyeng tayliessta
+Gloss: gangster-NOM John-ACC leg-ACC three-CL three-ACC hit-PST-DECL",114
+odin_kor_3613_unseg,존을 다리를 깡패들이 세명 때렸다,Three gangsters hit John's leg,Johnul talilul kkangphaytuli seymyeng ttayliessta,John-ACC leg-ACC gangster-PL-NOM 3-CL hit-PST-DECL,Johnul talilul kangpetuli semym tayliessta,John-ACC leg-ACC gangster-PL-NOM three-CL hit-PST-DECL,ok,False," Johnul talilul kangpetuli semym tayliessta
+Gloss: John-ACC leg-ACC gangster-PL-NOM three-CL hit-PST-DECL",105
+odin_kor_3624_unseg,깡패들이 세 명이 존을 다리를 때렸다,Three gangsters hit John's leg,Kkangphaytuli seymyengi Johnul talilul ttayliessta,Gangster-PL-NOM 3-CL-NOM John-ACC leg-ACC hit-PST-DECL,Kankpetuli sey myeni Johnul talla liessta,gangster-NOM three person-NOM John-ACC leg-ACC hit-PST-DECL,ok,False," Kankpetuli sey myeni Johnul talla liessta
+Gloss: gangster-NOM three person-NOM John-ACC leg-ACC hit-PST-DECL",109
+odin_kor_3625_unseg,깡패들이 존을 세명이 다리를 때렸다,Three gangsters hit John's leg,Kkangphaytuli Johnul seymyengi talilul ttayliessta,Gangster-PL-NOM John-ACC 3-CL-NOM leg-ACC hit-PST-DECL,Kankpetuli Johnul seymyengi tallilul tellyessta,gangster-PL-NOM John-ACC three-CL-NOM leg-ACC hit-PST-DECL,ok,False," Kankpetuli Johnul seymyengi tallilul tellyessta
+Gloss: gangster-PL-NOM John-ACC three-CL-NOM leg-ACC hit-PST-DECL",114
+odin_kor_3626_unseg,존을 깡패들이 다리를 세명이 때렸다,Three gangsters hit John's leg,Johnul kkangphaytuli talilul seymyengi ttayliessta,John-ACC gangster-PL-NOM leg-ACC 3-CL-NOM hit-PST-DECL,Johnul kangpetuli talilul seymyngi talyessta,John-ACC gangster-PL-NOM three-CL-NOM hit-PST-DECL,ok,False," Johnul kangpetuli talilul seymyngi talyessta
+Gloss: John-ACC gangster-PL-NOM three-CL-NOM hit-PST-DECL",103
+odin_kor_3627_unseg,깡패들이 존을 다리를 세명이 때렸다,Three gangsters hit John's leg,Kkangphaytuli Johnul talilul seymyengi ttayliessta,Gangster-PL-NOM John-ACC leg-ACC 3-CL-NOM hit-PST-DECL,Kankpetul Johnul talilul seymyengi talyessta,gangster-PL-NOM John-ACC leg-ACC three-CLF-NOM hit-PST-DECL,ok,False," Kankpetul Johnul talilul seymyengi talyessta
+Gloss: gangster-PL-NOM John-ACC leg-ACC three-CLF-NOM hit-PST-DECL",112
+odin_kor_3628_unseg,존을 다리를 깡패들이 세명이 때렸다,Three gangsters hit John's leg,Johnul talilul kkangphaytuli seymyengi ttayliessta,John-ACC leg-ACC gangster-PL-NOM 3-CL-NOM hit-PST-DECL,Johnul talilul kangpetuli seymyengi tellyessta,John-ACC leg-ACC gangster-PL-NOM three-CL-NOM hit-PST-DECL,ok,False," Johnul talilul kangpetuli seymyengi tellyessta
+Gloss: John-ACC leg-ACC gangster-PL-NOM three-CL-NOM hit-PST-DECL",113
+odin_kor_3629_unseg,학생들이 피아노를 세명이 함께 들었다,Three students lifted a piano together,Haksayngtuli pianolul seymyengi hamkkey tulessta,Student-PL-NOM piano-ACC 3-CL-NOM together lift-PST-DECL,Haksayngtuli pinanolul seymyengi hamkkey tuleyssta,student-PL-NOM piano-ACC three-CLF-NOM together do-PST-DECL,ok,False," Haksayngtuli pinanolul seymyengi hamkkey tuleyssta
+Gloss: student-PL-NOM piano-ACC three-CLF-NOM together do-PST-DECL",118
+odin_kor_3640_unseg,학생 몇 명이 컴퓨터 책을 샀니?,How many students bought the computer book?,Haksayng myechmyengi khempyuwuthe chaykul sassni?,Student how.many-CL-NOM computer book-ACC bought-Q,Haksayng myengi computer keykul sayni ?,student-NOM how many person-NOM computer-book ACC buy,ok,False," Haksayng myengi computer keykul sayni ?
+Gloss: student-NOM how many person-NOM computer-book ACC buy",101
+odin_kor_3643_unseg,존이 아버지가 항상 콧노래를 부르신다,John's father always hums a song,Johni apecika hangsang kosnolaylul pwulusinta,John-NOM father-NOM always nose.sing-ACC sing,Johni apecika hangsang soknolaylul pwulesstressen,John-NOM father-NOM always song-ACC hum-PST-DECL,ok,False," Johni apecika hangsang soknolaylul pwulesstressen
+Gloss: John-NOM father-NOM always song-ACC hum-PST-DECL",106
+odin_kor_3668_unseg,학생이 개에게 손을 물렸다,A student's hand was bitten by a dog.,Haksayngi kayeykey sonul mwulliessta,Student-NOM dog-DAT hand-ACC bite-PASS-PST-DECL,Haksayngi kayeykey sonul mulesssta,student-NOM dog-DAT hand-ACC bite-PST-DECL,ok,False," Haksayngi kayeykey sonul mulesssta
+Gloss: student-NOM dog-DAT hand-ACC bite-PST-DECL",85
