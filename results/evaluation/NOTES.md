@@ -21,14 +21,16 @@ Files: `test_scores.csv` (all test files), `dev_checkpoint_scores.csv` (every ch
 
 ## Table 9.1: main comparison (test)
 
-| System | Morpheme acc | Word acc | MER ↓ | Gloss chrF++ | Translit chrF++ | Parse fail |
-|---|---|---|---|---|---|---|
-| Zero-shot all-in-one | 5.9 | 1.9 | 0.90 | 19.4 | 1.3 | 1.1% |
-| Zero-shot step-by-step | 0.4 | 0.6 | 3.88 | 1.0 | 3.5 | 0% |
-| LoRA all-in-one, A (lr 2e-4), loss = chrF++ selected (ep 3) | 46.8 | 38.7 | 0.48 | 52.8 | 52.6 | 0.4% |
-| **LoRA two-stage, A (lr 2e-4), loss = chrF++ selected (ep 3)** | **49.6** | **41.3** | **0.43** | **56.4** | **54.2** | 0% |
-| LoRA two-stage, B (lr 1e-4), loss-selected (ep 3) | 46.9 | 37.0 | 0.44 | 53.2 | 45.6 | 0% |
-| LoRA two-stage, B (lr 1e-4), chrF++-selected (ep 2.5) | 47.1 | 35.9 | 0.44 | 52.6 | 44.5 | 0% |
+| System | Morpheme acc | Word acc | MER ↓ | Gloss chrF++ | Translit chrF++ | Parse fail | Truncated |
+|---|---|---|---|---|---|---|---|
+| Zero-shot all-in-one | 5.9 | 1.9 | 0.90 | 19.4 | 1.3 | 1.1% | 1.1% |
+| Zero-shot step-by-step | 0.4 | 0.6 | 3.88 | 1.0 | 3.5 | 0% | 10.6% |
+| LoRA all-in-one, A (lr 2e-4), loss = chrF++ selected (ep 3) | 46.8 | 38.7 | 0.48 | 52.8 | 52.6 | 0.4% | 1.5% |
+| **LoRA two-stage, A (lr 2e-4), loss = chrF++ selected (ep 3)** | **49.6** | **41.3** | **0.43** | **56.4** | **54.2** | 0% | 5.3% |
+| LoRA two-stage, B (lr 1e-4), loss-selected (ep 3) | 46.9 | 37.0 | 0.44 | 53.2 | 45.6 | 0% | 3.0% |
+| LoRA two-stage, B (lr 1e-4), chrF++-selected (ep 2.5) | 47.1 | 35.9 | 0.44 | 52.6 | 44.5 | 0% | 4.2% |
+
+Truncated = the output hit the generation length limit before it finished (mostly repetition loops). For LoRA files this is recomputed from the output length: the LoRA pipeline stops at budget − 1 bytes (511 / 255) while its own `truncated` flag requires ≥ budget, so the flag in the prediction files is always False (reported to Theo). Zero-shot keeps Gina's flag, because zero-shot generation does not stop early and reaching the limit does not imply a cut-off there.
 
 - **RQ2 (LoRA vs zero-shot):** morpheme accuracy rises from about 0–6% to 47–50%. Zero-shot Bolmo 1B does not produce IGT: it copies the English translation or the Korean source. See `results/zero_shot/NOTES.md`. The all-in-one gloss chrF++ of 19.4 comes from character overlap between the copied English translation and the English gloss words, not from glossing. The step-by-step MER of 3.88 comes from long Korean outputs, where every extra token counts as an insertion.
 - **RQ1 (strategy):** after LoRA, two-stage beats all-in-one on every metric (+2.8 morpheme acc, +2.7 word acc, +3.6 chrF++). In zero-shot, both are near 0, so that comparison carries no information.

@@ -18,6 +18,7 @@ Outputs (in --out, default results/evaluation/)
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 from pathlib import Path
@@ -45,12 +46,39 @@ METRIC_COLS = ["gloss_morpheme_accuracy", "gloss_word_accuracy", "gloss_mer",
                "transliteration_word_accuracy"]
 
 
-def score_file(path: Path) -> dict:
+def lora_budgets(generation: dict) -> dict:
+    """Byte budget per n_new column, from the LoRA pipeline's generation config."""
+    m = generation["max_new_bytes"]
+    return {"n_new_tokens": m["all_in_one"],
+            "n_new_tokens_step1": m["transliteration"],
+            "n_new_tokens_step2": m["gloss"]}
+
+
+def score_file(path: Path, budgets: dict | None = None) -> dict:
+    """Score one prediction CSV.
+
+    truncation_rate: for LoRA files (budgets given), a row counts as truncated when
+    any generation step reached its byte budget. The LoRA pipeline stops at
+    budget - 1 bytes while its own `truncated` flag needs >= budget, so that flag
+    is always False; it is kept as truncation_rate_reported. LoRA generation stops
+    as soon as the answer is complete, so reaching the budget means it was cut off.
+    Zero-shot generation does not stop early (Bolmo ignores the stopping criteria),
+    so reaching the budget says nothing there: zero-shot keeps its own flag.
+    """
     df = pd.read_csv(path, dtype=str, keep_default_na=False)
     res = evaluate(df["pred_gloss"].tolist(), df["gold_gloss"].tolist(),
                    df["pred_transliteration"].tolist(), df["gold_transliteration"].tolist())
     res["parse_failure_rate"] = (df["parse_status"] != "ok").mean()
-    res["truncation_rate"] = (df["truncated"].str.lower() == "true").mean()
+    reported = (df["truncated"].str.lower() == "true")
+    res["truncation_rate_reported"] = reported.mean()
+    if budgets:
+        hit = pd.Series(False, index=df.index)
+        for col, budget in budgets.items():
+            if col in df:
+                hit |= df[col].astype(int) >= budget - 1
+        res["truncation_rate"] = hit.mean()
+    else:
+        res["truncation_rate"] = reported.mean()
     return res
 
 
@@ -80,13 +108,14 @@ def main():
     dev_rows = []
     for run_dir, info in lora_runs(args.lora_dir):
         run = run_dir.name
+        budgets = lora_budgets(json.loads((run_dir / "run_meta.json").read_text())["generation"])
         for f in sorted((run_dir / "predictions").glob("*_test.csv")):
             m = TEST_RE.search(f.name)
             test_rows.append({"system": f"LoRA {info['strategy']} lr{info['lr']} r{info['r']}",
                               "run_id": run, "strategy": info["strategy"], "adaptation": "lora",
                               "seed": info["seed"], "selection": m["sel"] or "manual",
                               "step": int(m["step"]),
-                              "file": f.name, **score_file(f)})
+                              "file": f.name, **score_file(f, budgets)})
 
         # ------------------------------------------------------------ dev checkpoints
         theo = pd.read_csv(run_dir / "metrics.csv")
@@ -97,7 +126,7 @@ def main():
                              "r": info["r"], "step": step, "epoch": round(t["epoch"], 2),
                              "val_loss": t["val_loss"],
                              "theo_val_gloss_chrfpp": t["val_gloss_chrfpp"],
-                             **score_file(f)})
+                             **score_file(f, budgets)})
 
     test = pd.DataFrame(test_rows)
     dev = pd.DataFrame(dev_rows)
