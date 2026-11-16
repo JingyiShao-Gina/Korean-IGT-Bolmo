@@ -177,6 +177,14 @@ def select_checkpoints(metrics: list[dict]) -> dict:
     return {"loss": pick(best_loss), "chrf": pick(best_chrf), "same_checkpoint": best_loss["step"] == best_chrf["step"]}
 
 
+def is_truncated(ended: bool, text: str, parse_kind: str) -> bool:
+    """A generation stops for one of three reasons: <eos>, a complete answer, or the byte budget.
+    Neither of the first two -> it hit the budget. Do not compare n_new with the budget: the returned
+    outputs stop at budget - 1 bytes (511 / 255 in every test file), so the old `n_new >= max_new`
+    check never fired and all truncation flags up to 16 Nov are False."""
+    return (not ended) and not rz.is_complete(parse_kind, text)
+
+
 # ============================================================================ metrics
 
 
@@ -374,7 +382,7 @@ class Bolmo:
                 ended = bool(new) and new[-1] == self.eos
                 text = self.tok.decode(new, skip_special_tokens=True)
                 n_new = len(new) - (1 if ended else 0)
-                truncated = (not ended) and n_new >= max_new and not rz.is_complete(parse_kind, text)
+                truncated = is_truncated(ended, text, parse_kind)
                 results[j] = (text, n_new, truncated)
             i += len(chunk)
         return results

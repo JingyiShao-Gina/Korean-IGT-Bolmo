@@ -4,17 +4,19 @@ Owner: Theo. Agenda 17 Nov: baseline LoRA fine-tuning of Bolmo 1B, hyperparamete
 
 Requirements follow `docs/Korean IGT – Experimental Plan & Baselines.pdf` (v1.1): section 6.1 baseline, 6.2 hyperparameter experiments, 6.3-6.4 the two training tasks, 6.5 procedure, 7.2 checkpoint selection, 9.2 results table. In that plan LoRA is the **two-stage** (step-by-step) setup; the all-in-one LoRA run is an extra baseline.
 
-**Status (15 Nov):**
+**Status (16 Nov):**
 
 | Run | Strategy | Best val loss | Best val gloss chrF++ | Selected (loss / chrF++) | Test predictions |
 |---|---|---|---|---|---|
 | A baseline | two-stage | 0.5127 (step 780) | 56.64 (step 780) | 780 / 780 | done |
 | A baseline | all-in-one (extra) | 0.5298 (step 390) | 52.75 (step 390) | 390 / 390 | done |
-| B lr1e-4 | two-stage | - | - | - | to do (priority) |
+| B lr1e-4 | two-stage | 0.6324 (step 780) | 52.82 (step 650) | 780 / 650 | done (run by Gina) |
 | C r8 | two-stage | - | - | - | optional |
 | D r32 | two-stage | - | - | - | optional |
 
-Both selection rules pick the same (last) checkpoint in both baselines; plan section 7.2 asks to report this agreement.
+In both baselines the two selection rules pick the same (last) checkpoint; in run B they disagree (loss -> 780, chrF++ -> 650). Plan section 7.2 asks to report this.
+
+**Truncation flag (fixed 16 Nov).** Up to 16 Nov the `truncated` columns and `truncation_rate` (test files and `metrics.csv`) are always False / 0: outputs stop at budget - 1 bytes (511 all-in-one, 255 per two-stage step) and the old check needed `n_new >= budget`. Scores are not affected. The real test truncation rate is about 1.5-5.3% (all-in-one A 4/263 rows, two-stage A 14/263, B 8-11/263); Soyeong's evaluation recomputes it from the output length. Runs from now on use the fixed flag (`is_truncated` in `lora_bolmo.py`).
 
 ## What each file does
 
@@ -22,8 +24,8 @@ Both selection rules pick the same (last) checkpoint in both baselines; plan sec
 |---|---|
 | `lora/lora_bolmo.py` | Runner. Commands: `train` (resumable), `eval` (fill in any checkpoint without metrics), `select`, `predict`, `export`. |
 | `lora/lora_bolmo.ipynb` | Colab notebook: Drive, install, choose run, smoke test, train, loss-vs-chrF++ plot, select + test predictions, export. |
-| `configs/lora.json` | Model revision, LoRA/training settings, the five runs, chrF++ settings, generation budgets. |
-| `lora/test_lora.py` | CPU-only checks of data building, encoding, eval schedule, selection, chrF++ (`python lora/test_lora.py`). |
+| `configs/lora.json` | Model revision, LoRA/training settings, the four runs (A-D), chrF++ settings, generation budgets. |
+| `lora/test_lora.py` | CPU-only checks of data building, encoding, eval schedule, selection, chrF++, truncation flag (`python lora/test_lora.py`). |
 | `lora/smoke_tiny_bolmo.py` | CPU end-to-end check with a tiny random Bolmo built from the real model code (no weights download). |
 
 ## Runs
@@ -75,5 +77,5 @@ Each run writes to `MyDrive/korean-igt-lora/<run_id>/`, for example `bolmo-1b_al
 
 ## Not done yet
 
-- Plan 6.2 runs B (required), C and D (optional) on two-stage, then the plan 9.2 table (best validation loss and best validation chrF++ per run).
+- Plan 6.2 runs C and D (optional) on two-stage, then the plan 9.2 table (best validation loss and best validation chrF++ per run).
 - Morpheme- and word-level accuracy of the test predictions (Soyeong, see `evaluation/README.md`).

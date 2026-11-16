@@ -76,6 +76,16 @@ def test_chrf_counts_empty_predictions():
     assert "nc:6" in s["chrf_signature"] and "nw:2" in s["chrf_signature"]
 
 
+def test_truncation_flag_at_budget_minus_one():
+    # all-in-one output that loops and stops at 511 of 512 bytes, no <eos>, no finished Gloss line
+    looping = "Hankwuk-ey ka-ss-ni\nGloss: Korea-LOC go-PST-Q" + "-Q" * 230
+    assert lb.is_truncated(False, looping[:511], "all_in_one")
+    assert lb.is_truncated(False, "Johni sakwalul kkak", "single")          # step 1/2 cut at 255 bytes
+    assert not lb.is_truncated(True, "Johni sakwalul", "single")            # ended with <eos>
+    assert not lb.is_truncated(False, "Johni sakwalul\n", "single")         # stopped: answer complete
+    assert not lb.is_truncated(False, "Johni\nGloss: John-NOM\n", "all_in_one")
+
+
 if __name__ == "__main__":
     tests = [v for k, v in dict(globals()).items() if k.startswith("test_")]
     for t in tests:
