@@ -1,1 +1,11 @@
 run_id,model_size,strategy,adaptation,seed,selection_metric,checkpoint,gloss_word_accuracy,gloss_morpheme_accuracy,gloss_mer,gloss_chrfpp,transliteration_chrfpp,parse_failure_rate,truncation_rate
+bolmo-1b_all_in_one_test,1b,all_in_one,none,,,,0.0128,0.0516,0.9118,19.3785,1.3219,0.0114,0.0114
+bolmo-1b_step_by_step_test,1b,step_by_step,none,,,,0.0060,0.0035,3.8843,1.0438,3.4678,0.0000,0.1065
+bolmo-1b_all_in_one_r16_lr2e-4_s42,1b,all_in_one,lora,42,chrf,390,0.3720,0.4602,0.4929,52.8029,52.6012,0.0038,0.0000
+bolmo-1b_all_in_one_r16_lr2e-4_s42,1b,all_in_one,lora,42,loss,390,0.3720,0.4602,0.4929,52.8029,52.6012,0.0038,0.0000
+bolmo-1b_all_in_one_r16_lr2e-4_s42,1b,all_in_one,lora,42,manual,325,0.3754,0.4614,0.6390,52.7070,50.9225,0.0076,0.0000
+bolmo-1b_two_stage_r16_lr1e-4_s42,1b,two_stage,lora,42,chrf,650,0.3456,0.4622,0.4524,52.5902,44.5035,0.0000,0.0000
+bolmo-1b_two_stage_r16_lr1e-4_s42,1b,two_stage,lora,42,loss,780,0.3498,0.4591,0.4535,53.1519,45.5537,0.0000,0.0000
+bolmo-1b_two_stage_r16_lr2e-4_s42,1b,two_stage,lora,42,chrf,780,0.3942,0.4862,0.4358,56.4464,54.1760,0.0000,0.0000
+bolmo-1b_two_stage_r16_lr2e-4_s42,1b,two_stage,lora,42,loss,780,0.3942,0.4862,0.4358,56.4464,54.1760,0.0000,0.0000
+bolmo-1b_two_stage_r16_lr2e-4_s42,1b,two_stage,lora,42,manual,650,0.3823,0.4685,0.4276,55.6514,55.6190,0.0000,0.0000
