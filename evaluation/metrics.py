@@ -9,6 +9,12 @@ over the corpus (micro). The per-sentence average is reported as well.
 Edit-based scores (MER, WER) use Levenshtein distance over the same tokens
 and do penalise extra tokens.
 
+Accuracy and MER/WER compare tokens case-insensitively (casefold): the cleaned
+data unified the common tags, but rare tags (neg/NEG, Caus/CAUS) and
+sentence-initial English words (Student/student) still differ in case
+(see the dataset cleaning summary). Case-sensitive accuracy is also reported
+for reference. chrF++ stays case-sensitive, matching the LoRA pipeline.
+
 Tokenisation:
   * normalise: Unicode NFC, collapse whitespace, strip
   * words:     whitespace split
@@ -62,13 +68,15 @@ def edit_distance(pred: list[str], gold: list[str]) -> int:
     return prev[-1]
 
 
-def score_level(preds: list[str], golds: list[str], tokenize) -> dict:
+def score_level(preds: list[str], golds: list[str], tokenize, casefold: bool = True) -> dict:
     """Corpus scores at one level (word or morpheme)."""
     correct = total = edits = 0
     sentence_acc = []
     empty_refs = 0
     for p_text, g_text in zip(preds, golds, strict=True):
         p, g = tokenize(p_text), tokenize(g_text)
+        if casefold:
+            p, g = [t.casefold() for t in p], [t.casefold() for t in g]
         if not g:
             empty_refs += 1
             continue
@@ -104,11 +112,15 @@ def evaluate(pred_gloss, gold_gloss, pred_translit=None, gold_translit=None) -> 
     gold_gloss = [normalize(x) for x in gold_gloss]
     w = score_level(pred_gloss, gold_gloss, words)
     m = score_level(pred_gloss, gold_gloss, morphemes)
+    w_cs = score_level(pred_gloss, gold_gloss, words, casefold=False)
+    m_cs = score_level(pred_gloss, gold_gloss, morphemes, casefold=False)
     g_chrf, sig = chrf_pp(pred_gloss, gold_gloss)
     out = {
         "n": len(gold_gloss),
         "gloss_word_accuracy": w["accuracy"],
         "gloss_morpheme_accuracy": m["accuracy"],
+        "gloss_word_accuracy_case_sensitive": w_cs["accuracy"],
+        "gloss_morpheme_accuracy_case_sensitive": m_cs["accuracy"],
         "gloss_word_accuracy_sent_avg": w["avg_sentence_accuracy"],
         "gloss_morpheme_accuracy_sent_avg": m["avg_sentence_accuracy"],
         "gloss_wer": w["error_rate"],

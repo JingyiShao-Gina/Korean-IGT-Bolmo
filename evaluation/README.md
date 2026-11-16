@@ -4,7 +4,7 @@
 
 - `metrics.py`: word / morpheme accuracy, WER / MER, chrF++. `test_metrics.py`: hand-checked cases (`python evaluation/test_metrics.py`).
 - `evaluate.py`: scores the zero-shot and LoRA prediction files and writes `results/evaluation/` and `results/summary.csv`. Run it with `python evaluation/evaluate.py --lora-dir "<korean-igt-lora Drive folder>"`.
-- **Decision:** reported word and morpheme accuracy follow Ginn et al. (2024), using **positional** comparison (the i-th predicted token against the i-th gold token, with extra tokens ignored). This replaces the hierarchical edit-distance alignment proposed below. Edit distance is still used for WER / MER, computed over the flattened token sequence. Results and discussion: `results/evaluation/NOTES.md`.
+- **Decision:** reported word and morpheme accuracy follow Ginn et al. (2024), using **positional** comparison (the i-th predicted token against the i-th gold token, with extra tokens ignored). This replaces the hierarchical edit-distance alignment proposed below. Edit distance is still used for WER / MER, computed over the flattened token sequence. Accuracy and MER compare tokens case-insensitively, following the dataset cleaning summary; chrF++ stays case-sensitive. Results and discussion: `results/evaluation/NOTES.md`.
 
 The original protocol follows.
 

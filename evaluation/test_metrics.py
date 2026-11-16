@@ -66,6 +66,15 @@ def test_extra_and_short_predictions():
     assert r["accuracy"] == 1 and r["error_rate"] == 2 / 3
 
 
+def test_case_insensitive_accuracy():
+    pred = "student-NOM caus Neg"
+    gold = "Student-NOM CAUS NEG"
+    r = evaluate([pred], [gold])
+    assert r["gloss_morpheme_accuracy"] == 1 and r["gloss_mer"] == 0
+    assert r["gloss_morpheme_accuracy_case_sensitive"] == 1 / 4
+    assert r["gloss_word_accuracy_case_sensitive"] == 0
+
+
 def test_empty_and_malformed_prediction():
     r = evaluate(["", None], [GOLD, "a-NOM"])
     assert r["gloss_morpheme_accuracy"] == 0 and r["gloss_word_accuracy"] == 0
