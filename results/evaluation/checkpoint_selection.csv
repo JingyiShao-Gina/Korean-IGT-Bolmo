@@ -1,0 +1,13 @@
+run_id,criterion,selected_step,selected_epoch,dev_value,test_predictions_available,test_gloss_morpheme_accuracy,test_gloss_word_accuracy,test_gloss_mer,test_gloss_chrfpp
+bolmo-1b_all_in_one_r16_lr2e-4_s42,val_loss,390,3.0000,0.5298,True,0.4681,0.3865,0.4846,52.8029
+bolmo-1b_all_in_one_r16_lr2e-4_s42,val_gloss_chrfpp,390,3.0000,52.7477,True,0.4681,0.3865,0.4846,52.8029
+bolmo-1b_all_in_one_r16_lr2e-4_s42,val_gloss_mer,325,2.5000,0.5104,True,0.4697,0.3925,0.6307,52.7070
+bolmo-1b_all_in_one_r16_lr2e-4_s42,val_gloss_morpheme_accuracy,390,3.0000,0.4621,True,0.4681,0.3865,0.4846,52.8029
+bolmo-1b_two_stage_r16_lr1e-4_s42,val_loss,780,3.0000,0.6324,True,0.4689,0.3695,0.4425,53.1519
+bolmo-1b_two_stage_r16_lr1e-4_s42,val_gloss_chrfpp,650,2.5000,52.8209,True,0.4705,0.3592,0.4437,52.5902
+bolmo-1b_two_stage_r16_lr1e-4_s42,val_gloss_mer,650,2.5000,0.4613,True,0.4705,0.3592,0.4437,52.5902
+bolmo-1b_two_stage_r16_lr1e-4_s42,val_gloss_morpheme_accuracy,650,2.5000,0.4691,True,0.4705,0.3592,0.4437,52.5902
+bolmo-1b_two_stage_r16_lr2e-4_s42,val_loss,780,3.0000,0.5127,True,0.4961,0.4130,0.4252,56.4464
+bolmo-1b_two_stage_r16_lr2e-4_s42,val_gloss_chrfpp,780,3.0000,56.6437,True,0.4961,0.4130,0.4252,56.4464
+bolmo-1b_two_stage_r16_lr2e-4_s42,val_gloss_mer,650,2.5000,0.4088,True,0.4780,0.3985,0.4161,55.6514
+bolmo-1b_two_stage_r16_lr2e-4_s42,val_gloss_morpheme_accuracy,780,3.0000,0.5137,True,0.4961,0.4130,0.4252,56.4464
