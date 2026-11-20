@@ -1,7 +1,8 @@
 {
   "experiment": "zero_shot",
-  "prompt_version": "v3",
-  "prompt_source": "Korean IGT Experimental Protocol V3, section 2 (agenda 17 Nov)",
+  "prompt_version": "v4",
+  "prompt_version_note": "v4 adds the single-call step-by-step prompt and Ainu prompts. The Korean all-in-one text is unchanged since v3. The old two-call pipeline is kept as 'two_stage'.",
+  "prompt_source": "Korean IGT Experimental Protocol V3, section 2 (agenda 17 Nov); step-by-step = one call that asks for step 1 then step 2 (tutor, 20 Nov)",
   "models": [
     {
       "size": "1B",
@@ -17,12 +18,34 @@
   },
   "strategies": [
     "all_in_one",
-    "step_by_step"
+    "step_by_step",
+    "two_stage"
   ],
   "prompts": {
     "all_in_one": "zero_shot/prompts/all_in_one.txt",
+    "step_by_step": "zero_shot/prompts/step_by_step.txt",
     "step_1_transliteration": "zero_shot/prompts/transliteration.txt",
     "step_2_gloss": "zero_shot/prompts/gloss.txt"
+  },
+  "languages": {
+    "korean": {
+      "dataset_manifest": "data/manifest.json",
+      "prompts": {
+        "all_in_one": "zero_shot/prompts/all_in_one.txt",
+        "step_by_step": "zero_shot/prompts/step_by_step.txt",
+        "step_1_transliteration": "zero_shot/prompts/transliteration.txt",
+        "step_2_gloss": "zero_shot/prompts/gloss.txt"
+      },
+      "output_dir": "results/zero_shot/korean"
+    },
+    "ainu": {
+      "dataset_manifest": "data/manifest_ainu.json",
+      "prompts": {
+        "all_in_one": "zero_shot/prompts/ainu/all_in_one.txt",
+        "step_by_step": "zero_shot/prompts/ainu/step_by_step.txt"
+      },
+      "output_dir": "results/zero_shot/ainu"
+    }
   },
   "input_fields": {
     "original_script": "text",
@@ -37,7 +60,7 @@
     "num_beams": 1,
     "max_new_tokens": 768,
     "max_new_tokens_unit": "bytes (Bolmo is byte-level)",
-    "stop_rule": "step prompts: first complete line; all-in-one: transliteration line + Gloss line"
+    "stop_rule": "single-answer prompts: first complete line; all-in-one and step-by-step: transliteration line + gloss line"
   },
   "seed": 42,
   "save_raw_outputs": true

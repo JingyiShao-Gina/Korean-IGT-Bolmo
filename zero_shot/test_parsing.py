@@ -49,4 +49,35 @@ assert rz.parse_all_in_one(" Johni\nGloss:\n")[2] == "empty_gloss"
 assert rz.parse_all_in_one("\nGloss: John-NOM\n") == ("Gloss: John-NOM", "", "missing_gloss")
 assert rz.parse_all_in_one(" \nX\nGloss: g\n")[0] == "X"
 
+# --- single-call step-by-step prompt (v4) and its parser
+assert T["step_by_step"].endswith("\nStep 1 - Transliteration:")
+assert "Work step by step." in T["step_by_step"] and "Based on your transliteration from Step 1" in T["step_by_step"]
+assert rz.parse_step_by_step(" Johni sakwalul\nStep 2 - Gloss: John-NOM apple-ACC\nStep 3") == (
+    "Johni sakwalul", "John-NOM apple-ACC", "ok")
+assert rz.parse_step_by_step(" Johni\nstep 2: gloss: John-NOM\n") == ("Johni", "John-NOM", "ok")
+assert rz.parse_step_by_step(" Johni\nGloss: John-NOM\n")[2] == "missing_gloss"  # wrong label
+assert rz.parse_step_by_step(" Johni\nStep 2 - Gloss:\n")[2] == "empty_gloss"
+
+# --- stopping criterion sees only the generated part (Bolmo passes [last prompt byte] + new)
+prompt = [5, 6, 7, 8]
+assert rz.generated_part([5, 6, 7, 8, 40, 41], prompt) == [40, 41]  # standard transformers
+assert rz.generated_part([8, 40, 41], prompt) == [40, 41]           # Bolmo
+assert rz.generated_part([8], prompt) == []
+
+# --- languages: Korean keeps its files; Ainu has its own prompts and manifest
+L = cfg["languages"]
+assert L["korean"]["prompts"]["all_in_one"] == cfg["prompts"]["all_in_one"]
+for lang, word in (("korean", "Korean"), ("ainu", "Ainu")):
+    for key in ("all_in_one", "step_by_step"):
+        t = rz.load_prompt(L[lang]["prompts"][key])
+        assert f"Language: {word}\nOriginal {word} script: {{original_script}}" in t, (lang, key)
+        other = "Ainu" if word == "Korean" else "Korean"
+        assert other not in t, (lang, key)
+    # Ainu prompts are the Korean ones with only the language name changed
+    if lang == "ainu":
+        for key in ("all_in_one", "step_by_step"):
+            assert rz.load_prompt(L["ainu"]["prompts"][key]) == T[key].replace("Korean", "Ainu")
+m_ainu = json.loads((rz.ROOT / L["ainu"]["dataset_manifest"]).read_text(encoding="utf-8"))
+assert m_ainu["split_mapping"]["validation"] == "eval" and m_ainu["split_counts"]["test"] == 750
+
 print("all parsing checks passed")
