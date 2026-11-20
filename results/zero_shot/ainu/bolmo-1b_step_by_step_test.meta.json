@@ -1,0 +1,70 @@
+{
+  "language": "ainu",
+  "strategy": "step_by_step",
+  "split": "test",
+  "limit": null,
+  "model_id": "allenai/Bolmo-1B",
+  "model_revision": "452690a8cfab1dd1ec27b74f2667632f17a21b46",
+  "dataset_manifest": {
+    "dataset_id": "lowresource-igt/Ainu_igt_dataset",
+    "dataset_config": "default",
+    "revision": "bf06682cd822f0218940e7d907638cad3c87a58e",
+    "language": "Hokkaido Ainu (ainu1240)",
+    "license": "not stated upstream",
+    "cleaned": false,
+    "cleaning_note": "Original upstream data, not cleaned by the team. Known issues: inconsistent gloss labels (1SG / 1s / 1sA), extra spaces, half-width katakana, some broken glosses; only 180/750 test rows have equal word counts in transcription and gloss.",
+    "field_mapping": {
+      "source": "text",
+      "transliteration": "transcription",
+      "gloss": "glosses"
+    },
+    "split_mapping": {
+      "train": "train",
+      "validation": "eval",
+      "test": "test"
+    },
+    "split_counts": {
+      "train": 6726,
+      "validation": 218,
+      "test": 750
+    }
+  },
+  "prompt_version": "v5",
+  "language_name": "Ainu",
+  "prompt_files": {
+    "step_by_step": "zero_shot/prompts/step_by_step.txt"
+  },
+  "prompt_sha256": {
+    "step_by_step": "95c996272e199a4da2532b323d9fc855d890bbb0b255904abd89c97966b2c58d"
+  },
+  "prompt_sha256_filled": {
+    "step_by_step": "dba4afded127f328ea9f69be5f766ebab9c00e387b99bb7ca54f25955deb041f"
+  },
+  "generation": {
+    "do_sample": false,
+    "num_beams": 1,
+    "max_new_tokens": 768,
+    "max_new_tokens_unit": "bytes (Bolmo is byte-level)",
+    "stop_rule": "single-answer prompts: first complete line; all-in-one and step-by-step: transliteration line + gloss line"
+  },
+  "stopping_criteria_used": true,
+  "seed": 42,
+  "git_sha": "6bb986a155828f2d872eba62043ab764992b5bfc",
+  "runtime_seconds": 3103.7,
+  "versions": {
+    "python": "3.13.16",
+    "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+    "torch": "2.14.1+cu130",
+    "transformers": "4.57.3",
+    "datasets": "4.8.5",
+    "xlstm": "2.0.3",
+    "pandas": "2.2.3",
+    "gpu": "Tesla T4"
+  },
+  "n_examples": 750,
+  "parse_status_counts": {
+    "ok": 710,
+    "missing_gloss": 40
+  },
+  "truncation_rate": 0.07333333333333333
+}

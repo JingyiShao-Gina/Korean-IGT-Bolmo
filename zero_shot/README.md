@@ -15,7 +15,7 @@ Input: original script (`text`) + English translation (`translation`). Output: t
 | Language | Data (manifest) | Test rows | Status |
 |---|---|---|---|
 | Korean | `Soyyeongg/Korean_igt_cleaned` (`data/manifest.json`, cleaned by Soyeong) | 263 | all-in-one and two-stage done (`results/zero_shot/`); single-call step-by-step to run |
-| Ainu | `lowresource-igt/Ainu_igt_dataset` (`data/manifest_ainu.json`, **not cleaned**) | 750 | zero-shot only (no LoRA); to run |
+| Ainu | `lowresource-igt/Ainu_igt_dataset` (`data/manifest_ainu.json`, **not cleaned**) | 750 | zero-shot only (no LoRA). **Done** (prompt v5): `results/zero_shot/ainu/bolmo-1b_{all_in_one,step_by_step}_test.csv` |
 
 Ainu dev = the dataset's `eval` split (218 rows). The Ainu source is in katakana, and the gold transcription is Latin script. Known data issues are listed in `data/manifest_ainu.json`; for example, only 180/750 test rows have the same number of words in transcription and gloss, which matters for word-level accuracy.
 
