@@ -19,7 +19,7 @@ for k, t in GENERIC.items():
 
 # --- templates end at the answer label
 assert T["all_in_one"].endswith("\nTransliteration:"), T["all_in_one"][-40:]
-assert T["step_by_step"].endswith("\nStep 1 - Transliteration:")
+assert T["step_by_step"].endswith("\nTransliteration:")
 assert T["step_1_transliteration"].endswith("\nTransliteration:")
 assert T["step_2_gloss"].endswith("\nGloss:")
 
@@ -55,17 +55,29 @@ assert rz.parse_all_in_one(" Johni\n\ngloss :  John-NOM \n") == ("Johni", "John-
 assert rz.parse_all_in_one(" Johni\nTranslation: John\n")[2] == "missing_gloss"
 assert rz.parse_all_in_one(" Johni sakwalul")[2] == "missing_gloss"
 assert rz.parse_all_in_one(" Johni\nGloss:\n")[2] == "empty_gloss"
-assert rz.parse_all_in_one("\nGloss: John-NOM\n") == ("Gloss: John-NOM", "", "missing_gloss")
+assert rz.parse_all_in_one("\nGloss: John-NOM\n") == ("", "John-NOM", "empty_transliteration")
 assert rz.parse_all_in_one(" \nX\nGloss: g\n")[0] == "X"
 
 # --- single-call step-by-step prompt (v4) and its parser
-assert T["step_by_step"].endswith("\nStep 1 - Transliteration:")
 assert "Work step by step." in T["step_by_step"] and "Based on your transliteration from Step 1" in T["step_by_step"]
+# v5: step-by-step differs from all-in-one only in the task-description lines
+aio, sbs = T["all_in_one"].split("\n"), T["step_by_step"].split("\n")
+assert aio[:5] == sbs[:5] and aio[-6:] == sbs[-6:], "only the task description may differ"
+assert rz.parse_step_by_step(" Johni sakwalul\nGloss: John-NOM apple-ACC\nmore") == (
+    "Johni sakwalul", "John-NOM apple-ACC", "ok")
 assert rz.parse_step_by_step(" Johni sakwalul\nStep 2 - Gloss: John-NOM apple-ACC\nStep 3") == (
     "Johni sakwalul", "John-NOM apple-ACC", "ok")
 assert rz.parse_step_by_step(" Johni\nstep 2: gloss: John-NOM\n") == ("Johni", "John-NOM", "ok")
-assert rz.parse_step_by_step(" Johni\nGloss: John-NOM\n")[2] == "missing_gloss"  # wrong label
+assert rz.parse_step_by_step(" Johni\nTranslation: John\n")[2] == "missing_gloss"  # wrong label
 assert rz.parse_step_by_step(" Johni\nStep 2 - Gloss:\n")[2] == "empty_gloss"
+
+# --- the model leaves the transliteration empty and jumps to the gloss label (Ainu smoke test)
+assert rz.parse_step_by_step("\nStep 2 - Gloss:\n") == ("", "", "empty_answer")
+assert rz.parse_step_by_step("\nStep 2 - Gloss: fire-ACC\n") == ("", "fire-ACC", "empty_transliteration")
+assert rz.parse_step_by_step("\n ape a= omare\nStep 2 - Gloss: fire\n") == ("ape a= omare", "fire", "ok")
+assert rz.is_complete("all_in_one", "\nStep 2 - Gloss:\n")
+assert not rz.is_complete("all_in_one", "\nStep 2 - Gloss:")
+assert rz.is_complete("all_in_one", " V1 V2\nGloss: --\n")
 
 # --- stopping criterion sees only the generated part (Bolmo passes [last prompt byte] + new)
 prompt = [5, 6, 7, 8]
@@ -86,7 +98,7 @@ assert m_ainu["split_mapping"]["validation"] == "eval" and m_ainu["split_counts"
 # --- filled with "Korean", the prompts are exactly the ones used before (v3 runs)
 ref_dir = sys.argv[1] if len(sys.argv) > 1 else None
 if ref_dir:
-    ref = {"all_in_one": "all_in_one", "step_by_step": "step_by_step",
+    ref = {"all_in_one": "all_in_one",  # step_by_step changed in v5, so it is not compared
            "step_1_transliteration": "transliteration", "step_2_gloss": "gloss"}
     for key, fname in ref.items():
         old = (Path(ref_dir) / f"{fname}.txt").read_text(encoding="utf-8").rstrip()

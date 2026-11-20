@@ -70,7 +70,8 @@ def prompt_sha256(template: str) -> str:
 # ----------------------------------------------------------------------------- parsing
 
 _GLOSS_LINE = re.compile(r"^\s*gloss\s*:\s*(.*)$", re.IGNORECASE)
-_STEP2_GLOSS_LINE = re.compile(r"^\s*step\s*2\s*[-:.]?\s*gloss\s*:\s*(.*)$", re.IGNORECASE)
+_STEP2_GLOSS_LINE = re.compile(r"^\s*(?:step\s*2\s*[-:.]?\s*)?gloss\s*:\s*(.*)$", re.IGNORECASE)  # v5: "Gloss:"; v4: "Step 2 - Gloss:"
+_ANY_GLOSS_LABEL = re.compile(r"^\s*(step\s*2\s*[-:.]?\s*)?gloss\s*:", re.IGNORECASE)
 
 
 def _lines(completion: str) -> list[str]:
@@ -80,17 +81,19 @@ def _lines(completion: str) -> list[str]:
 def is_complete(kind: str, completion: str) -> bool:
     """True once the completion contains every line the prompt asks for.
 
-    kind = "single": one answer line (step 1, step 2).
-    kind = "all_in_one": transliteration line, then a non-empty Gloss line.
+    kind = "single": one answer line (two-stage calls).
+    kind = "all_in_one": transliteration line + gloss line (all-in-one and step-by-step).
+        Done once a gloss label line is finished, or two non-empty lines are finished
+        (the model may leave the transliteration empty and go straight to the gloss label).
     A line only counts as finished when a newline follows it.
     """
-    lines = _lines(completion)
-    finished = lines[:-1]  # the last element has no newline after it yet
     if kind == "single":
-        return len(finished) >= 1
+        return len(_lines(completion)[:-1]) >= 1
     if kind == "all_in_one":
-        rest = [l for l in finished[1:] if l.strip()]
-        return len(finished) >= 1 and len(rest) >= 1
+        finished = completion.replace("\r\n", "\n").split("\n")[:-1]
+        if any(_ANY_GLOSS_LABEL.match(l) for l in finished[1:]):
+            return True
+        return sum(1 for l in finished if l.strip()) >= 2
     raise ValueError(kind)
 
 
@@ -100,19 +103,42 @@ def parse_single(completion: str) -> str:
 
 
 def _parse_two_lines(completion: str, gloss_line: re.Pattern) -> tuple[str, str, str]:
-    lines = _lines(completion)
-    translit = lines[0].strip()
-    gloss, status = "", "missing_gloss"
-    for line in lines[1:]:
+    """Line 1 (right after the prompt's transliteration label) is the transliteration.
+    If it is empty, the answer may start on the next non-empty line, unless that line is
+    already the gloss label (the model skipped the transliteration). The next non-empty
+    line must be the gloss label. Nothing is repaired.
+
+    parse_status: ok | missing_gloss (no gloss label) | empty_answer (both empty)
+                  | empty_gloss | empty_transliteration
+    """
+    lines = completion.replace("\r\n", "\n").split("\n")
+    translit, start = lines[0].strip(), 1
+    if not translit:
+        for j in range(1, len(lines)):
+            if lines[j].strip():
+                if _ANY_GLOSS_LABEL.match(lines[j]):
+                    start = j
+                else:
+                    translit, start = lines[j].strip(), j + 1
+                break
+    gloss, has_label = "", False
+    for line in lines[start:]:
         if not line.strip():
             continue
         m = gloss_line.match(line)
         if m:
-            gloss = m.group(1).strip()
-            status = "ok" if gloss else "empty_gloss"
+            gloss, has_label = m.group(1).strip(), True
         break
-    if not translit and status == "ok":
+    if not has_label:
+        status = "missing_gloss"
+    elif not translit and not gloss:
+        status = "empty_answer"
+    elif not gloss:
+        status = "empty_gloss"
+    elif not translit:
         status = "empty_transliteration"
+    else:
+        status = "ok"
     return translit, gloss, status
 
 
@@ -128,8 +154,8 @@ def parse_all_in_one(completion: str) -> tuple[str, str, str]:
 def parse_step_by_step(completion: str) -> tuple[str, str, str]:
     """Like parse_all_in_one, for the single-call step-by-step prompt.
 
-    The prompt ends with 'Step 1 - Transliteration:', so line 1 is the transliteration.
-    The next non-empty line must start with 'Step 2 - Gloss:'.
+    v5 uses the same labels as all-in-one (prompt ends with 'Transliteration:', then a
+    'Gloss:' line); the v4 label 'Step 2 - Gloss:' is accepted too.
     """
     return _parse_two_lines(completion, _STEP2_GLOSS_LINE)
 

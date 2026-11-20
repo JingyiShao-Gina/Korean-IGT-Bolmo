@@ -8,7 +8,7 @@ Step 1: Predict the transliteration of the {language} script.
 Step 2: Based on your transliteration from Step 1, predict the corresponding morpheme-level gloss.
 Preserve word and morpheme order and use consistent IGT labels.
 Do not explain your answer.
-Answer in two lines: the first line starts with "Step 1 - Transliteration:",
-the second line starts with "Step 2 - Gloss:".
+Answer in two lines: the first line starts with "Transliteration:",
+the second line starts with "Gloss:".
 
-Step 1 - Transliteration:
+Transliteration:
