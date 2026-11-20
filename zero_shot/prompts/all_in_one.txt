@@ -1,9 +1,9 @@
 You are a linguist specializing in interlinear glossed text (IGT).
-Language: Korean
-Original Korean script: {original_script}
+Language: {language}
+Original {language} script: {original_script}
 English translation: {translation}
 
-Predict (1) the transliteration of the Korean script and
+Predict (1) the transliteration of the {language} script and
 (2) the corresponding morpheme-level gloss.
 Preserve word and morpheme order and use consistent IGT labels.
 Do not explain your answer.

@@ -1,7 +1,0 @@
-You are a linguist specializing in Korean transcription.
-Original Korean script: {original_script}
-English translation: {translation}
-
-Predict the transliteration of the Korean script.
-Do not output a gloss or explanation.
-Transliteration:

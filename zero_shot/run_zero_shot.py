@@ -44,14 +44,23 @@ def load_prompt(rel_path: str) -> str:
 
 
 def render(template: str, **fields: str) -> str:
-    """Fill {placeholders} by plain replacement (data may contain braces)."""
+    """Fill {placeholders} by plain replacement (data may contain braces).
+
+    Prompt files are language-neutral: {language} must be filled too, either here
+    (language="Korean") or beforehand with fill_language().
+    """
     out = template
     for key, value in fields.items():
         out = out.replace("{" + key + "}", value)
-    left = re.findall(r"\{(original_script|translation|predicted_transliteration)\}", out)
+    left = re.findall(r"\{(language|original_script|translation|predicted_transliteration)\}", out)
     if left:
         raise ValueError(f"Unfilled placeholders: {left}")
     return out
+
+
+def fill_language(template: str, language_name: str) -> str:
+    """Fill only {language} (e.g. 'Korean', 'Ainu'); the data fields stay as placeholders."""
+    return template.replace("{language}", language_name)
 
 
 def prompt_sha256(template: str) -> str:
@@ -383,6 +392,7 @@ def main(argv: list[str] | None = None) -> list[Path]:
     if args.lang not in cfg["languages"]:
         raise SystemExit(f"Unknown --lang {args.lang!r}; choose from {sorted(cfg['languages'])}")
     lang_cfg = cfg["languages"][args.lang]
+    language_name = lang_cfg["language_name"]
     model_cfg = cfg["models"][0]
     gen_cfg = cfg["generation"]
     manifest_path = ROOT / lang_cfg["dataset_manifest"]
@@ -390,14 +400,12 @@ def main(argv: list[str] | None = None) -> list[Path]:
     strategies = DEFAULT_STRATEGIES if args.strategy == "both" else (args.strategy,)
     needed = {"all_in_one": ["all_in_one"], "step_by_step": ["step_by_step"],
               "two_stage": ["step_1_transliteration", "step_2_gloss"]}
-    missing = [k for s_ in strategies for k in needed[s_] if k not in lang_cfg["prompts"]]
-    if missing:
-        raise SystemExit(f"No prompt for {missing} in language {args.lang!r}")
 
     import torch
     torch.manual_seed(cfg["seed"])
 
-    templates = {k: load_prompt(v) for k, v in lang_cfg["prompts"].items()}
+    generic = {k: load_prompt(v) for k, v in cfg["prompts"].items()}
+    templates = {k: fill_language(t, language_name) for k, t in generic.items()}
     rows = load_rows(args.split, args.limit, manifest_path)
     print(f"Loaded {len(rows)} {args.lang} {args.split} rows")
     gen = Generator(model_cfg["model_id"], model_cfg["revision"], gen_cfg["max_new_tokens"])
@@ -425,8 +433,10 @@ def main(argv: list[str] | None = None) -> list[Path]:
             "model_revision": model_cfg["revision"],
             "dataset_manifest": json.loads(manifest_path.read_text(encoding="utf-8")),
             "prompt_version": cfg["prompt_version"],
-            "prompt_files": {k: lang_cfg["prompts"][k] for k in used},
-            "prompt_sha256": {k: prompt_sha256(v) for k, v in used.items()},
+            "language_name": language_name,
+            "prompt_files": {k: cfg["prompts"][k] for k in used},
+            "prompt_sha256": {k: prompt_sha256(generic[k]) for k in used},
+            "prompt_sha256_filled": {k: prompt_sha256(v) for k, v in used.items()},
             "generation": gen_cfg,
             "stopping_criteria_used": gen.use_stopping,
             "seed": cfg["seed"],

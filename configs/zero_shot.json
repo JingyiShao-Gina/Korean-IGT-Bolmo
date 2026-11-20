@@ -1,7 +1,7 @@
 {
   "experiment": "zero_shot",
   "prompt_version": "v4",
-  "prompt_version_note": "v4 adds the single-call step-by-step prompt and Ainu prompts. The Korean all-in-one text is unchanged since v3. The old two-call pipeline is kept as 'two_stage'.",
+  "prompt_version_note": "v4: prompts are language-neutral templates ({language} is filled from the language config); adds the single-call step-by-step prompt. For Korean the filled prompts are identical to v3 (all-in-one) and to the earlier two-call prompts, which are kept as 'two_stage' (renamed files).",
   "prompt_source": "Korean IGT Experimental Protocol V3, section 2 (agenda 17 Nov); step-by-step = one call that asks for step 1 then step 2 (tutor, 20 Nov)",
   "models": [
     {
@@ -24,26 +24,18 @@
   "prompts": {
     "all_in_one": "zero_shot/prompts/all_in_one.txt",
     "step_by_step": "zero_shot/prompts/step_by_step.txt",
-    "step_1_transliteration": "zero_shot/prompts/transliteration.txt",
-    "step_2_gloss": "zero_shot/prompts/gloss.txt"
+    "step_1_transliteration": "zero_shot/prompts/two_stage_transliteration.txt",
+    "step_2_gloss": "zero_shot/prompts/two_stage_gloss.txt"
   },
   "languages": {
     "korean": {
+      "language_name": "Korean",
       "dataset_manifest": "data/manifest.json",
-      "prompts": {
-        "all_in_one": "zero_shot/prompts/all_in_one.txt",
-        "step_by_step": "zero_shot/prompts/step_by_step.txt",
-        "step_1_transliteration": "zero_shot/prompts/transliteration.txt",
-        "step_2_gloss": "zero_shot/prompts/gloss.txt"
-      },
       "output_dir": "results/zero_shot/korean"
     },
     "ainu": {
+      "language_name": "Ainu",
       "dataset_manifest": "data/manifest_ainu.json",
-      "prompts": {
-        "all_in_one": "zero_shot/prompts/ainu/all_in_one.txt",
-        "step_by_step": "zero_shot/prompts/ainu/step_by_step.txt"
-      },
       "output_dir": "results/zero_shot/ainu"
     }
   },

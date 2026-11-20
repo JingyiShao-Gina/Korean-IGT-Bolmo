@@ -6,6 +6,8 @@ Owner: Gina. Bolmo 1B, no fine-tuning, two settings from the agenda:
 - **Step-by-step**: one call whose prompt asks for **Step 1** (transliteration) and then **Step 2** (the gloss, based on the Step 1 transliteration). This is the tutor's definition (clarified 20 Nov).
 - **Two-stage** (extra, Korean only): two separate calls, first the transliteration and then the gloss from the predicted transliteration. This is what we first ran as "step-by-step"; Theo's LoRA two-stage setup uses the same prompts.
 
+The prompt files are **language-neutral**: they contain a `{language}` placeholder, which the runner fills from the language config (`Korean`, `Ainu`, ...). The same three prompts are used for every language. For Korean, the filled prompts are word-for-word the ones used in the earlier Korean runs.
+
 Input: original script (`text`) + English translation (`translation`). Output: transliteration + morpheme-level gloss. Gold targets (`transcription`, `glosses`) are used for evaluation only and never appear in prompts.
 
 ## Languages
@@ -21,11 +23,10 @@ Ainu dev = the dataset's `eval` split (218 rows). The Ainu source is in katakana
 
 | File | Purpose |
 |---|---|
-| `zero_shot/prompts/all_in_one.txt` | Korean all-in-one prompt; ends with `Transliteration:`, and the model answers `Transliteration:` / `Gloss:`. |
-| `zero_shot/prompts/step_by_step.txt` | Korean step-by-step prompt (one call); ends with `Step 1 - Transliteration:`, and the model answers `Step 1 - Transliteration:` / `Step 2 - Gloss:`. |
-| `zero_shot/prompts/transliteration.txt`, `gloss.txt` | Korean two-stage prompts (call 1, call 2). Also used by Theo's LoRA code. |
-| `zero_shot/prompts/ainu/*.txt` | Ainu all-in-one and step-by-step prompts: the Korean prompts with only "Korean" replaced by "Ainu". |
-| `configs/zero_shot.json` | Run settings: model ID and revision, prompt version, the prompt files, manifest and output folder for each language, greedy decoding, generation budget. |
+| `zero_shot/prompts/all_in_one.txt` | All-in-one prompt (shared by all languages). It ends with `Transliteration:`, and the model answers `Transliteration:` / `Gloss:`. |
+| `zero_shot/prompts/step_by_step.txt` | Step-by-step prompt, one call (shared). It ends with `Step 1 - Transliteration:`, and the model answers `Step 1 - Transliteration:` / `Step 2 - Gloss:`. |
+| `zero_shot/prompts/two_stage_transliteration.txt`, `two_stage_gloss.txt` | Two-stage prompts (call 1, call 2): the earlier "step-by-step", renamed from `transliteration.txt` / `gloss.txt`. Not one of the agenda settings. |
+| `configs/zero_shot.json` | Run settings: model ID and revision, prompt version, the prompt files, and, for each language, its name, data manifest and output folder. Also greedy decoding and the generation budget. To add a language, add an entry under `languages` and a manifest in `data/`. |
 | `data/manifest_ainu.json` | Ainu dataset ID, pinned revision, split names and counts, data-quality notes. |
 | `zero_shot/run_zero_shot.py` | The runner. It loads data and model, fills in the prompts, generates, parses the answers, and writes a CSV plus a `.meta.json` for each setting. CLI: `--lang korean/ainu`, `--split dev/test`, `--limit N`, `--strategy all_in_one/step_by_step/two_stage/both` (`both` = all-in-one + step-by-step). |
 | `zero_shot/zero_shot_bolmo.ipynb` | Colab notebook: install, choose `LANG`, prompt preview, 10-row dev smoke test, full test run, download. |
@@ -80,6 +81,6 @@ Prompts follow Korean IGT Experimental Protocol V3, section 2, and the tutor's s
 
 - `v2`: the all-in-one prompt showed `Transliteration: ...` / `Gloss: ...` as a format example.
 - `v3`: in the 10-row dev smoke test, Bolmo copied the literal `...` in 9/10 all-in-one outputs, so the example was replaced with a written two-line instruction. Used for the Korean test runs (all-in-one, two-stage).
-- `v4` (current): adds the single-call step-by-step prompt and the Ainu prompts. The Korean all-in-one and two-stage texts are unchanged from v3. The step-by-step prompt differs from all-in-one only in the step instructions and the answer labels, so a difference between the two settings can be attributed to asking for steps.
+- `v4` (current): adds the single-call step-by-step prompt and makes all prompts language-neutral (`{language}`). The two-stage files were renamed to `two_stage_*.txt`. Filled with "Korean", the all-in-one and two-stage texts are unchanged from v3. The step-by-step prompt differs from all-in-one only in the step instructions and the answer labels, so a difference between the two settings can be attributed to asking for steps.
 
 Any further prompt change needs a new version, must be tested on dev only, and requires the test run to be repeated.

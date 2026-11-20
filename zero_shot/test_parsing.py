@@ -7,27 +7,36 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import run_zero_shot as rz  # noqa: E402
 
 cfg = json.loads(rz.CONFIG_PATH.read_text(encoding="utf-8"))
-T = {k: rz.load_prompt(v) for k, v in cfg["prompts"].items()}
+GENERIC = {k: rz.load_prompt(v) for k, v in cfg["prompts"].items()}
+T = {k: rz.fill_language(t, "Korean") for k, t in GENERIC.items()}
 
-# --- templates end at the answer label and contain no gold fields
-assert T["all_in_one"].endswith("\nTransliteration:"), T["all_in_one"][-40:]
-assert T["step_1_transliteration"].endswith("\nTransliteration:")
-assert T["step_2_gloss"].endswith("\nGloss:")
-for t in T.values():
+# --- prompt files are language-neutral
+for k, t in GENERIC.items():
+    assert "{language}" in t, k
+    assert "Korean" not in t and "Ainu" not in t, k
     assert "\r" not in t
     assert "{transcription}" not in t and "{glosses}" not in t and "{gold" not in t
+
+# --- templates end at the answer label
+assert T["all_in_one"].endswith("\nTransliteration:"), T["all_in_one"][-40:]
+assert T["step_by_step"].endswith("\nStep 1 - Transliteration:")
+assert T["step_1_transliteration"].endswith("\nTransliteration:")
+assert T["step_2_gloss"].endswith("\nGloss:")
 
 ex = {"text": "존이 사과를 깎은 칼", "translation": "the knife with which John peeled an apple {x}"}
 p = rz.render(T["all_in_one"], original_script=ex["text"], translation=ex["translation"])
 assert "Original Korean script: 존이 사과를 깎은 칼" in p and "{x}" in p  # braces in data survive
+assert rz.render(GENERIC["all_in_one"], language="Korean", original_script=ex["text"], translation=ex["translation"]) == p
 p2 = rz.render(T["step_2_gloss"], original_script=ex["text"], translation=ex["translation"],
                predicted_transliteration="Johni sakwalul kkakun khal")
 assert "Predicted transliteration: Johni sakwalul kkakun khal" in p2
-try:
-    rz.render(T["step_2_gloss"], original_script="a", translation="b")
-    raise AssertionError("missing placeholder not detected")
-except ValueError:
-    pass
+for bad in (lambda: rz.render(T["step_2_gloss"], original_script="a", translation="b"),
+            lambda: rz.render(GENERIC["all_in_one"], original_script="a", translation="b")):  # {language} left
+    try:
+        bad()
+        raise AssertionError("missing placeholder not detected")
+    except ValueError:
+        pass
 
 # --- completion detection (used for stopping and truncation)
 assert not rz.is_complete("single", " Johni sakwalul")
@@ -64,20 +73,24 @@ assert rz.generated_part([5, 6, 7, 8, 40, 41], prompt) == [40, 41]  # standard t
 assert rz.generated_part([8, 40, 41], prompt) == [40, 41]           # Bolmo
 assert rz.generated_part([8], prompt) == []
 
-# --- languages: Korean keeps its files; Ainu has its own prompts and manifest
-L = cfg["languages"]
-assert L["korean"]["prompts"]["all_in_one"] == cfg["prompts"]["all_in_one"]
-for lang, word in (("korean", "Korean"), ("ainu", "Ainu")):
+# --- languages: every language uses the shared prompts, only the name changes
+for lang, L in cfg["languages"].items():
+    name = L["language_name"]
     for key in ("all_in_one", "step_by_step"):
-        t = rz.load_prompt(L[lang]["prompts"][key])
-        assert f"Language: {word}\nOriginal {word} script: {{original_script}}" in t, (lang, key)
-        other = "Ainu" if word == "Korean" else "Korean"
-        assert other not in t, (lang, key)
-    # Ainu prompts are the Korean ones with only the language name changed
-    if lang == "ainu":
-        for key in ("all_in_one", "step_by_step"):
-            assert rz.load_prompt(L["ainu"]["prompts"][key]) == T[key].replace("Korean", "Ainu")
-m_ainu = json.loads((rz.ROOT / L["ainu"]["dataset_manifest"]).read_text(encoding="utf-8"))
+        t = rz.fill_language(GENERIC[key], name)
+        assert f"Language: {name}\nOriginal {name} script: {{original_script}}" in t, (lang, key)
+    assert (rz.ROOT / L["dataset_manifest"]).exists(), lang
+m_ainu = json.loads((rz.ROOT / cfg["languages"]["ainu"]["dataset_manifest"]).read_text(encoding="utf-8"))
 assert m_ainu["split_mapping"]["validation"] == "eval" and m_ainu["split_counts"]["test"] == 750
+
+# --- filled with "Korean", the prompts are exactly the ones used before (v3 runs)
+ref_dir = sys.argv[1] if len(sys.argv) > 1 else None
+if ref_dir:
+    ref = {"all_in_one": "all_in_one", "step_by_step": "step_by_step",
+           "step_1_transliteration": "transliteration", "step_2_gloss": "gloss"}
+    for key, fname in ref.items():
+        old = (Path(ref_dir) / f"{fname}.txt").read_text(encoding="utf-8").rstrip()
+        assert T[key] == old, key
+    print("Korean prompts identical to the previous files")
 
 print("all parsing checks passed")
