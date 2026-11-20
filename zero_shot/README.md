@@ -15,7 +15,22 @@ Input: original script (`text`) + English translation (`translation`). Output: t
 | Language | Data (manifest) | Test rows | Status |
 |---|---|---|---|
 | Korean | `Soyyeongg/Korean_igt_cleaned` (`data/manifest.json`, cleaned by Soyeong) | 263 | all-in-one and two-stage done (`results/zero_shot/`); single-call step-by-step to run |
-| Ainu | `lowresource-igt/Ainu_igt_dataset` (`data/manifest_ainu.json`, **not cleaned**) | 750 | zero-shot only (no LoRA). **Done** (prompt v5): `results/zero_shot/ainu/bolmo-1b_{all_in_one,step_by_step}_test.csv` |
+| Ainu | `lowresource-igt/Ainu_igt_dataset` (`data/manifest_ainu.json`, **not cleaned**) | 750 | zero-shot only (no LoRA). **Done** (prompt v5): `results/zero_shot/ainu/bolmo-1b_{all_in_one,step_by_step}_test.csv`; scores in `results/zero_shot/ainu/scores.csv` |
+
+### Ainu zero-shot scores (test, 750 rows)
+
+Scored with `zero_shot/score_zero_shot.py --lang ainu`, which uses the team metrics in `evaluation/metrics.py` (Soyeong; positional accuracy after Ginn et al. 2024, case-insensitive, corpus micro-average). The script reproduces the Korean all-in-one numbers on the `soyeong/evaluation` branch (0.0594 / 0.0188).
+
+| | All-in-one | Step-by-step |
+|---|---|---|
+| Gloss morpheme accuracy | 0.85% | 0.95% |
+| Gloss word accuracy | 0.87% | 0.95% |
+| Gloss MER / WER | 1.15 / 1.17 | 1.25 / 1.25 |
+| Gloss chrF++ | 9.79 | 10.31 |
+| Transliteration chrF++ | 5.11 | 5.77 |
+| Parse failure / truncation | 8.7% / 10.8% | 5.3% / 7.3% |
+
+Both settings fail: Bolmo 1B copies the katakana source as "transliteration" and the English translation as "gloss", and it never produces a gloss tag. The few matches are English words that happen to sit at the same position as in the gold gloss (`and` 13×, `then` 11×, `father`, `village`, …). The step-by-step vs all-in-one difference (0.95% vs 0.85%) is too small to mean anything. On the 180 rows whose gold transcription and gloss have the same word count, the results are the same (`aligned_word_count` rows in `scores.csv`). MER/WER above 1 means that the model writes more tokens than the gold gloss has, and each extra token counts as an insertion.
 
 Ainu dev = the dataset's `eval` split (218 rows). The Ainu source is in katakana, and the gold transcription is Latin script. Known data issues are listed in `data/manifest_ainu.json`; for example, only 180/750 test rows have the same number of words in transcription and gloss, which matters for word-level accuracy.
 
@@ -30,6 +45,8 @@ Ainu dev = the dataset's `eval` split (218 rows). The Ainu source is in katakana
 | `data/manifest_ainu.json` | Ainu dataset ID, pinned revision, split names and counts, data-quality notes. |
 | `zero_shot/run_zero_shot.py` | The runner. It loads data and model, fills in the prompts, generates, parses the answers, and writes a CSV plus a `.meta.json` for each setting. CLI: `--lang korean/ainu`, `--split dev/test`, `--limit N`, `--strategy all_in_one/step_by_step/two_stage/both` (`both` = all-in-one + step-by-step). |
 | `zero_shot/zero_shot_bolmo.ipynb` | Colab notebook: install, choose `LANG`, prompt preview, 10-row dev smoke test, full test run, download. |
+| `zero_shot/score_zero_shot.py` | Scores a language's two test CSVs with `evaluation/metrics.py` and writes `results/zero_shot/<lang>/scores.csv` (`--lang ainu`; `--check-korean` re-checks the Korean numbers). |
+| `evaluation/metrics.py`, `evaluation/test_metrics.py` | Team metrics by Soyeong, copied unchanged from the `soyeong/evaluation` branch. |
 | `zero_shot/test_parsing.py` | CPU-only checks for prompts, parsing and the stopping logic (`python zero_shot/test_parsing.py`). |
 | `results/zero_shot/bolmo-1b_all_in_one_test.csv` | Korean all-in-one test predictions (263 rows, prompt v3). |
 | `results/zero_shot/bolmo-1b_step_by_step_test.csv` | Korean **two-stage** test predictions (263 rows). The file name is from before the step-by-step definition changed; it is kept because Soyeong's evaluation reads it. |
