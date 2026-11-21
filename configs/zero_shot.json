@@ -37,6 +37,11 @@
       "language_name": "Ainu",
       "dataset_manifest": "data/manifest_ainu.json",
       "output_dir": "results/zero_shot/ainu"
+    },
+    "tsez": {
+      "language_name": "Tsez",
+      "dataset_manifest": "data/manifest_tsez.json",
+      "output_dir": "results/zero_shot/tsez"
     }
   },
   "input_fields": {
