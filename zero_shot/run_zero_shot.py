@@ -24,6 +24,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import platform
 import re
 import subprocess
@@ -338,7 +339,7 @@ class Generator:
 # ----------------------------------------------------------------------------- runs
 
 
-def run_all_in_one(gen: Generator, rows: list[dict], template: str) -> list[dict]:
+def run_all_in_one(gen: Generator, rows: list[dict], template: str, on_record=None) -> list[dict]:
     out = []
     for i, r in enumerate(rows, 1):
         prompt = render(template, original_script=r["text"], translation=r["translation"])
@@ -353,11 +354,13 @@ def run_all_in_one(gen: Generator, rows: list[dict], template: str) -> list[dict
             "raw_output": raw,
             "n_new_tokens": n_new,
         })
+        if on_record:
+            on_record(out[-1])
         _progress(i, len(rows), r["id"], status)
     return out
 
 
-def run_step_by_step(gen: Generator, rows: list[dict], template: str) -> list[dict]:
+def run_step_by_step(gen: Generator, rows: list[dict], template: str, on_record=None) -> list[dict]:
     """One call; the prompt asks for Step 1 (transliteration), then Step 2 (gloss)."""
     out = []
     for i, r in enumerate(rows, 1):
@@ -373,11 +376,13 @@ def run_step_by_step(gen: Generator, rows: list[dict], template: str) -> list[di
             "raw_output": raw,
             "n_new_tokens": n_new,
         })
+        if on_record:
+            on_record(out[-1])
         _progress(i, len(rows), r["id"], status)
     return out
 
 
-def run_two_stage(gen: Generator, rows: list[dict], t_step1: str, t_step2: str) -> list[dict]:
+def run_two_stage(gen: Generator, rows: list[dict], t_step1: str, t_step2: str, on_record=None) -> list[dict]:
     """Two calls: transliteration, then gloss from the model's own predicted transliteration."""
     out = []
     for i, r in enumerate(rows, 1):
@@ -408,6 +413,8 @@ def run_two_stage(gen: Generator, rows: list[dict], t_step1: str, t_step2: str) 
             "n_new_tokens_step1": n1,
             "n_new_tokens_step2": n2,
         })
+        if on_record:
+            on_record(out[-1])
         _progress(i, len(rows), r["id"], status)
     return out
 
@@ -425,6 +432,71 @@ def _gold(r: dict) -> dict:
 def _progress(i: int, n: int, rid: str, status: str) -> None:
     if i == 1 or i % 10 == 0 or i == n:
         print(f"  [{i}/{n}] {rid}: {status}", flush=True)
+
+
+# ----------------------------------------------------------------------------- checkpoints
+# With --resume, every finished row is appended to <out_csv>.partial.jsonl right away
+# (flushed and fsynced), so a crash, a closed browser or a recycled Colab runtime loses at
+# most the row in progress. Line 1 holds the run signature; a rerun with the same settings
+# skips the rows already in the file. Greedy decoding makes the resumed rows identical to
+# an uninterrupted run. Never run two processes on the same checkpoint at the same time.
+
+
+def checkpoint_path(out_csv: Path) -> Path:
+    return out_csv.with_suffix(".partial.jsonl")
+
+
+def load_checkpoint(path: Path, signature: dict) -> dict:
+    """Finished records by row id. Raises if the file belongs to a run with other settings.
+    A last line cut off by a crash is ignored (that row is simply redone)."""
+    done = {}
+    with open(path, encoding="utf-8") as fh:
+        lines = fh.read().split("\n")
+    if not lines or not lines[0].strip():
+        return done
+    header = json.loads(lines[0])
+    if header.get("signature") != signature:
+        raise SystemExit(f"{path} was written by a run with different settings; "
+                         "use another --out-dir or delete the file to start over.\n"
+                         f"  file: {header.get('signature')}\n  now:  {signature}")
+    for line in lines[1:]:
+        if not line.strip():
+            continue
+        try:
+            rec = json.loads(line)
+        except json.JSONDecodeError:
+            continue  # partial last line from an interrupted write
+        done[rec["id"]] = rec
+    return done
+
+
+def open_checkpoint(path: Path, signature: dict):
+    """Append handle; writes the signature line when the file is new or empty."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    new = not path.exists() or path.stat().st_size == 0
+    fh = open(path, "a", encoding="utf-8")
+    if new:
+        fh.write(json.dumps({"signature": signature}, ensure_ascii=False) + "\n")
+        _sync(fh)
+    else:
+        with open(path, "rb") as check:  # make sure we start on a fresh line
+            check.seek(-1, os.SEEK_END)
+            if check.read(1) != b"\n":
+                fh.write("\n")
+    return fh
+
+
+def append_checkpoint(fh, record: dict) -> None:
+    fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+    _sync(fh)
+
+
+def _sync(fh) -> None:
+    fh.flush()
+    try:
+        os.fsync(fh.fileno())
+    except OSError:
+        pass
 
 
 # ----------------------------------------------------------------------------- data + metadata
@@ -494,6 +566,9 @@ def main(argv: list[str] | None = None) -> list[Path]:
     ap.add_argument("--out-dir", default=None, help="default: output_dir of the language in the config")
     ap.add_argument("--shots", type=int, default=0,
                     help="few-shot: number of train examples in the prompt (0 = zero-shot, the default)")
+    ap.add_argument("--resume", action="store_true",
+                    help="save each finished row to <output>.partial.jsonl and skip rows already "
+                         "there; rerun the same command after an interruption to continue")
     args = ap.parse_args(argv)
     if args.shots < 0:
         raise SystemExit("--shots must be 0 or more")
@@ -537,7 +612,7 @@ def main(argv: list[str] | None = None) -> list[Path]:
             templates[k] = add_examples(templates[k], block, language_name)
         print(f"{args.shots}-shot: train examples {[e['id'] for e in examples]}")
 
-    gen = Generator(model_cfg["model_id"], model_cfg["revision"], gen_cfg["max_new_tokens"])
+    gen = None  # loaded on first use, so a fully finished resume needs no GPU
 
     if args.out_dir:
         out_dir = Path(args.out_dir)
@@ -552,13 +627,41 @@ def main(argv: list[str] | None = None) -> list[Path]:
     for strategy in strategies:
         print(f"== {strategy} ==")
         t0 = time.time()
-        if strategy == "all_in_one":
-            recs = run_all_in_one(gen, rows, templates["all_in_one"])
-        elif strategy == "step_by_step":
-            recs = run_step_by_step(gen, rows, templates["step_by_step"])
-        else:
-            recs = run_two_stage(gen, rows, templates["step_1_transliteration"], templates["step_2_gloss"])
         used = {k: templates[k] for k in needed[strategy]}
+        out_csv = out_dir / f"{tag}_{strategy}{shot_tag}_{args.split}{suffix}.csv"
+        signature = {
+            "language": args.lang, "strategy": strategy, "split": args.split, "limit": args.limit,
+            "shots": args.shots, "few_shot_examples": [e["id"] for e in examples],
+            "model_revision": model_cfg["revision"], "generation": gen_cfg,
+            "prompt_sha256_filled": {k: prompt_sha256(v) for k, v in used.items()},
+        }
+        done, fh = {}, None
+        if args.resume:
+            ids = [r["id"] for r in rows]
+            if len(set(ids)) != len(ids):
+                raise SystemExit("--resume needs unique row ids")
+            ckpt = checkpoint_path(out_csv)
+            if ckpt.exists():
+                done = load_checkpoint(ckpt, signature)
+            print(f"  resume: {len(done)}/{len(rows)} rows already in {ckpt}", flush=True)
+            fh = open_checkpoint(ckpt, signature)
+        todo = [r for r in rows if r["id"] not in done]
+        new = []
+        if todo:
+            if gen is None:
+                gen = Generator(model_cfg["model_id"], model_cfg["revision"], gen_cfg["max_new_tokens"])
+            on_record = (lambda rec: append_checkpoint(fh, rec)) if fh else None
+            if strategy == "all_in_one":
+                new = run_all_in_one(gen, todo, templates["all_in_one"], on_record)
+            elif strategy == "step_by_step":
+                new = run_step_by_step(gen, todo, templates["step_by_step"], on_record)
+            else:
+                new = run_two_stage(gen, todo, templates["step_1_transliteration"],
+                                    templates["step_2_gloss"], on_record)
+        if fh:
+            fh.close()
+        by_id = {**done, **{r["id"]: r for r in new}}
+        recs = [by_id[r["id"]] for r in rows]
         meta = {
             "language": args.lang,
             "strategy": strategy,
@@ -578,13 +681,14 @@ def main(argv: list[str] | None = None) -> list[Path]:
                                    "transcription": e["transcription"], "glosses": e["glosses"]}
                                   for e in examples],
             "generation": gen_cfg,
-            "stopping_criteria_used": gen.use_stopping,
+            "stopping_criteria_used": gen.use_stopping if gen else None,
             "seed": cfg["seed"],
             "git_sha": _git_sha(),
             "runtime_seconds": round(time.time() - t0, 1),
+            "resumed": bool(args.resume and done),
+            "rows_from_checkpoint": len(done),
             "versions": _versions(),
         }
-        out_csv = out_dir / f"{tag}_{strategy}{shot_tag}_{args.split}{suffix}.csv"
         write_outputs(recs, out_csv, meta)
         written.append(out_csv)
     return written

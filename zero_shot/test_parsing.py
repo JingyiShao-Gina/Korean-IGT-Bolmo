@@ -132,6 +132,53 @@ for key in ("all_in_one", "step_by_step"):
     assert p.startswith(JT[key].replace(fields, "").rsplit("\n\nTransliteration:", 1)[0].rstrip() + "\n\n")
 assert rz.examples_block([{**train[0], "glosses": "NEG\n-POL"}], "Jejueo").endswith("Gloss: NEG -POL")
 
+# --- --resume: a run interrupted after 3 rows and resumed equals an uninterrupted run
+import tempfile  # noqa: E402
+
+
+class FakeGen:
+    """Deterministic stand-in for the model; optionally crashes after `fail_after` calls."""
+    def __init__(self, fail_after=None):
+        self.calls, self.fail_after = 0, fail_after
+
+    def complete(self, prompt, kind):
+        self.calls += 1
+        if self.fail_after is not None and self.calls > self.fail_after:
+            raise RuntimeError("simulated disconnect")
+        word = prompt.split("Original Korean script: ")[1].split("\n")[0]
+        return f" {word}-tr\nGloss: {word}-GL\n", 10, False
+
+
+rows = [{"id": f"r{i}", "text": f"w{i}", "translation": f"t{i}", "transcription": f"w{i}",
+         "glosses": f"g{i}"} for i in range(7)]
+sig = {"language": "korean", "strategy": "all_in_one", "shots": 0}
+full = rz.run_all_in_one(FakeGen(), rows, T["all_in_one"])
+with tempfile.TemporaryDirectory() as tmp:
+    ck = rz.checkpoint_path(Path(tmp) / "out.csv")
+    fh = rz.open_checkpoint(ck, sig)
+    try:
+        rz.run_all_in_one(FakeGen(fail_after=3), rows, T["all_in_one"], lambda r: rz.append_checkpoint(fh, r))
+        raise AssertionError("simulated crash did not happen")
+    except RuntimeError:
+        pass
+    fh.close()
+    with open(ck, "a", encoding="utf-8") as raw:  # a half-written last line from the crash
+        raw.write('{"id": "r3", "pred_gl')
+    done = rz.load_checkpoint(ck, sig)
+    assert sorted(done) == ["r0", "r1", "r2"], sorted(done)
+    fh = rz.open_checkpoint(ck, sig)                # resume appends on a fresh line
+    todo = [r for r in rows if r["id"] not in done]
+    new = rz.run_all_in_one(FakeGen(), todo, T["all_in_one"], lambda r: rz.append_checkpoint(fh, r))
+    fh.close()
+    by_id = {**done, **{r["id"]: r for r in new}}
+    assert [by_id[r["id"]] for r in rows] == full    # identical to the uninterrupted run
+    assert sorted(rz.load_checkpoint(ck, sig)) == [r["id"] for r in rows]
+    try:
+        rz.load_checkpoint(ck, {**sig, "shots": 3})  # other settings must not be mixed in
+        raise AssertionError("signature mismatch not detected")
+    except SystemExit:
+        pass
+
 # --- filled with "Korean", the prompts are exactly the ones used before (v3 runs)
 ref_dir = sys.argv[1] if len(sys.argv) > 1 else None
 if ref_dir:
