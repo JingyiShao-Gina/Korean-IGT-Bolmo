@@ -50,6 +50,26 @@ def morphemes(text) -> list[str]:
     return [m for w in words(text) for m in MORPHEME_BOUNDARY.split(w) if m]
 
 
+def join_detached_affixes(text) -> str:
+    """Re-attach affixes that a dataset writes as separate tokens.
+
+    Some datasets (e.g. Jejueo, from wav2gloss/DoReCo) write a gloss as
+    "eat -PST -POL -DECL" instead of "eat-PST-POL-DECL". A token that starts with
+    "-" or "=" is joined to the previous token, and a token that ends with "-" or
+    "=" is joined to the next one. Morphemes are unchanged; only the word
+    boundaries are restored, so that word accuracy compares whole words.
+    """
+    out: list[str] = []
+    glue = False
+    for tok in words(text):
+        if out and (glue or tok[0] in "-="):
+            out[-1] += tok
+        else:
+            out.append(tok)
+        glue = tok[-1] in "-="
+    return " ".join(out)
+
+
 def positional_correct(pred: list[str], gold: list[str]) -> int:
     """Number of gold positions whose token is predicted at the same index."""
     return sum(1 for i, g in enumerate(gold) if i < len(pred) and pred[i] == g)

@@ -17,6 +17,7 @@ Input: original script (`text`) + English translation (`translation`). Output: t
 | Korean | `Soyyeongg/Korean_igt_cleaned` (`data/manifest.json`, cleaned by Soyeong) | 263 | all-in-one and two-stage done (`results/zero_shot/`); single-call step-by-step to run |
 | Ainu | `lowresource-igt/Ainu_igt_dataset` (`data/manifest_ainu.json`, **not cleaned**) | 750 | zero-shot only (no LoRA). **Done** (prompt v5): `results/zero_shot/ainu/bolmo-1b_{all_in_one,step_by_step}_test.csv`; scores in `results/zero_shot/ainu/scores.csv` |
 | Tsez (ddo) | `lowresource-igt/Tsez_igt_dataset` (`data/manifest_tsez.json`, **not cleaned**) | 445 | zero-shot only. **Done** (prompt v5, Theo): `results/zero_shot/tsez/bolmo-1b_{all_in_one,step_by_step}_test.csv`; scores in `results/zero_shot/tsez/scores.csv` |
+| Jejueo | `lowresource-igt/Jejueo_igt_dataset` (`data/manifest_jejueo.json`, **not cleaned**) | 712 | zero-shot only. **Done** (prompt v5, Soyeong): `results/zero_shot/jejueo/bolmo-1b_{all_in_one,step_by_step}_test.csv`; scores in `results/zero_shot/jejueo/scores.csv`. Glosses write suffixes as separate tokens (`eat -PST -POL -DECL`); scoring re-attaches them before word-level metrics. Gold transcription is IPA. |
 
 ### Ainu zero-shot scores (test, 750 rows)
 
@@ -52,6 +53,24 @@ Scored with `zero_shot/score_zero_shot.py --lang tsez` (same metrics as Ainu). R
 Same failure as Ainu: Bolmo 1B copies the Cyrillic source unchanged as "transliteration" (the gold is Latin script, hence the very low transliteration chrF++) and copies the English translation as "gloss", with no gloss tags. The step-by-step vs all-in-one difference is too small to mean anything. All 445 Tsez test rows have the same word count in transcription and gloss, so the `aligned_word_count` rows in `scores.csv` equal the `all` rows. The Colab run installed `xlstm` 2.0.3 (the README pins 2.0.4).
 
 Tsez dev = the dataset's `eval` split (445 rows). Source: GlossLM; source text is Cyrillic, gold transcription is Latin script.
+
+### Jejueo zero-shot scores (test, 712 rows)
+
+Scored with `zero_shot/score_zero_shot.py --lang jejueo` (same metrics as Ainu and Tsez). The Jejueo glosses write suffixes as separate tokens (`eat -PST -POL -DECL`), so the script first re-attaches them (`metrics.join_detached_affixes`, both gold and prediction); this changes only word-level metrics, not morpheme-level ones. Run on a Colab T4 GPU; runtime about 37 min (all-in-one) and 27 min (step-by-step).
+
+| | All-in-one | Step-by-step |
+|---|---|---|
+| Gloss morpheme accuracy | 1.08% | 1.08% |
+| Gloss word accuracy | 1.21% | 1.18% |
+| Gloss MER / WER | 1.06 / 1.50 | 1.22 / 1.82 |
+| Gloss chrF++ | 8.71 | 9.08 |
+| Transliteration chrF++ | 0.30 | 0.18 |
+| Transliteration word accuracy | 0.00% | 0.00% |
+| Parse failure (`missing_gloss`) / truncation | 6.0% / 6.0% | 1.7% / 1.7% |
+
+Same failure as Ainu and Tsez: Bolmo 1B copies the Hangul source unchanged as "transliteration" and the English translation as "gloss", with no gloss tags. The gold transcription is IPA (`məkəsʰuta`), so transliteration scores are close to zero. The few matches are English words at the same position as in the gold gloss (`so` 11×, `and`, `but`, `now`, `go`, …). The two settings are not meaningfully different. On the 648 rows whose gold transcription and (re-joined) gloss have the same word count, the results are the same (`aligned_word_count` rows in `scores.csv`). The Colab run installed `xlstm` 2.0.3 (the README pins 2.0.4).
+
+Jejueo dev = the dataset's `eval` split (211 rows). In the 10-row dev smoke test, one row had the source text `[ ]` (an empty placeholder in the spoken corpus) and the step-by-step output was a repeated character; the test split has no such rows. Source: wav2gloss / DoReCo spoken corpus. Known data issues are listed in `data/manifest_jejueo.json`.
 
 ## What each file does
 

@@ -7,7 +7,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
-from metrics import (edit_distance, evaluate, morphemes, normalize,  # noqa: E402
+from metrics import (edit_distance, evaluate, join_detached_affixes, morphemes, normalize,  # noqa: E402
                      positional_correct, score_level, words)
 
 GOLD = "guest-NOM two CL that wine-ACC drink-PST-DECL"
@@ -73,6 +73,22 @@ def test_case_insensitive_accuracy():
     assert r["gloss_morpheme_accuracy"] == 1 and r["gloss_mer"] == 0
     assert r["gloss_morpheme_accuracy_case_sensitive"] == 1 / 4
     assert r["gloss_word_accuracy_case_sensitive"] == 0
+
+
+def test_join_detached_affixes():
+    # Jejueo test rows: suffixes are separate tokens in the dataset
+    assert join_detached_affixes("NEG -POL -DECL 1SG -TOP eat -PST -POL -DECL") \
+        == "NEG-POL-DECL 1SG-TOP eat-PST-POL-DECL"
+    # a token ending in "-" attaches to the next one
+    assert join_detached_affixes("DEM.PROX- thing_NOM see -PRS") == "DEM.PROX-thing_NOM see-PRS"
+    assert join_detached_affixes("go =TOP") == "go=TOP"
+    # already joined glosses and empty input are unchanged
+    assert join_detached_affixes("guest-NOM two CL") == "guest-NOM two CL"
+    assert join_detached_affixes("") == ""
+    # morphemes do not change, only word boundaries
+    g = "go -IRR -POL -DECL DEM.DIST.be -CVB.but approximately six hour.CLF -CVB.CND"
+    assert morphemes(join_detached_affixes(g)) == morphemes(g)
+    assert len(words(join_detached_affixes(g))) == 5
 
 
 def test_empty_and_malformed_prediction():
