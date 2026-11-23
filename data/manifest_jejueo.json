@@ -1,0 +1,26 @@
+{
+  "dataset_id": "lowresource-igt/Jejueo_igt_dataset",
+  "dataset_config": "default",
+  "revision": "c90ef54b75d2d32d2aa73e344e3229290055d1bf",
+  "language": "Jejueo (jeju1234)",
+  "license": "not stated upstream",
+  "cleaned": false,
+  "cleaning_note": "Original upstream data (source: wav2gloss / DoReCo spoken corpus), not cleaned by the team. Known issues: (1) glosses write suffixes as separate tokens ('eat -PST -POL -DECL'), see gloss_affixes_detached; (2) the gold transcription is IPA ('məkəsʰuta'), not a romanization, so transliteration scores are expected to be near zero; (3) spoken data with hesitations and false starts ('찾-'); (4) 113/712 test texts contain archaic Hangul jamo; (5) 25 test texts also appear in train (irrelevant for zero-shot).",
+  "gloss_affixes_detached": true,
+  "gloss_affixes_note": "Scoring re-attaches tokens that start with '-' or '=' to the previous token (and tokens ending in '-' or '=' to the next one) before word-level metrics; morphemes are unchanged. After joining, 648/712 test rows (91%) have the same number of words in transcription and gloss (14% before).",
+  "field_mapping": {
+    "source": "text",
+    "transliteration": "transcription",
+    "gloss": "glosses"
+  },
+  "split_mapping": {
+    "train": "train",
+    "validation": "eval",
+    "test": "test"
+  },
+  "split_counts": {
+    "train": 704,
+    "validation": 211,
+    "test": 712
+  }
+}

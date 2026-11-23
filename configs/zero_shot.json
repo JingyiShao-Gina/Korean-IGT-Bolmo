@@ -42,6 +42,11 @@
       "language_name": "Tsez",
       "dataset_manifest": "data/manifest_tsez.json",
       "output_dir": "results/zero_shot/tsez"
+    },
+    "jejueo": {
+      "language_name": "Jejueo",
+      "dataset_manifest": "data/manifest_jejueo.json",
+      "output_dir": "results/zero_shot/jejueo"
     }
   },
   "input_fields": {

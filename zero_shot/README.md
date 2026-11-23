@@ -17,6 +17,7 @@ Input: original script (`text`) + English translation (`translation`). Output: t
 | Korean | `Soyyeongg/Korean_igt_cleaned` (`data/manifest.json`, cleaned by Soyeong) | 263 | all-in-one and two-stage done (`results/zero_shot/`); single-call step-by-step to run |
 | Ainu | `lowresource-igt/Ainu_igt_dataset` (`data/manifest_ainu.json`, **not cleaned**) | 750 | zero-shot only (no LoRA). **Done** (prompt v5): `results/zero_shot/ainu/bolmo-1b_{all_in_one,step_by_step}_test.csv`; scores in `results/zero_shot/ainu/scores.csv` |
 | Tsez (ddo) | `lowresource-igt/Tsez_igt_dataset` (`data/manifest_tsez.json`, **not cleaned**) | 445 | zero-shot only. **Done** (prompt v5, Theo): `results/zero_shot/tsez/bolmo-1b_{all_in_one,step_by_step}_test.csv`; scores in `results/zero_shot/tsez/scores.csv` |
+| Jejueo | `lowresource-igt/Jejueo_igt_dataset` (`data/manifest_jejueo.json`, **not cleaned**) | 712 | zero-shot only (Soyeong). To run. Glosses write suffixes as separate tokens (`eat -PST -POL -DECL`); scoring re-attaches them before word-level metrics. Gold transcription is IPA. |
 
 ### Ainu zero-shot scores (test, 750 rows)
 

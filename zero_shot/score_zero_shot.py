@@ -8,6 +8,10 @@ results/zero_shot/<lang>/scores.csv. Each strategy is scored on all test rows an
 the subset whose gold transcription and gloss have the same number of words (the
 Ainu data is not cleaned, and only 180/750 Ainu test rows are aligned).
 
+If the language's manifest sets "gloss_affixes_detached" (Jejueo: "eat -PST -POL -DECL"),
+the gold and predicted glosses are first passed through metrics.join_detached_affixes, so
+that word-level metrics compare whole words; morpheme-level metrics are unaffected.
+
 --check-korean also re-scores the Korean all-in-one file and asserts that it matches
 results/evaluation/test_scores.csv on the soyeong/evaluation branch (0.0594 morpheme
 accuracy), to show that this script computes the same numbers.
@@ -15,13 +19,19 @@ accuracy), to show that this script computes the same numbers.
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "evaluation"))
 import pandas as pd  # noqa: E402
-from metrics import evaluate, words  # noqa: E402
+from metrics import evaluate, join_detached_affixes, words  # noqa: E402
+
+
+def manifest_for(lang: str) -> dict:
+    cfg = json.loads((ROOT / "configs/zero_shot.json").read_text(encoding="utf-8"))
+    return json.loads((ROOT / cfg["languages"][lang]["dataset_manifest"]).read_text(encoding="utf-8"))
 
 STRATEGIES = ("all_in_one", "step_by_step")
 COLS = ["language", "strategy", "subset", "n", "gloss_morpheme_accuracy", "gloss_word_accuracy",
@@ -51,10 +61,16 @@ def main(argv=None) -> pd.DataFrame:
         print("Korean all-in-one check matches the evaluation branch:", got)
 
     folder = ROOT / "results/zero_shot" / args.lang
+    join_affixes = manifest_for(args.lang).get("gloss_affixes_detached", False)
+    if join_affixes:
+        print("Gloss affixes are detached in this dataset: re-attaching them before scoring.")
     rows = []
     for strategy in STRATEGIES:
         f = folder / f"bolmo-1b_{strategy}_test.csv"
         df = pd.read_csv(f, dtype=str, keep_default_na=False)
+        if join_affixes:
+            df["gold_gloss"] = df.gold_gloss.map(join_detached_affixes)
+            df["pred_gloss"] = df.pred_gloss.map(join_detached_affixes)
         aligned = [len(words(t)) == len(words(g)) for t, g in zip(df.gold_transliteration, df.gold_gloss)]
         for subset, d in (("all", df), ("aligned_word_count", df[aligned])):
             rows.append({"language": args.lang, "strategy": strategy, "subset": subset,
