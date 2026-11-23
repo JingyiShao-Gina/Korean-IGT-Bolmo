@@ -72,6 +72,34 @@ Same failure as Ainu and Tsez: Bolmo 1B copies the Hangul source unchanged as "t
 
 Jejueo dev = the dataset's `eval` split (211 rows). In the 10-row dev smoke test, one row had the source text `[ ]` (an empty placeholder in the spoken corpus) and the step-by-step output was a repeated character; the test split has no such rows. Source: wav2gloss / DoReCo spoken corpus. Known data issues are listed in `data/manifest_jejueo.json`.
 
+## Few-shot
+
+`--shots K` adds K solved train examples to the all-in-one and step-by-step prompts. Everything else is the same as zero-shot: model, greedy decoding, generation budget, parsing and scoring. Zero-shot runs (`--shots 0`, the default) are unchanged.
+
+```
+python zero_shot/run_zero_shot.py --lang jejueo --split dev --limit 10 --shots 3   # smoke test
+python zero_shot/run_zero_shot.py --lang jejueo --split test --shots 3             # full run
+python zero_shot/score_zero_shot.py --lang jejueo --shots 3                        # scores
+```
+
+On Colab, use `zero_shot/few_shot_bolmo.ipynb` (set `LANG` and `SHOTS`).
+
+- **Examples.** The same K examples are used for every evaluated row. They are drawn with seed 42 from train rows that meet all of these conditions (settings under `few_shot` in `configs/zero_shot.json`):
+  - all four fields are filled in
+  - the text is not a placeholder such as `[ ]`
+  - the gloss contains a grammatical tag
+  - the text has at least 3 words and at most 60 characters
+  - the gloss has at most 100 characters
+  - the text does not occur in the dev or test split, so the model is never shown the answer
+
+  Because dev and test texts are both excluded, the dev smoke test and the test run use the same examples. Prompt layout: the template's header and instructions come first, then the K examples (`Original … script:`, `English translation:`, `Transliteration:`, `Gloss:`, with gold values), then the sentence to annotate in the same format, ending at `Transliteration:`. A first version put the instructions between the sentence and the answer label, and on 2 Jejueo dev rows Bolmo copied example 1 word for word. That is why the sentence now comes right before the label. Example glosses are copied from the dataset as they are, so Jejueo examples keep detached suffixes (`eat -PST -DECL`).
+- **Output.** Results are written to `results/few_shot/<lang>/bolmo-1b_<strategy>_<K>shot_<split>.csv`. The `.meta.json` file records `shots`, the seed and the full examples (`few_shot_examples`).
+- **Prompt length.** With 3 shots, test prompts are about 1.2–1.6 KB on average (Jejueo 1.2, Ainu 1.3, Tsez 1.6), compared with about 0.5–0.7 KB for zero-shot. On a T4 the 10-row Jejueo dev smoke test took 145 s (all-in-one) and 160 s (step-by-step), about 3× zero-shot (45 s). Most of that is repetition loops (3/10 truncated in each setting). Expect roughly 2 hours per setting on test. The notebook therefore runs the two settings in separate cells (section 5: all-in-one, section 6: step-by-step), each followed by its own download.
+- **Selected train ids (3 shots).**
+  - Jejueo: `…jeju0060-05_0125`, `…jeju0060-05_0031`, `…jeju0063-01-02_0221`
+  - Ainu: `OI990508KY.094`, `K7807151KY.122`, `K7708242UP.102`
+  - Tsez: `708`, `175`, `1713`
+
 ## What each file does
 
 | File | Purpose |
@@ -83,6 +111,7 @@ Jejueo dev = the dataset's `eval` split (211 rows). In the 10-row dev smoke test
 | `data/manifest_ainu.json` | Ainu dataset ID, pinned revision, split names and counts, data-quality notes. |
 | `zero_shot/run_zero_shot.py` | The runner. It loads data and model, fills in the prompts, generates, parses the answers, and writes a CSV plus a `.meta.json` for each setting. CLI: `--lang korean/ainu`, `--split dev/test`, `--limit N`, `--strategy all_in_one/step_by_step/two_stage/both` (`both` = all-in-one + step-by-step). |
 | `zero_shot/zero_shot_bolmo.ipynb` | Colab notebook: install, choose `LANG`, prompt preview, 10-row dev smoke test, full test run, download. |
+| `zero_shot/few_shot_bolmo.ipynb` | Colab notebook for few-shot: like the zero-shot one, plus `SHOTS`; checks out the few-shot branch, previews the prompt with its examples, downloads `results/few_shot/<lang>/`. |
 | `zero_shot/score_zero_shot.py` | Scores a language's two test CSVs with `evaluation/metrics.py` and writes `results/zero_shot/<lang>/scores.csv` (`--lang ainu`; `--check-korean` re-checks the Korean numbers). |
 | `evaluation/metrics.py`, `evaluation/test_metrics.py` | Team metrics by Soyeong, copied unchanged from the `soyeong/evaluation` branch. |
 | `zero_shot/test_parsing.py` | CPU-only checks for prompts, parsing and the stopping logic (`python zero_shot/test_parsing.py`). |

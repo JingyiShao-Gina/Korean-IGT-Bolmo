@@ -9,6 +9,11 @@ Strategies (all prompts end at an answer label, Bolmo is a base model):
 Usage (from the repository root, on a GPU machine such as Colab):
     python zero_shot/run_zero_shot.py --lang ainu --split dev --limit 10    # smoke test
     python zero_shot/run_zero_shot.py --lang ainu --split test              # full run
+    python zero_shot/run_zero_shot.py --lang jejueo --split test --shots 3  # few-shot
+
+--shots K puts K fixed train examples (with gold transliteration and gloss) into the
+all-in-one and step-by-step prompts, before the sentence to annotate; output goes to
+results/few_shot/<lang>/<model>_<strategy>_<K>shot_<split>.csv. --shots 0 is zero-shot.
 
 Writes <output_dir of the language>/<model>_<strategy>_<split>[_n<limit>].csv plus a run
 metadata JSON. The prompt/parse helpers have no torch dependency, so they can be tested
@@ -65,6 +70,81 @@ def fill_language(template: str, language_name: str) -> str:
 
 def prompt_sha256(template: str) -> str:
     return hashlib.sha256(template.encode("utf-8")).hexdigest()
+
+
+# ----------------------------------------------------------------------------- few-shot
+
+
+def _one_line(value) -> str:
+    """Collapse whitespace so an example field never breaks the line-based answer format."""
+    return " ".join(str(value or "").split())
+
+
+def select_examples(train_rows: list[dict], k: int, seed: int, exclude_texts=(),
+                    max_text_chars: int = 60, max_gloss_chars: int = 100, min_text_words: int = 3) -> list[dict]:
+    """K fixed in-context examples from the train split, the same for every evaluated row.
+
+    A train row qualifies when all four fields are non-empty, its text is not a placeholder
+    such as '[ ]', its gloss contains at least one grammatical tag (2+ capital letters, so the
+    examples show what a gloss looks like), it has at least min_text_words words and is short
+    (keeps the prompt short; Bolmo is byte-level), and its text is not in exclude_texts (the
+    dev and test texts; otherwise the model would be shown the answer). The K rows are drawn with random.Random(seed).
+    """
+    import random
+
+    excluded = {_one_line(t) for t in exclude_texts}
+    pool = []
+    for r in train_rows:
+        text, gloss = _one_line(r.get("text")), _one_line(r.get("glosses"))
+        if not all(_one_line(r.get(f)) for f in ("text", "translation", "transcription", "glosses")):
+            continue
+        if re.fullmatch(r"\[\s*\]", text) or text in excluded:
+            continue
+        if len(text) > max_text_chars or len(gloss) > max_gloss_chars or len(text.split()) < min_text_words:
+            continue
+        if not re.search(r"[A-Z]{2,}", gloss):
+            continue
+        pool.append(r)
+    if len(pool) < k:
+        raise ValueError(f"only {len(pool)} train rows qualify as examples, need {k}")
+    return random.Random(seed).sample(pool, k)
+
+
+def examples_block(examples: list[dict], language_name: str) -> str:
+    """The examples in exactly the field and answer format the target sentence gets."""
+    parts = []
+    for e in examples:
+        parts.append(
+            f"Original {language_name} script: {_one_line(e['text'])}\n"
+            f"English translation: {_one_line(e['translation'])}\n"
+            f"Transliteration: {_one_line(e['transcription'])}\n"
+            f"Gloss: {_one_line(e['glosses'])}"
+        )
+    return "\n\n".join(parts)
+
+
+def add_examples(template: str, block: str, language_name: str) -> str:
+    """Turn a language-filled zero-shot template into a few-shot prompt:
+
+        <header and instructions of the template>
+        <example 1> ... <example K>          (script, translation, Transliteration, Gloss)
+        Original <language> script: {original_script}
+        English translation: {translation}
+        Transliteration:
+
+    The sentence to annotate comes last, in the same format as the examples, so the prompt
+    ends at the answer label right after it. (v1 put the examples before the sentence and
+    left the instructions between the sentence and the label; on 2 Jejueo dev rows Bolmo
+    then copied example 1 verbatim.)
+    """
+    fields = (f"Original {language_name} script: {{original_script}}\n"
+              "English translation: {translation}\n")
+    label = "\n\nTransliteration:"
+    if template.count(fields) != 1 or not template.endswith(label):
+        raise ValueError("template must hold the script and translation lines once and end with "
+                         "'Transliteration:'")
+    instructions = template.replace(fields, "")[: -len(label)].rstrip()
+    return f"{instructions}\n\n{block}\n\n{fields}Transliteration:"
 
 
 # ----------------------------------------------------------------------------- parsing
@@ -412,7 +492,11 @@ def main(argv: list[str] | None = None) -> list[Path]:
     ap.add_argument("--strategy", choices=[*STRATEGIES, "both"], default="both",
                     help="'both' = all_in_one + step_by_step (the two agenda settings)")
     ap.add_argument("--out-dir", default=None, help="default: output_dir of the language in the config")
+    ap.add_argument("--shots", type=int, default=0,
+                    help="few-shot: number of train examples in the prompt (0 = zero-shot, the default)")
     args = ap.parse_args(argv)
+    if args.shots < 0:
+        raise SystemExit("--shots must be 0 or more")
 
     cfg = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     if args.lang not in cfg["languages"]:
@@ -424,6 +508,8 @@ def main(argv: list[str] | None = None) -> list[Path]:
     manifest_path = ROOT / lang_cfg["dataset_manifest"]
 
     strategies = DEFAULT_STRATEGIES if args.strategy == "both" else (args.strategy,)
+    if args.shots and "two_stage" in strategies:
+        raise SystemExit("--shots is only implemented for all_in_one and step_by_step")
     needed = {"all_in_one": ["all_in_one"], "step_by_step": ["step_by_step"],
               "two_stage": ["step_1_transliteration", "step_2_gloss"]}
 
@@ -434,11 +520,34 @@ def main(argv: list[str] | None = None) -> list[Path]:
     templates = {k: fill_language(t, language_name) for k, t in generic.items()}
     rows = load_rows(args.split, args.limit, manifest_path)
     print(f"Loaded {len(rows)} {args.lang} {args.split} rows")
+
+    few_cfg = cfg["few_shot"]
+    examples = []
+    if args.shots:
+        if args.split == "train":
+            raise SystemExit("few-shot examples come from train, so evaluate on dev or test")
+        # never show a dev or test sentence as an example; excluding both keeps the
+        # examples identical for the dev smoke test and the test run
+        eval_texts = [r["text"] for sp in ("dev", "test") for r in load_rows(sp, None, manifest_path)]
+        examples = select_examples(load_rows("train", None, manifest_path), args.shots, few_cfg["seed"],
+                                   eval_texts, few_cfg["max_text_chars"], few_cfg["max_gloss_chars"],
+                                   few_cfg["min_text_words"])
+        block = examples_block(examples, language_name)
+        for k in ("all_in_one", "step_by_step"):
+            templates[k] = add_examples(templates[k], block, language_name)
+        print(f"{args.shots}-shot: train examples {[e['id'] for e in examples]}")
+
     gen = Generator(model_cfg["model_id"], model_cfg["revision"], gen_cfg["max_new_tokens"])
 
-    out_dir = Path(args.out_dir) if args.out_dir else ROOT / lang_cfg["output_dir"]
+    if args.out_dir:
+        out_dir = Path(args.out_dir)
+    elif args.shots:
+        out_dir = ROOT / few_cfg["output_dir"].format(lang=args.lang)
+    else:
+        out_dir = ROOT / lang_cfg["output_dir"]
     tag = f"bolmo-{model_cfg['size'].lower()}"
     suffix = f"_n{args.limit}" if args.limit else ""
+    shot_tag = f"_{args.shots}shot" if args.shots else ""
     written = []
     for strategy in strategies:
         print(f"== {strategy} ==")
@@ -463,6 +572,11 @@ def main(argv: list[str] | None = None) -> list[Path]:
             "prompt_files": {k: cfg["prompts"][k] for k in used},
             "prompt_sha256": {k: prompt_sha256(generic[k]) for k in used},
             "prompt_sha256_filled": {k: prompt_sha256(v) for k, v in used.items()},
+            "shots": args.shots,
+            "few_shot_seed": few_cfg["seed"] if args.shots else None,
+            "few_shot_examples": [{"id": e["id"], "text": e["text"], "translation": e["translation"],
+                                   "transcription": e["transcription"], "glosses": e["glosses"]}
+                                  for e in examples],
             "generation": gen_cfg,
             "stopping_criteria_used": gen.use_stopping,
             "seed": cfg["seed"],
@@ -470,7 +584,7 @@ def main(argv: list[str] | None = None) -> list[Path]:
             "runtime_seconds": round(time.time() - t0, 1),
             "versions": _versions(),
         }
-        out_csv = out_dir / f"{tag}_{strategy}_{args.split}{suffix}.csv"
+        out_csv = out_dir / f"{tag}_{strategy}{shot_tag}_{args.split}{suffix}.csv"
         write_outputs(recs, out_csv, meta)
         written.append(out_csv)
     return written

@@ -95,6 +95,43 @@ for lang, L in cfg["languages"].items():
 m_ainu = json.loads((rz.ROOT / cfg["languages"]["ainu"]["dataset_manifest"]).read_text(encoding="utf-8"))
 assert m_ainu["split_mapping"]["validation"] == "eval" and m_ainu["split_counts"]["test"] == 750
 
+# --- few-shot: example selection and prompt insertion
+train = [
+    {"id": "a", "text": "아니우다 난 먹엇우다.", "translation": "No thanks, I ate already.",
+     "transcription": "aniuta nan məkəsʰuta", "glosses": "NEG -POL -DECL 1SG -TOP eat -PST -POL -DECL"},
+    {"id": "h", "text": "야, 알앗우다.", "translation": "Alright!", "transcription": "ja alasʰuta",
+     "glosses": "yes know -PST -POL -DECL"},                                                # 2 words
+    {"id": "b", "text": "[ ]", "translation": "[ ]", "transcription": "x", "glosses": "X-NOM"},    # placeholder
+    {"id": "c", "text": "뭐", "translation": "what", "transcription": "mə", "glosses": "what"},     # no gloss tag
+    {"id": "d", "text": "아니 아니 궨찮수다.", "translation": "No, no, it's fine.",
+     "transcription": "ani ani kʷent͡ɕʰanhsʰuta", "glosses": "NEG NEG be_okay -POL -DECL"},
+    {"id": "e", "text": "a test sentence", "translation": "t", "transcription": "t", "glosses": "t-NOM"},  # in test
+    {"id": "f", "text": "x" * 61, "translation": "t", "transcription": "t", "glosses": "t-NOM"},      # too long
+    {"id": "g", "text": "a b\nc", "translation": "t", "transcription": "t", "glosses": ""},            # empty gloss
+]
+picked = rz.select_examples(train, 2, seed=42, exclude_texts=["a test sentence"])
+assert sorted(e["id"] for e in picked) == ["a", "d"]
+assert rz.select_examples(train, 2, 42, ["a test sentence"]) == picked          # deterministic
+try:
+    rz.select_examples(train, 3, 42, ["a test sentence"])
+    raise AssertionError("too few qualifying rows not detected")
+except ValueError:
+    pass
+JT = {k: rz.fill_language(t, "Jejueo") for k, t in GENERIC.items()}
+for key in ("all_in_one", "step_by_step"):
+    fs = rz.add_examples(JT[key], rz.examples_block(picked, "Jejueo"), "Jejueo")
+    p = rz.render(fs, original_script="갈거우다.", translation="I will go.")
+    # the target sentence comes last, in the examples' format, right before the answer label
+    assert p.endswith("Original Jejueo script: 갈거우다.\nEnglish translation: I will go.\nTransliteration:")
+    assert p.count("Original Jejueo script:") == 3                              # 2 examples + target
+    assert p.count("\nTransliteration:") == 3 and p.count("\nGloss:") == 2
+    assert "Gloss: NEG -POL -DECL 1SG -TOP eat -PST -POL -DECL" in p
+    # instructions come first, unchanged
+    assert p.index("Do not explain your answer.") < p.index("Original Jejueo script:")
+    fields = "Original Jejueo script: {original_script}\nEnglish translation: {translation}\n"
+    assert p.startswith(JT[key].replace(fields, "").rsplit("\n\nTransliteration:", 1)[0].rstrip() + "\n\n")
+assert rz.examples_block([{**train[0], "glosses": "NEG\n-POL"}], "Jejueo").endswith("Gloss: NEG -POL")
+
 # --- filled with "Korean", the prompts are exactly the ones used before (v3 runs)
 ref_dir = sys.argv[1] if len(sys.argv) > 1 else None
 if ref_dir:
