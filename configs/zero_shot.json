@@ -65,5 +65,13 @@
     "stop_rule": "single-answer prompts: first complete line; all-in-one and step-by-step: transliteration line + gloss line"
   },
   "seed": 42,
+  "few_shot": {
+    "note": "Used only with --shots K > 0. K fixed train examples (same for every evaluated row), drawn with this seed from train rows that have all fields, a gloss tag, at least min_text_words words, text <= max_text_chars and gloss <= max_gloss_chars, and whose text is not in the dev or test split (so the examples are the same for both).",
+    "seed": 42,
+    "max_text_chars": 60,
+    "max_gloss_chars": 100,
+    "min_text_words": 3,
+    "output_dir": "results/few_shot/{lang}"
+  },
   "save_raw_outputs": true
 }
