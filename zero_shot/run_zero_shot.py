@@ -111,11 +111,10 @@ def select_examples(train_rows: list[dict], k: int, seed: int, exclude_texts=(),
 
 
 def examples_block(examples: list[dict], language_name: str) -> str:
-    """The examples in the same field and answer format as the prompt itself."""
+    """The examples in exactly the field and answer format the target sentence gets."""
     parts = []
-    for i, e in enumerate(examples, 1):
+    for e in examples:
         parts.append(
-            f"Example {i}\n"
             f"Original {language_name} script: {_one_line(e['text'])}\n"
             f"English translation: {_one_line(e['translation'])}\n"
             f"Transliteration: {_one_line(e['transcription'])}\n"
@@ -125,12 +124,27 @@ def examples_block(examples: list[dict], language_name: str) -> str:
 
 
 def add_examples(template: str, block: str, language_name: str) -> str:
-    """Insert the examples into a language-filled template, right before the sentence to
-    annotate; the instructions and the final answer label stay as they are."""
-    marker = f"Original {language_name} script: {{original_script}}"
-    if template.count(marker) != 1:
-        raise ValueError(f"template must contain {marker!r} exactly once")
-    return template.replace(marker, f"{block}\n\nNow the sentence to annotate:\n{marker}")
+    """Turn a language-filled zero-shot template into a few-shot prompt:
+
+        <header and instructions of the template>
+        <example 1> ... <example K>          (script, translation, Transliteration, Gloss)
+        Original <language> script: {original_script}
+        English translation: {translation}
+        Transliteration:
+
+    The sentence to annotate comes last, in the same format as the examples, so the prompt
+    ends at the answer label right after it. (v1 put the examples before the sentence and
+    left the instructions between the sentence and the label; on 2 Jejueo dev rows Bolmo
+    then copied example 1 verbatim.)
+    """
+    fields = (f"Original {language_name} script: {{original_script}}\n"
+              "English translation: {translation}\n")
+    label = "\n\nTransliteration:"
+    if template.count(fields) != 1 or not template.endswith(label):
+        raise ValueError("template must hold the script and translation lines once and end with "
+                         "'Transliteration:'")
+    instructions = template.replace(fields, "")[: -len(label)].rstrip()
+    return f"{instructions}\n\n{block}\n\n{fields}Transliteration:"
 
 
 # ----------------------------------------------------------------------------- parsing

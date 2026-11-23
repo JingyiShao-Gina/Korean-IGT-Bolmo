@@ -120,14 +120,16 @@ except ValueError:
 JT = {k: rz.fill_language(t, "Jejueo") for k, t in GENERIC.items()}
 for key in ("all_in_one", "step_by_step"):
     fs = rz.add_examples(JT[key], rz.examples_block(picked, "Jejueo"), "Jejueo")
-    assert fs.endswith("\nTransliteration:")                                    # same answer label
     p = rz.render(fs, original_script="갈거우다.", translation="I will go.")
+    # the target sentence comes last, in the examples' format, right before the answer label
+    assert p.endswith("Original Jejueo script: 갈거우다.\nEnglish translation: I will go.\nTransliteration:")
     assert p.count("Original Jejueo script:") == 3                              # 2 examples + target
-    assert p.index("Example 2") < p.index("Now the sentence to annotate:") < p.index("갈거우다.")
+    assert p.count("\nTransliteration:") == 3 and p.count("\nGloss:") == 2
     assert "Gloss: NEG -POL -DECL 1SG -TOP eat -PST -POL -DECL" in p
-    # without examples the prompt is unchanged (zero-shot is not affected)
-    assert rz.render(JT[key], original_script="갈거우다.", translation="I will go.") in p.replace(
-        p[p.index("Example 1"):p.index("Original Jejueo script: 갈거우다.")], "")
+    # instructions come first, unchanged
+    assert p.index("Do not explain your answer.") < p.index("Original Jejueo script:")
+    fields = "Original Jejueo script: {original_script}\nEnglish translation: {translation}\n"
+    assert p.startswith(JT[key].replace(fields, "").rsplit("\n\nTransliteration:", 1)[0].rstrip() + "\n\n")
 assert rz.examples_block([{**train[0], "glosses": "NEG\n-POL"}], "Jejueo").endswith("Gloss: NEG -POL")
 
 # --- filled with "Korean", the prompts are exactly the ones used before (v3 runs)
