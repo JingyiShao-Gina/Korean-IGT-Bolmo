@@ -15,7 +15,7 @@ Input: original script (`text`) + English translation (`translation`). Output: t
 | Language | Data (manifest) | Test rows | Status |
 |---|---|---|---|
 | Korean | `Soyyeongg/Korean_igt_cleaned` (`data/manifest.json`, cleaned by Soyeong) | 263 | all-in-one and two-stage done (`results/zero_shot/`); single-call step-by-step to run |
-| Ainu | `lowresource-igt/Ainu_igt_dataset` (`data/manifest_ainu.json`, **not cleaned**) | 750 | zero-shot only (no LoRA). **Done** (prompt v5): `results/zero_shot/ainu/bolmo-1b_{all_in_one,step_by_step}_test.csv`; scores in `results/zero_shot/ainu/scores.csv` |
+| Ainu | `lowresource-igt/Ainu_igt_dataset` (`data/manifest_ainu.json`, **not cleaned**) | 750 | zero-shot only (no LoRA). **Done** (prompt v5): `results/zero_shot/ainu/bolmo-1b_{all_in_one,step_by_step}_test.csv`; scores in `results/zero_shot/ainu/scores.csv`. 3-shot **done**: `results/few_shot/ainu/` (scores below) |
 | Tsez (ddo) | `lowresource-igt/Tsez_igt_dataset` (`data/manifest_tsez.json`, **not cleaned**) | 445 | zero-shot only. **Done** (prompt v5, Theo): `results/zero_shot/tsez/bolmo-1b_{all_in_one,step_by_step}_test.csv`; scores in `results/zero_shot/tsez/scores.csv` |
 | Jejueo | `lowresource-igt/Jejueo_igt_dataset` (`data/manifest_jejueo.json`, **not cleaned**) | 712 | zero-shot only. **Done** (prompt v5, Soyeong): `results/zero_shot/jejueo/bolmo-1b_{all_in_one,step_by_step}_test.csv`; scores in `results/zero_shot/jejueo/scores.csv`. Glosses write suffixes as separate tokens (`eat -PST -POL -DECL`); scoring re-attaches them before word-level metrics. Gold transcription is IPA. |
 
@@ -100,6 +100,27 @@ On Colab, use `zero_shot/few_shot_bolmo.ipynb` (set `LANG` and `SHOTS`).
   - Jejueo: `…jeju0060-05_0125`, `…jeju0060-05_0031`, `…jeju0063-01-02_0221`
   - Ainu: `OI990508KY.094`, `K7807151KY.122`, `K7708242UP.102`
   - Tsez: `708`, `175`, `1713`
+
+### Ainu 3-shot scores (test, 750 rows)
+
+Results: `results/few_shot/ainu/bolmo-1b_{all_in_one,step_by_step}_3shot_test.csv`. Scores: `results/few_shot/ainu/scores.csv`, from `zero_shot/score_zero_shot.py --lang ainu --shots 3`. The run used a Colab T4 with `--resume` as background processes; each run finished in one go (`resumed: false`). Runtime was about 2.4 h (all-in-one) and 2.5 h (step-by-step). Zero-shot is shown in brackets for comparison.
+
+| | All-in-one | Step-by-step |
+|---|---|---|
+| Gloss morpheme accuracy | 1.47% (0.85%) | 1.61% (0.95%) |
+| Gloss word accuracy | 1.33% (0.87%) | 1.49% (0.95%) |
+| Gloss MER / WER | 2.95 / 2.83 | 3.39 / 3.33 |
+| Gloss chrF++ | 9.57 (9.79) | 9.01 (10.31) |
+| Transliteration chrF++ | 18.84 (5.11) | 18.40 (5.77) |
+| Transliteration word accuracy | 8.15% (0.55%) | 8.61% (0.57%) |
+| Parse failure (`missing_gloss`) / truncation | 6.4% / 11.1% | 6.5% / 12.4% |
+
+The examples change the kind of output.
+- **Transliteration.** Every transliteration is now in Latin script. In zero-shot, 99% of them kept the katakana. About 8% of the words match the gold exactly (for example `hine ora`), so transliteration chrF++ rises from about 5 to about 18.
+- **Gloss.** Glosses now look like IGT: about half of the all-in-one glosses contain gloss tags (`4.S`, `COP`, `INFR.EV`), against 4% in zero-shot. Copies of the English translation fall from 70% to 10% (all-in-one).
+- **Accuracy.** Gloss accuracy still stays below 2%, because the tags and stems rarely land on the right word. Many tags are copied from the examples (`INFR.EV COP then`).
+- **Gloss chrF++.** It barely changes. With MER/WER around 3, the glosses are much longer than the gold, often because the model repeats itself until it runs out of budget.
+- **Settings.** As in zero-shot, step-by-step and all-in-one are too close to tell apart.
 
 ## What each file does
 

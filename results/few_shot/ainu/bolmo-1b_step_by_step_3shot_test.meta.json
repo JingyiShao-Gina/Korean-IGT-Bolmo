@@ -1,0 +1,97 @@
+{
+  "language": "ainu",
+  "strategy": "step_by_step",
+  "split": "test",
+  "limit": null,
+  "model_id": "allenai/Bolmo-1B",
+  "model_revision": "452690a8cfab1dd1ec27b74f2667632f17a21b46",
+  "dataset_manifest": {
+    "dataset_id": "lowresource-igt/Ainu_igt_dataset",
+    "dataset_config": "default",
+    "revision": "bf06682cd822f0218940e7d907638cad3c87a58e",
+    "language": "Hokkaido Ainu (ainu1240)",
+    "license": "not stated upstream",
+    "cleaned": false,
+    "cleaning_note": "Original upstream data, not cleaned by the team. Known issues: inconsistent gloss labels (1SG / 1s / 1sA), extra spaces, half-width katakana, some broken glosses; only 180/750 test rows have equal word counts in transcription and gloss.",
+    "field_mapping": {
+      "source": "text",
+      "transliteration": "transcription",
+      "gloss": "glosses"
+    },
+    "split_mapping": {
+      "train": "train",
+      "validation": "eval",
+      "test": "test"
+    },
+    "split_counts": {
+      "train": 6726,
+      "validation": 218,
+      "test": 750
+    }
+  },
+  "prompt_version": "v5",
+  "language_name": "Ainu",
+  "prompt_files": {
+    "step_by_step": "zero_shot/prompts/step_by_step.txt"
+  },
+  "prompt_sha256": {
+    "step_by_step": "95c996272e199a4da2532b323d9fc855d890bbb0b255904abd89c97966b2c58d"
+  },
+  "prompt_sha256_filled": {
+    "step_by_step": "380d4f5d578b91f8e6a10fa41974805b0fec0fafaa0b578b6957d60cdab94284"
+  },
+  "shots": 3,
+  "few_shot_seed": 42,
+  "few_shot_examples": [
+    {
+      "id": "OI990508KY.094",
+      "text": "“*タ ウェンノ ... タネ 、 オカイ カムイ ネ ヤッカ",
+      "translation": "“now, [all] existing gods",
+      "transcription": "“*ta wenno ... tane , okay kamuy ne yakka",
+      "glosses": "here be.bad-ADV UNK now exist.PL god COP although"
+    },
+    {
+      "id": "K7807151KY.122",
+      "text": "V ウ ヤイコッパットゥイェ",
+      "translation": "And shredded my throat,",
+      "transcription": "v u yaykotpattuye",
+      "glosses": "RFN RTM REFL-NI.throat-cut-TR.SG"
+    },
+    {
+      "id": "K7708242UP.102",
+      "text": "オラウン チセ ソイ タ エｸ =アン ルウェ ネ アクス 、",
+      "translation": "When i made it to the front of my home,",
+      "transcription": "oraun cise soy ta ek =an ruwe ne akusu ,",
+      "glosses": "then house outside at come.SG=4.S INFR.EV COP then"
+    }
+  ],
+  "generation": {
+    "do_sample": false,
+    "num_beams": 1,
+    "max_new_tokens": 768,
+    "max_new_tokens_unit": "bytes (Bolmo is byte-level)",
+    "stop_rule": "single-answer prompts: first complete line; all-in-one and step-by-step: transliteration line + gloss line"
+  },
+  "stopping_criteria_used": true,
+  "seed": 42,
+  "git_sha": "a65a7f9632e796d0423564fe68493917b5f01d72",
+  "runtime_seconds": 8996.6,
+  "resumed": false,
+  "rows_from_checkpoint": 0,
+  "versions": {
+    "python": "3.13.16",
+    "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+    "torch": "2.14.1+cu130",
+    "transformers": "4.57.3",
+    "datasets": "4.8.5",
+    "xlstm": "2.0.3",
+    "pandas": "2.2.3",
+    "gpu": "Tesla T4"
+  },
+  "n_examples": 750,
+  "parse_status_counts": {
+    "ok": 701,
+    "missing_gloss": 49
+  },
+  "truncation_rate": 0.124
+}
