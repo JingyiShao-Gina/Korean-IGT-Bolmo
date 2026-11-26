@@ -1,0 +1,7 @@
+You are a linguist specializing in {language} transcription.
+Original {language} script: {original_script}
+English translation: {translation}
+
+Predict the transliteration of the {language} script.
+Do not output a gloss or explanation.
+Transliteration:

@@ -1,7 +1,8 @@
 {
   "experiment": "zero_shot",
-  "prompt_version": "v3",
-  "prompt_source": "Korean IGT Experimental Protocol V3, section 2 (agenda 17 Nov)",
+  "prompt_version": "v5",
+  "prompt_version_note": "v5: step-by-step uses the same answer labels as all-in-one (Transliteration: / Gloss:); with v4's 'Step 1 - Transliteration:' / 'Step 2 - Gloss:' labels Bolmo returned empty answers on 10/10 Ainu eval rows. All prompts are language-neutral templates ({language} is filled from the language config). For Korean the all-in-one and two-stage prompts are identical to v3.",
+  "prompt_source": "Korean IGT Experimental Protocol V3, section 2 (agenda 17 Nov); step-by-step = one call that asks for step 1 then step 2 (tutor, 20 Nov)",
   "models": [
     {
       "size": "1B",
@@ -17,12 +18,36 @@
   },
   "strategies": [
     "all_in_one",
-    "step_by_step"
+    "step_by_step",
+    "two_stage"
   ],
   "prompts": {
     "all_in_one": "zero_shot/prompts/all_in_one.txt",
-    "step_1_transliteration": "zero_shot/prompts/transliteration.txt",
-    "step_2_gloss": "zero_shot/prompts/gloss.txt"
+    "step_by_step": "zero_shot/prompts/step_by_step.txt",
+    "step_1_transliteration": "zero_shot/prompts/two_stage_transliteration.txt",
+    "step_2_gloss": "zero_shot/prompts/two_stage_gloss.txt"
+  },
+  "languages": {
+    "korean": {
+      "language_name": "Korean",
+      "dataset_manifest": "data/manifest.json",
+      "output_dir": "results/zero_shot/korean"
+    },
+    "ainu": {
+      "language_name": "Ainu",
+      "dataset_manifest": "data/manifest_ainu.json",
+      "output_dir": "results/zero_shot/ainu"
+    },
+    "tsez": {
+      "language_name": "Tsez",
+      "dataset_manifest": "data/manifest_tsez.json",
+      "output_dir": "results/zero_shot/tsez"
+    },
+    "jejueo": {
+      "language_name": "Jejueo",
+      "dataset_manifest": "data/manifest_jejueo.json",
+      "output_dir": "results/zero_shot/jejueo"
+    }
   },
   "input_fields": {
     "original_script": "text",
@@ -37,8 +62,16 @@
     "num_beams": 1,
     "max_new_tokens": 768,
     "max_new_tokens_unit": "bytes (Bolmo is byte-level)",
-    "stop_rule": "step prompts: first complete line; all-in-one: transliteration line + Gloss line"
+    "stop_rule": "single-answer prompts: first complete line; all-in-one and step-by-step: transliteration line + gloss line"
   },
   "seed": 42,
+  "few_shot": {
+    "note": "Used only with --shots K > 0. K fixed train examples (same for every evaluated row), drawn with this seed from train rows that have all fields, a gloss tag, at least min_text_words words, text <= max_text_chars and gloss <= max_gloss_chars, and whose text is not in the dev or test split (so the examples are the same for both).",
+    "seed": 42,
+    "max_text_chars": 60,
+    "max_gloss_chars": 100,
+    "min_text_words": 3,
+    "output_dir": "results/few_shot/{lang}"
+  },
   "save_raw_outputs": true
 }

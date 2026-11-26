@@ -1,5 +1,5 @@
 You are a linguist specializing in interlinear glossing.
-Original Korean script: {original_script}
+Original {language} script: {original_script}
 English translation: {translation}
 Predicted transliteration: {predicted_transliteration}
 

@@ -27,6 +27,7 @@ Names are intentionally unassigned until the team confirms them.
 
 ## Repository layout
 - `zero_shot/`: prompt templates and inference protocol.
+- `few_shot/`: the full few-shot prompts for reference (the runner is `zero_shot/run_zero_shot.py --shots K`).
 - `lora/`: training and ablation protocol.
 - `evaluation/`: metric definitions and checkpoint-selection rules.
 - `data/`: schema, split policy, and source manifest template.
