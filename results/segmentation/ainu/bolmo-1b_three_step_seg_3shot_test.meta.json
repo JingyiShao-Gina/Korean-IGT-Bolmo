@@ -1,0 +1,102 @@
+{
+  "language": "ainu",
+  "strategy": "three_step_seg",
+  "split": "test",
+  "limit": null,
+  "model_id": "allenai/Bolmo-1B",
+  "model_revision": "452690a8cfab1dd1ec27b74f2667632f17a21b46",
+  "dataset_manifest": {
+    "dataset_id": "lowresource-igt/Ainu_igt_dataset",
+    "dataset_config": "default",
+    "revision": "bf06682cd822f0218940e7d907638cad3c87a58e",
+    "language": "Hokkaido Ainu (ainu1240)",
+    "license": "not stated upstream",
+    "cleaned": false,
+    "cleaning_note": "Original upstream data, not cleaned by the team. Known issues: inconsistent gloss labels (1SG / 1s / 1sA), extra spaces, half-width katakana, some broken glosses; only 180/750 test rows have equal word counts in transcription and gloss.",
+    "field_mapping": {
+      "source": "text",
+      "transliteration": "transcription",
+      "gloss": "glosses"
+    },
+    "split_mapping": {
+      "train": "train",
+      "validation": "eval",
+      "test": "test"
+    },
+    "split_counts": {
+      "train": 6726,
+      "validation": 218,
+      "test": 750
+    }
+  },
+  "language_name": "Ainu",
+  "prompt_files": {
+    "three_step_seg": "segmentation/prompts/three_step.txt"
+  },
+  "prompt_sha256": {
+    "three_step_seg": "eec6771fd88542f3a4d9b54274b3805d8046ae73ced7e18a0c76f8382f2b6902"
+  },
+  "prompt_sha256_filled": {
+    "three_step_seg": "06ff4fb6dd5a18c3381ec46b928cea591085b5b420be3ef7752b4e9e77afa2cc"
+  },
+  "shots": 3,
+  "few_shot_seed": 42,
+  "few_shot_examples": [
+    {
+      "id": "OI990508KY.094",
+      "text": "“*タ ウェンノ ... タネ 、 オカイ カムイ ネ ヤッカ",
+      "translation": "“now, [all] existing gods",
+      "transcription": "“*ta wenno ... tane , okay kamuy ne yakka",
+      "glosses": "here be.bad-ADV UNK now exist.PL god COP although",
+      "transliteration_unsegmented": "“*ta wenno ... tane , okay kamuy ne yakka"
+    },
+    {
+      "id": "K7807151KY.122",
+      "text": "V ウ ヤイコッパットゥイェ",
+      "translation": "And shredded my throat,",
+      "transcription": "v u yaykotpattuye",
+      "glosses": "RFN RTM REFL-NI.throat-cut-TR.SG",
+      "transliteration_unsegmented": "v u yaykotpattuye"
+    },
+    {
+      "id": "K7708242UP.102",
+      "text": "オラウン チセ ソイ タ エｸ =アン ルウェ ネ アクス 、",
+      "translation": "When i made it to the front of my home,",
+      "transcription": "oraun cise soy ta ek =an ruwe ne akusu ,",
+      "glosses": "then house outside at come.SG=4.S INFR.EV COP then",
+      "transliteration_unsegmented": "oraun cise soy ta ekan ruwe ne akusu ,"
+    }
+  ],
+  "segmentation_note": "pred_transliteration = predicted Segmentation line (scored against the gold transcription, which marks clitics with '='); the Step 1 line is in pred_transliteration_unsegmented.",
+  "generation": {
+    "do_sample": false,
+    "num_beams": 1,
+    "max_new_tokens": 768,
+    "max_new_tokens_unit": "bytes (Bolmo is byte-level)",
+    "stop_rule": "single-answer prompts: first complete line; all-in-one and step-by-step: transliteration line + gloss line"
+  },
+  "stopping_criteria_used": true,
+  "seed": 42,
+  "git_sha": "f1898ff1e07e8eebd31258a2ba8cce546b389760",
+  "runtime_seconds": 6349.2,
+  "resumed": false,
+  "rows_from_checkpoint": 0,
+  "versions": {
+    "python": "3.13.16",
+    "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+    "torch": "2.14.1+cu130",
+    "transformers": "4.57.3",
+    "datasets": "4.8.5",
+    "xlstm": "2.0.3",
+    "pandas": "2.2.3",
+    "gpu": "Tesla T4"
+  },
+  "runner": "segmentation/run_segmentation.py",
+  "n_examples": 750,
+  "parse_status_counts": {
+    "ok": 688,
+    "missing_segmentation": 60,
+    "missing_gloss": 2
+  },
+  "truncation_rate": 0.148
+}

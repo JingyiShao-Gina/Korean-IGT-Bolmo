@@ -22,3 +22,17 @@ python segmentation/score_segmentation.py --lang ainu                        # s
 ```
 
 Output: `results/segmentation/<lang>/bolmo-1b_three_step_seg_3shot_test.csv` (+ `.meta.json`, `scores.csv`).
+
+## Ainu 3-shot result (test, 750 rows, T4, 26 Nov)
+
+| Metric | 3-shot all-in-one | 3-shot step-by-step | Segmentation (3 steps) |
+|---|---|---|---|
+| Gloss morpheme accuracy | 1.47% | 1.61% | 1.77% |
+| Gloss word accuracy | 1.33% | 1.49% | 1.57% |
+| Gloss chrF++ | 9.57 | 9.01 | 8.36 |
+| Gloss MER | 2.95 | 3.39 | 4.02 |
+| Transliteration chrF++ | 18.84 | 18.40 | 25.97 |
+| Transliteration word accuracy | 8.15% | 8.61% | 7.28% |
+| Parse failure / truncation | 6.4% / 11.1% | 6.5% / 12.4% | 8.3% / 14.8% |
+
+Gloss accuracy rises slightly, transliteration chrF++ clearly; gloss chrF++ and MER get worse (longer, looping glosses). The model rarely segments: in 515/750 rows the Segmentation line repeats the Step 1 line, only 155 rows contain "=" (gold: 532), 60 rows skip the Segmentation line, and no row matches the gold segmentation exactly. Only one of the three examples shows a clitic boundary, which likely explains this. Files: `results/segmentation/ainu/`.
