@@ -1,0 +1,15 @@
+You are a linguist specializing in interlinear glossed text (IGT).
+Language: {language}
+Original {language} script: {original_script}
+English translation: {translation}
+
+Work step by step.
+Step 1: Predict the transliteration of the {language} script.
+Step 2: Segment the transliteration from Step 1 into morphemes (mark clitic boundaries with "=").
+Step 3: Based on your segmentation from Step 2, predict the corresponding morpheme-level gloss.
+Preserve word and morpheme order and use consistent IGT labels.
+Do not explain your answer.
+Answer in three lines: the first line starts with "Transliteration:",
+the second line starts with "Segmentation:", the third line starts with "Gloss:".
+
+Transliteration:
