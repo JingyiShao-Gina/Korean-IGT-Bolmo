@@ -1,13 +1,15 @@
 """Score every zero-shot and LoRA prediction file and build the result tables.
 
 Usage:
-  python evaluation/evaluate.py --lora-dir "<path to korean-igt-lora>"
+  python evaluation/evaluate.py --lora-dir "<path to igt-lora>"
 
 Inputs
-  results/zero_shot/bolmo-1b_<strategy>_test.csv          (Gina, in Git)
-  <lora-dir>/<run>/metrics.csv                              (val loss per checkpoint)
-  <lora-dir>/<run>/predictions/*_test.csv                   (selected checkpoints, test)
-  <lora-dir>/<run>/dev_predictions/step-XXXXXX.csv          (every checkpoint, dev)
+  results/zero_shot/[<lang>/]bolmo-1b_<strategy>_test.csv  (zero-shot; files directly in zero_shot/ are Korean)
+  <lora-dir>/<lang>/<run>/metrics.csv                       (val loss per checkpoint)
+  <lora-dir>/<lang>/<run>/predictions/*_test.csv            (selected checkpoints, test; *_<K>shot_test.csv
+                                                             = same adapter tested with the K-shot prompt)
+  <lora-dir>/<lang>/<run>/dev_predictions/step-XXXXXX.csv   (every checkpoint, dev)
+  (runs directly in <lora-dir>/ are the earlier Korean runs and still work)
 
 Outputs (in --out, default results/evaluation/)
   test_scores.csv             one row per test prediction file
@@ -29,9 +31,11 @@ sys.path.insert(0, str(Path(__file__).parent))
 from metrics import evaluate  # noqa: E402
 
 REPO = Path(__file__).resolve().parent.parent
-RUN_RE = re.compile(r"bolmo-1b_(?P<strategy>all_in_one|two_stage)_r(?P<r>\d+)_lr(?P<lr>[\de.-]+)_s(?P<seed>\d+)$")
-# "<run>_loss-selected_step780_test.csv", or "<run>_step650_step650_test.csv" from `predict --step`
-TEST_RE = re.compile(r"_(?:(?P<sel>loss|chrf)-selected|step\d+)_step(?P<step>\d+)_test\.csv$")
+# "bolmo-1b_ainu_step_by_step_r16_lr2e-4_s42" (per language) or "bolmo-1b_two_stage_r16_lr2e-4_s42" (earlier Korean runs)
+RUN_RE = re.compile(r"bolmo-1b_(?:(?P<lang>[a-z]+)_)?(?P<strategy>all_in_one|step_by_step|two_stage)"
+                    r"_r(?P<r>\d+)_lr(?P<lr>[\de.-]+)_s(?P<seed>\d+)$")
+# "<run>_loss-selected_step780[_3shot]_test.csv", or "<run>_step650_step650_test.csv" from `predict --step`
+TEST_RE = re.compile(r"_(?:(?P<sel>loss|chrf)-selected|step\d+)_step(?P<step>\d+)(?:_(?P<shots>\d+)shot)?_test\.csv$")
 
 # Selection criteria on dev: column, direction ("min"/"max")
 CRITERIA = {
@@ -49,6 +53,8 @@ METRIC_COLS = ["gloss_morpheme_accuracy", "gloss_word_accuracy", "gloss_mer",
 def lora_budgets(generation: dict) -> dict:
     """Byte budget per n_new column, from the LoRA pipeline's generation config."""
     m = generation["max_new_bytes"]
+    if isinstance(m, int):  # per-language runs: one call per row, one budget
+        return {"n_new_tokens": m}
     return {"n_new_tokens": m["all_in_one"],
             "n_new_tokens_step1": m["transliteration"],
             "n_new_tokens_step2": m["gloss"]}
@@ -83,10 +89,13 @@ def score_file(path: Path, budgets: dict | None = None) -> dict:
 
 
 def lora_runs(lora_dir: Path):
-    for d in sorted(lora_dir.iterdir()):
+    """Runs in <lora-dir>/<lang>/<run> and (earlier Korean runs) <lora-dir>/<run>."""
+    for d in sorted([*lora_dir.iterdir(), *lora_dir.glob("*/*")]):
         m = RUN_RE.match(d.name)
         if d.is_dir() and m and (d / "metrics.csv").exists():
-            yield d, m.groupdict()
+            info = m.groupdict()
+            info["lang"] = info["lang"] or "korean"
+            yield d, info
 
 
 def main():
@@ -99,10 +108,11 @@ def main():
 
     # ---------------------------------------------------------------- test files
     test_rows = []
-    for f in sorted(args.zero_shot_dir.glob("bolmo-1b_*_test.csv")):
+    for f in sorted([*args.zero_shot_dir.glob("bolmo-1b_*_test.csv"), *args.zero_shot_dir.glob("*/bolmo-1b_*_test.csv")]):
         strategy = f.name.removeprefix("bolmo-1b_").removesuffix("_test.csv")
-        test_rows.append({"system": f"Zero-shot {strategy}", "run_id": f.stem,
-                          "strategy": strategy, "adaptation": "none", "seed": "",
+        lang = "korean" if f.parent == args.zero_shot_dir else f.parent.name
+        test_rows.append({"system": f"Zero-shot {strategy}", "language": lang, "run_id": f.stem,
+                          "strategy": strategy, "adaptation": "none", "shots": 0, "seed": "",
                           "selection": "", "step": "", "file": f.name, **score_file(f)})
 
     dev_rows = []
@@ -111,8 +121,11 @@ def main():
         budgets = lora_budgets(json.loads((run_dir / "run_meta.json").read_text())["generation"])
         for f in sorted((run_dir / "predictions").glob("*_test.csv")):
             m = TEST_RE.search(f.name)
-            test_rows.append({"system": f"LoRA {info['strategy']} lr{info['lr']} r{info['r']}",
-                              "run_id": run, "strategy": info["strategy"], "adaptation": "lora",
+            shots = int(m["shots"] or 0)
+            test_rows.append({"system": f"LoRA {info['strategy']} lr{info['lr']} r{info['r']}"
+                                        + (f" + {shots}-shot prompt" if shots else ""),
+                              "language": info["lang"], "run_id": run, "strategy": info["strategy"],
+                              "adaptation": "lora", "shots": shots,
                               "seed": info["seed"], "selection": m["sel"] or "manual",
                               "step": int(m["step"]),
                               "file": f.name, **score_file(f, budgets)})
@@ -122,7 +135,7 @@ def main():
         for f in sorted((run_dir / "dev_predictions").glob("step-*.csv")):
             step = int(f.stem.split("-")[1])
             t = theo.loc[theo["step"] == step].iloc[0]
-            dev_rows.append({"run_id": run, "strategy": info["strategy"], "lr": info["lr"],
+            dev_rows.append({"run_id": run, "language": info["lang"], "strategy": info["strategy"], "lr": info["lr"],
                              "r": info["r"], "step": step, "epoch": round(t["epoch"], 2),
                              "val_loss": t["val_loss"],
                              "theo_val_gloss_chrfpp": t["val_gloss_chrfpp"],
@@ -141,7 +154,7 @@ def main():
         g = g.sort_values("step")  # ties -> earlier step
         for crit, (col, how) in CRITERIA.items():
             best = g.loc[g[col].idxmin() if how == "min" else g[col].idxmax()]
-            hit = test[(test["run_id"] == run) & (test["step"] == best["step"])]
+            hit = test[(test["run_id"] == run) & (test["step"] == best["step"]) & (test["shots"] == 0)]
             row = {"run_id": run, "criterion": crit, "selected_step": int(best["step"]),
                    "selected_epoch": best["epoch"], "dev_value": best[col],
                    "test_predictions_available": not hit.empty}
@@ -151,15 +164,15 @@ def main():
     sel = pd.DataFrame(sel_rows)
 
     # ---------------------------------------------------------------- write
-    front = ["system", "run_id", "selection", "step"]
+    front = ["system", "language", "run_id", "selection", "step"]
     test[front + METRIC_COLS + [c for c in test.columns if c not in front + METRIC_COLS]] \
         .to_csv(args.out / "test_scores.csv", index=False, float_format="%.4f")
     dev.to_csv(args.out / "dev_checkpoint_scores.csv", index=False, float_format="%.4f")
     sel.to_csv(args.out / "checkpoint_selection.csv", index=False, float_format="%.4f")
 
     summary = pd.DataFrame({
-        "run_id": test["run_id"], "model_size": "1b", "strategy": test["strategy"],
-        "adaptation": test["adaptation"], "seed": test["seed"],
+        "run_id": test["run_id"], "language": test["language"], "model_size": "1b", "strategy": test["strategy"],
+        "adaptation": test["adaptation"], "shots": test["shots"], "seed": test["seed"],
         "selection_metric": test["selection"], "checkpoint": test["step"],
         **{c: test[c] for c in ["gloss_word_accuracy", "gloss_morpheme_accuracy", "gloss_mer",
                                 "gloss_chrfpp", "transliteration_chrfpp",
@@ -167,7 +180,7 @@ def main():
     summary.to_csv(REPO / "results/summary.csv", index=False, float_format="%.4f")
 
     pd.set_option("display.width", 200)
-    print("\nTEST\n", test[["system", "selection", "step", "gloss_morpheme_accuracy",
+    print("\nTEST\n", test[["system", "language", "selection", "step", "gloss_morpheme_accuracy",
                             "gloss_word_accuracy", "gloss_mer", "gloss_chrfpp",
                             "transliteration_chrfpp", "parse_failure_rate"]].round(4).to_string())
     print("\nDEV\n", dev[["run_id", "step", "val_loss", "gloss_chrfpp", "gloss_mer",

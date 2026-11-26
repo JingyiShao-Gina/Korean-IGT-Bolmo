@@ -1,22 +1,17 @@
 {
   "experiment": "lora",
-  "protocol": "docs/Korean IGT – Experimental Plan & Baselines.pdf (v1.1), sections 6.1-6.5 and 7.2 (agenda 17 Nov: 1B only)",
+  "protocol": "Agenda 24 Nov / 01 Dec: LoRA fine-tuning of Bolmo 1B in the all-in-one and step-by-step setups, for each low-resource language (ain, ddo, jje); hyperparameter tuning not now.",
   "model": {
     "size": "1B",
     "model_id": "allenai/Bolmo-1B",
     "revision": "452690a8cfab1dd1ec27b74f2667632f17a21b46"
   },
-  "dataset_manifest": "data/manifest.json",
+  "languages_note": "Languages, dataset manifests, prompt files and few-shot settings are read from configs/zero_shot.json (one source for zero-shot, few-shot and LoRA). --lang is a key of its 'languages'.",
   "strategies": [
     "all_in_one",
-    "two_stage"
+    "step_by_step"
   ],
-  "prompt_version": "v3",
-  "prompts": {
-    "all_in_one": "zero_shot/prompts/all_in_one.txt",
-    "step_1_transliteration": "zero_shot/prompts/transliteration.txt",
-    "step_2_gloss": "zero_shot/prompts/gloss.txt"
-  },
+  "strategies_note": "Both are one call and use the zero-shot prompt files (zero_shot/prompts/all_in_one.txt, step_by_step.txt) with {language} filled in. Same answer format (Transliteration line + Gloss line); they differ only in the instructions. The old two-call two_stage LoRA setup is removed.",
   "adapter": {
     "r": 16,
     "lora_alpha": 32,
@@ -32,8 +27,8 @@
     "per_device_train_batch_size": 1,
     "gradient_accumulation_steps": 16,
     "effective_batch_size_single_gpu": 16,
-    "max_seq_bytes": 1536,
-    "max_seq_bytes_note": "Bolmo is byte-level. Longest train example is 1470 bytes (3 of 2079 exceed 1024), dev/test max 896, so 1536 keeps every example untruncated.",
+    "max_seq_bytes": 2048,
+    "max_seq_bytes_note": "Bolmo is byte-level: <bos> + prompt + answer + <eos>. Longer train/dev examples are left out of training / validation loss and listed in run_meta.json (never truncated); a warning is printed above 1%. lora/check_data.py (26 Nov): 2048 leaves out 2 of 6726 Ainu and 2 of 3558 Tsez train rows (longest 2911 bytes), no Jejueo rows and no dev rows.",
     "optimizer": "adamw_torch",
     "weight_decay": 0.01,
     "max_grad_norm": 1.0,
@@ -47,19 +42,32 @@
     "eval_every_epochs": 0.5,
     "eval_every_epochs_note": "The plan saves after each epoch; every 0.5 epoch is a superset (epochs 1, 2, 3 are among the six checkpoints) and is kept for all runs so they stay comparable.",
     "resume_every_steps": 20,
-    "resume_every_steps_note": "Quick resume save (adapter + optimizer state, overwritten each time, not evaluated) so a Colab disconnect loses at most 20 optimizer steps.",
-    "two_stage_teacher_forcing": "stage-2 training and validation-loss examples use the gold transliteration; validation/test generation always chains the predicted transliteration"
+    "resume_every_steps_note": "Quick resume save (adapter + optimizer state, overwritten each time, not evaluated) so a Colab disconnect loses at most 20 optimizer steps."
   },
   "runs": {
     "baseline": {},
-    "r8": {"r": 8, "lora_alpha": 16},
-    "r32": {"r": 32, "lora_alpha": 64},
-    "lr1e-4": {"learning_rate": 0.0001}
+    "r8": {
+      "r": 8,
+      "lora_alpha": 16
+    },
+    "r32": {
+      "r": 32,
+      "lora_alpha": 64
+    },
+    "lr1e-4": {
+      "learning_rate": 0.0001
+    }
   },
-  "runs_note": "Plan section 6.2: A baseline (r16, alpha 32, lr 2e-4), B lr1e-4, C r8 (alpha 16), D r32 (alpha 64). A and B have priority; C and D are optional extensions if compute allows. The plan's LoRA setup is the two-stage pipeline, so B-D run on two_stage; all_in_one LoRA is an extra baseline.",
+  "runs_note": "Agenda 24 Nov: hyperparameter tuning not now, so only 'baseline' (r16, alpha 32, lr 2e-4) is planned. r8 / r32 / lr1e-4 stay available (one factor at a time) for later.",
   "checkpoint_selection": [
-    {"metric": "val_loss", "direction": "min"},
-    {"metric": "val_gloss_chrfpp", "direction": "max"}
+    {
+      "metric": "val_loss",
+      "direction": "min"
+    },
+    {
+      "metric": "val_gloss_chrfpp",
+      "direction": "max"
+    }
   ],
   "checkpoint_selection_tie_break": "earlier step",
   "chrf": {
@@ -73,13 +81,13 @@
     "do_sample": false,
     "num_beams": 1,
     "batch_size": 8,
-    "max_new_bytes": {
-      "all_in_one": 512,
-      "transliteration": 256,
-      "gloss": 256
-    },
-    "max_new_bytes_note": "Longest gold answer: train gloss 265 bytes, dev/test gloss 116 bytes. Training appends an end-of-sequence byte, so the model learns to stop."
+    "max_new_bytes": 1024,
+    "max_new_bytes_note": "Same budget for both strategies (one call: transliteration line + gloss line). Longest gold answer (lora/check_data.py, 26 Nov): test Ainu 819, Tsez 677, Jejueo 454 bytes; dev Tsez 658 (9 dev rows > 512), so 1024 covers every dev/test answer. Training appends an end-of-sequence byte, so the model learns to stop; the budget only matters for outputs that do not stop."
   },
-  "repeat_seeds": [42, 43, 44],
-  "output_root_colab": "/content/drive/MyDrive/korean-igt-lora"
+  "repeat_seeds": [
+    42,
+    43,
+    44
+  ],
+  "output_root_colab": "/content/drive/MyDrive/igt-lora"
 }

@@ -1,7 +1,0 @@
-step,epoch,val_loss,val_loss_transliteration,val_loss_gloss,val_gloss_chrfpp,val_transliteration_chrfpp,parse_failure_rate,truncation_rate,n_dev,eval_seconds,chrf_signature
-130,0.5002,0.972043,1.174953,0.803501,38.1761,24.9651,0.0,0.0,262,471.1,nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.6.0
-260,1.0005,0.786998,0.926147,0.671417,45.8831,35.6028,0.0,0.0,262,334.8,nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.6.0
-390,1.5007,0.720099,0.84117,0.619534,50.3568,40.9801,0.0,0.0,262,333.2,nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.6.0
-520,2.001,0.665833,0.764792,0.583634,52.7931,42.0063,0.0,0.0,262,359.1,nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.6.0
-650,2.5012,0.642079,0.731076,0.568156,52.8209,43.0729,0.0,0.0,262,334.1,nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.6.0
-780,3.0,0.632448,0.718899,0.56064,52.6342,43.3733,0.0,0.0,262,362.7,nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.6.0

@@ -10,7 +10,8 @@ It checks that:
   4. after over-fitting, greedy generation reproduces the target and stops at <eos>
      (this ties the training targets - bytes + boundary variants - to what generate() decodes);
   5. batched (left-padded) generation equals one-by-one generation;
-  6. an adapter saved and re-loaded gives the same loss.
+  6. an adapter saved and re-loaded gives the same loss;
+  7. predict_rows runs for both strategies, with the zero-shot and a few-shot prompt.
 Nothing here is a research result.
 """
 import sys
@@ -35,7 +36,7 @@ conf.update(dict(hidden_size=64, intermediate_size=128, local_intermediate_size=
 base = AutoModelForCausalLM.from_config(conf, trust_remote_code=True).float()
 tok = AutoTokenizer.from_pretrained(m["model_id"], revision=m["revision"], trust_remote_code=True)
 
-s = lb.run_settings(cfg, "baseline", "all_in_one")
+s = lb.run_settings(cfg, "baseline", "all_in_one", "ainu")
 s["adapter"]["lora_dropout"] = 0.0
 model = lb.Bolmo.from_model(cfg, base, tok, s, trainable=True)
 
@@ -46,11 +47,11 @@ assert all("lora_" in n for n, p in base.named_parameters() if p.requires_grad)
 print("trainable / total:", model.trainable_parameters())
 
 # 2. encoding
-T = lb.load_templates(cfg)
-row = {"id": "x1", "text": "존이 사과를 깎은 칼", "translation": "the knife with which John peeled an apple",
-       "transcription": "Johni sakwalul kkakun khal", "glosses": "John-NOM apple-ACC peel-ADN knife"}
-[ex] = lb.build_examples([row], "all_in_one", T)
-ex["prompt"] = "Korean: 존이 사과를 깎은 칼\nTransliteration:"  # short prompt so the tiny model learns fast
+T = lb.load_templates("ainu")
+row = {"id": "x1", "text": "オラウン チセ ソイ タ", "translation": "When i made it to the front of my home,",
+       "transcription": "oraun cise soy ta", "glosses": "then house outside at"}
+[ex] = lb.build_examples([row], "all_in_one", lb.prompt_fn(T, "all_in_one", "Ainu"))
+ex["prompt"] = "Ainu: オラウン チセ ソイ タ\nTransliteration:"  # short prompt so the tiny model learns fast
 model.check_encoding(ex["prompt"], ex["target"])
 enc = {**lb.encode_example(ex["prompt"], ex["target"], bos=model.bos, eos=model.eos, offset=model.offset),
        "kind": "all_in_one"}
@@ -97,7 +98,7 @@ assert text == ex["target"], (text, ex["target"])
 assert n_new == len(ex["target"].encode()) and not trunc
 
 # 5. batch == single
-prompts = [ex["prompt"], "Korean: 칼\nTransliteration:", "Korean: 사과를 깎은 칼이다 그리고 더 긴 문장\nTransliteration:"]
+prompts = [ex["prompt"], "Ainu: チセ\nTransliteration:", "Ainu: オラウン チセ ソイ タ エｸ =アン ルウェ ネ アクス\nTransliteration:"]
 single = [model.generate([p], "all_in_one", 64, 1)[0] for p in prompts]
 batch = model.generate(prompts, "all_in_one", 64, 3)
 for a, b in zip(single, batch):
@@ -121,8 +122,14 @@ with tempfile.TemporaryDirectory() as d:
 print(f"loss before save {before:.6f}, after reload {after:.6f}")
 assert abs(before - after) < 1e-4
 
-# 7. two-stage prediction path runs end to end (output is noise on a random model)
-recs = model.predict_rows([row], "two_stage", T, {"batch_size": 2, "max_new_bytes": {"transliteration": 16, "gloss": 16}})
-print("two_stage record keys:", sorted(recs[0]))
-print(lb.chrf_scores(recs, cfg["chrf"]))
+# 7. prediction path for both strategies, zero-shot and few-shot prompt (output is noise on a random model)
+gen_cfg = {"batch_size": 2, "max_new_bytes": 16}
+shots = [{"id": "e1", "text": "チセ", "translation": "house", "transcription": "cise", "glosses": "house"}]
+for strategy in lb.STRATEGIES:
+    for examples in (None, shots):
+        recs = model.predict_rows([row, {**row, "id": "x2", "text": None}], strategy,
+                                  lb.prompt_fn(T, strategy, "Ainu", examples), gen_cfg)
+        assert [r["id"] for r in recs] == ["x1", "x2"]
+        assert set(recs[0]) >= {"pred_transliteration", "pred_gloss", "parse_status", "truncated", "raw_output", "n_new_tokens"}
+        print(strategy, "few-shot" if examples else "zero-shot", lb.chrf_scores(recs, cfg["chrf"])["gloss_chrfpp"])
 print("tiny-model smoke test passed")

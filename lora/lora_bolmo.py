@@ -1,20 +1,26 @@
-"""LoRA fine-tuning of Bolmo 1B for Korean IGT: all-in-one and two-stage (transliteration -> gloss).
+"""LoRA fine-tuning of Bolmo 1B for IGT of any language in configs/zero_shot.json: all-in-one and step-by-step.
 
-Run from the repository root on a GPU machine (Colab):
+One code for everyone; --lang picks the language (ainu, tsez, jejueo, ...). Run from the repository root on a
+GPU machine (Colab):
 
-    python lora/lora_bolmo.py train   --strategy all_in_one --run baseline --smoke   # pipeline check, not a result
-    python lora/lora_bolmo.py train   --strategy all_in_one --run baseline           # resumable
-    python lora/lora_bolmo.py eval    --strategy all_in_one --run baseline           # fill in any checkpoint without metrics
-    python lora/lora_bolmo.py select  --strategy all_in_one --run baseline           # loss-selected + chrF++-selected step
-    python lora/lora_bolmo.py predict --strategy all_in_one --run baseline --split test --rule both
-    python lora/lora_bolmo.py export  --strategy all_in_one --run baseline           # copy small result files into results/lora/
+    python lora/lora_bolmo.py train   --lang ainu --strategy step_by_step --smoke   # pipeline check, not a result
+    python lora/lora_bolmo.py train   --lang ainu --strategy step_by_step           # resumable
+    python lora/lora_bolmo.py eval    --lang ainu --strategy step_by_step           # fill in any checkpoint without metrics
+    python lora/lora_bolmo.py select  --lang ainu --strategy step_by_step           # loss-selected + chrF++-selected step
+    python lora/lora_bolmo.py predict --lang ainu --strategy step_by_step --split test             # zero-shot prompt
+    python lora/lora_bolmo.py predict --lang ainu --strategy step_by_step --split test --shots 3   # few-shot prompt
+    python lora/lora_bolmo.py export  --lang ainu --strategy step_by_step           # small files -> results/lora/<lang>/
 
---strategy: all_in_one | two_stage.   --run: a key of "runs" in configs/lora.json (baseline, r8, r32, lr1e-4).
+--strategy: all_in_one | step_by_step.   --run: a key of "runs" in configs/lora.json (baseline).
 
-Everything for one run lives in <out-root>/<run_id>/ (on Colab: Google Drive, so a session restart loses nothing):
-    run_meta.json            settings, matched LoRA modules, trainable parameter count, versions
+Languages, datasets, prompt files and few-shot settings are read from configs/zero_shot.json, so LoRA uses
+exactly the zero-shot / few-shot prompts (zero_shot/prompts/all_in_one.txt and step_by_step.txt, {language}
+filled in). Both strategies are ONE call with the same answer format; they differ only in the instructions.
+
+Everything for one run lives in <out-root>/<lang>/<run_id>/ (on Colab: Google Drive, so a restart loses nothing):
+    run_meta.json            settings, matched LoRA modules, trainable parameter count, data checks, versions
     train_log.csv            one row per optimizer step: train loss, learning rate, gradient norm
-    metrics.csv              one row per checkpoint: validation loss and validation chrF++  (-> Soyeong)
+    metrics.csv              one row per checkpoint: validation loss, gloss and transliteration chrF++
     checkpoints/step-NNNNNN/ LoRA adapter + optimizer/scheduler/RNG state (resume point)
     dev_predictions/         generated dev predictions per checkpoint (source of val chrF++)
     selection.json           checkpoint chosen by min val loss and by max val gloss chrF++
@@ -22,13 +28,13 @@ Everything for one run lives in <out-root>/<run_id>/ (on Colab: Google Drive, so
 
 How the model is trained (see lora/README.md for the reasoning):
 - Bolmo is byte-level. Each example = <bos> + prompt bytes + target bytes + <eos>; loss only on target bytes + <eos>.
-- Prompts are the frozen zero-shot v3 templates; the target is what the zero-shot parser expects after the prompt.
+- The prompt is the zero-shot prompt (no examples); it ends with 'Transliteration:'. The target is
+  ' <transliteration>\nGloss: <gloss>', which the zero-shot parsers read back.
 - Bolmo's output vocabulary has two entries per byte: "byte" and "byte, then patch boundary". The target for each
   position is the next byte, shifted to its boundary variant where the model's own boundary predictor puts a
   boundary (the same patching the model uses at inference).
-- two_stage = one adapter trained on both tasks: (script + translation -> transliteration) and
-  (script + translation + GOLD transliteration -> gloss). Validation/test generation always chains the
-  model's PREDICTED transliteration into stage 2.
+- `predict --shots K` tests the same adapter with the few-shot prompt: the K train examples are chosen exactly as
+  in `zero_shot/run_zero_shot.py --shots K` (same function, seed and filters).
 """
 from __future__ import annotations
 
@@ -46,11 +52,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "zero_shot"))
-import run_zero_shot as rz  # noqa: E402  (prompt filling, parsing, data loading, versions)
+import run_zero_shot as rz  # noqa: E402  (prompts, few-shot examples, parsing, data loading, versions)
 
 CONFIG_PATH = ROOT / "configs" / "lora.json"
-MANIFEST_PATH = ROOT / "data" / "manifest.json"
-STRATEGIES = ("all_in_one", "two_stage")
+STRATEGIES = ("all_in_one", "step_by_step")
+PARSERS = {"all_in_one": rz.parse_all_in_one, "step_by_step": rz.parse_step_by_step}
 COLAB_DRIVE = Path("/content/drive/MyDrive")
 
 # ============================================================================ config
@@ -60,16 +66,35 @@ def load_config() -> dict:
     return json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
 
 
+def load_zs_config() -> dict:
+    """configs/zero_shot.json: languages, datasets, prompt files and few-shot settings (shared with zero-shot)."""
+    return json.loads(rz.CONFIG_PATH.read_text(encoding="utf-8"))
+
+
+def languages() -> list[str]:
+    return sorted(load_zs_config()["languages"])
+
+
+def lang_info(lang: str) -> dict:
+    """{'lang', 'language_name', 'manifest_path'} of a key of 'languages' in configs/zero_shot.json."""
+    langs = load_zs_config()["languages"]
+    if lang not in langs:
+        raise SystemExit(f"Unknown --lang {lang!r}; choose from {sorted(langs)}")
+    return {"lang": lang, "language_name": langs[lang]["language_name"],
+            "manifest_path": ROOT / langs[lang]["dataset_manifest"]}
+
+
 def fmt_lr(lr: float) -> str:
     return f"{lr:.0e}".replace("e-0", "e-")  # 0.0002 -> 2e-4
 
 
-def run_settings(cfg: dict, run: str, strategy: str, seed: int | None = None) -> dict:
+def run_settings(cfg: dict, run: str, strategy: str, lang: str, seed: int | None = None) -> dict:
     """Baseline adapter/training settings with the run's overrides applied."""
     if run not in cfg["runs"]:
         raise SystemExit(f"Unknown --run {run!r}; choose from {list(cfg['runs'])}")
     if strategy not in STRATEGIES:
         raise SystemExit(f"Unknown --strategy {strategy!r}; choose from {STRATEGIES}")
+    lang_info(lang)
     adapter = dict(cfg["adapter"])
     training = dict(cfg["training"])
     for key, value in cfg["runs"][run].items():
@@ -82,8 +107,10 @@ def run_settings(cfg: dict, run: str, strategy: str, seed: int | None = None) ->
     if seed is not None:
         training["seed"] = seed
     size = cfg["model"]["size"].lower()
-    run_id = f"bolmo-{size}_{strategy}_r{adapter['r']}_lr{fmt_lr(training['learning_rate'])}_s{training['seed']}"
-    return {"run": run, "strategy": strategy, "run_id": run_id, "adapter": adapter, "training": training}
+    run_id = (f"bolmo-{size}_{lang}_{strategy}_r{adapter['r']}"
+              f"_lr{fmt_lr(training['learning_rate'])}_s{training['seed']}")
+    return {"run": run, "lang": lang, "strategy": strategy, "run_id": run_id,
+            "adapter": adapter, "training": training}
 
 
 def default_out_root(cfg: dict) -> Path:
@@ -92,46 +119,73 @@ def default_out_root(cfg: dict) -> Path:
     return ROOT / "outputs" / "lora"  # git-ignored local fallback
 
 
-def load_templates(cfg: dict) -> dict[str, str]:
-    return {k: rz.load_prompt(v) for k, v in cfg["prompts"].items()}
+def run_path(args, cfg: dict, s: dict) -> Path:
+    root = Path(args.out_root) if args.out_root else default_out_root(cfg)
+    return root / s["lang"] / (s["run_id"] + ("_smoke" if args.smoke else ""))
+
+
+def load_templates(lang: str) -> dict[str, str]:
+    """The zero-shot prompt of each strategy with {language} filled in (same files and function as zero-shot)."""
+    zs, info = load_zs_config(), lang_info(lang)
+    return {k: rz.fill_language(rz.load_prompt(zs["prompts"][k]), info["language_name"]) for k in STRATEGIES}
+
+
+def few_shot_examples(lang: str, k: int) -> list[dict]:
+    """The K fixed train examples that `run_zero_shot.py --lang <lang> --shots K` uses (same seed and filters)."""
+    zs, info = load_zs_config(), lang_info(lang)
+    few = zs["few_shot"]
+    eval_texts = [r["text"] for sp in ("dev", "test") for r in rz.load_rows(sp, None, info["manifest_path"])]
+    return rz.select_examples(rz.load_rows("train", None, info["manifest_path"]), k, few["seed"], eval_texts,
+                              few["max_text_chars"], few["max_gloss_chars"], few["min_text_words"])
+
+
+def prompt_fn(templates: dict[str, str], strategy: str, language_name: str, examples: list[dict] | None = None):
+    """row -> prompt. Without examples: the zero-shot prompt. With examples: the few-shot prompt built exactly
+    like run_zero_shot.py does. (Per-row example selection, e.g. by word overlap, plugs in here.)"""
+    template = templates[strategy]
+    if examples:
+        template = rz.add_examples(template, rz.examples_block(examples, language_name), language_name)
+    # a missing field (None in some datasets) becomes an empty string, as in the zero-shot CSVs
+    return lambda r: rz.render(template, original_script=r["text"] or "", translation=r["translation"] or "")
 
 
 # ============================================================================ examples (no torch)
 
 
-def build_examples(rows: list[dict], strategy: str, templates: dict[str, str]) -> list[dict]:
-    """Supervised (prompt, target) pairs.
+def answer_fields(r: dict) -> tuple[str, str]:
+    """Gold transliteration and gloss on one line each (the answer format is two lines; uncleaned
+    data can contain line breaks or repeated spaces)."""
+    return rz._one_line(r.get("transcription")), rz._one_line(r.get("glosses"))
 
-    all_in_one: one example per row; the target continues 'Transliteration:' with the
-        transliteration line and the 'Gloss:' line, which rz.parse_all_in_one reads back.
-    two_stage: two examples per row (transliteration task, gloss task). The gloss task is
-        conditioned on the GOLD transliteration (teacher forcing, plan section 6.4).
+
+def usable(r: dict) -> bool:
+    """A row can be a training / validation-loss example only if its input (script, translation) and both
+    answer fields are non-empty."""
+    return bool(rz._one_line(r.get("text"))) and bool(rz._one_line(r.get("translation"))) and all(answer_fields(r))
+
+
+def build_examples(rows: list[dict], strategy: str, make_prompt) -> list[dict]:
+    """Supervised (prompt, target) pairs, one per usable row, for both strategies.
+
+    The prompt (zero-shot prompt of the strategy) ends with 'Transliteration:'; the target continues it with
+    the transliteration line and the 'Gloss:' line, which the strategy's zero-shot parser reads back.
+    Rows with an empty transliteration or gloss are left out (see usable()).
     """
+    if strategy not in STRATEGIES:
+        raise ValueError(strategy)
     out = []
     for r in rows:
-        script, translation = r["text"], r["translation"]
-        translit, gloss = r["transcription"].strip(), r["glosses"].strip()
-        if strategy == "all_in_one":
-            out.append({
-                "row_id": r["id"], "kind": "all_in_one",
-                "prompt": rz.render(templates["all_in_one"], original_script=script, translation=translation),
-                "target": f" {translit}\nGloss: {gloss}",
-            })
-        elif strategy == "two_stage":
-            out.append({
-                "row_id": r["id"], "kind": "transliteration",
-                "prompt": rz.render(templates["step_1_transliteration"], original_script=script, translation=translation),
-                "target": f" {translit}",
-            })
-            out.append({
-                "row_id": r["id"], "kind": "gloss",
-                "prompt": rz.render(templates["step_2_gloss"], original_script=script, translation=translation,
-                                    predicted_transliteration=translit),
-                "target": f" {gloss}",
-            })
-        else:
-            raise ValueError(strategy)
+        if not usable(r):
+            continue
+        translit, gloss = answer_fields(r)
+        out.append({"row_id": r["id"], "kind": strategy, "prompt": make_prompt(r),
+                    "target": f" {translit}\nGloss: {gloss}"})
     return out
+
+
+def example_bytes(ex: dict) -> int:
+    """Encoded length: <bos> + prompt + target + <eos> (Bolmo: one id per byte)."""
+    return 2 + len(ex["prompt"].encode("utf-8")) + len(ex["target"].encode("utf-8"))
 
 
 def encode_example(prompt: str, target: str, *, bos: int, eos: int, offset: int) -> dict:
@@ -330,7 +384,7 @@ class Bolmo:
         from transformers import StoppingCriteria
 
         gen = self
-        parse_kind = "all_in_one" if kind == "all_in_one" else "single"
+        parse_kind = "all_in_one"  # both strategies: transliteration line + gloss line
 
         class _Stop(StoppingCriteria):
             # Bolmo calls this per example with [last prompt byte, generated bytes...]
@@ -350,7 +404,7 @@ class Bolmo:
         enc = [encode_prompt(p, bos=self.bos, offset=self.offset) for p in prompts]
         order = sorted(range(len(prompts)), key=lambda i: -len(enc[i]))
         results: list = [None] * len(prompts)
-        parse_kind = "all_in_one" if kind == "all_in_one" else "single"
+        parse_kind = "all_in_one"
         i, bs = 0, max(1, batch_size)
         while i < len(order):
             chunk = order[i:i + bs]
@@ -387,36 +441,15 @@ class Bolmo:
             i += len(chunk)
         return results
 
-    def predict_rows(self, rows: list[dict], strategy: str, templates: dict, gen_cfg: dict) -> list[dict]:
-        """Predictions with the same columns as the zero-shot CSVs (two_stage uses the step_by_step columns)."""
-        bs, budget = gen_cfg["batch_size"], gen_cfg["max_new_bytes"]
-        gold = [rz._gold(r) for r in rows]
-        if strategy == "all_in_one":
-            prompts = [rz.render(templates["all_in_one"], original_script=r["text"], translation=r["translation"])
-                       for r in rows]
-            outs = self.generate(prompts, "all_in_one", budget["all_in_one"], bs)
-            recs = []
-            for g, (raw, n_new, trunc) in zip(gold, outs):
-                translit, gloss, status = rz.parse_all_in_one(raw)
-                recs.append({**g, "pred_transliteration": translit, "pred_gloss": gloss, "parse_status": status,
-                             "truncated": trunc, "raw_output": raw, "n_new_tokens": n_new})
-            return recs
-        p1 = [rz.render(templates["step_1_transliteration"], original_script=r["text"], translation=r["translation"])
-              for r in rows]
-        o1 = self.generate(p1, "transliteration", budget["transliteration"], bs)
-        translits = [rz.parse_single(raw) for raw, _, _ in o1]
-        # Stage 2 always receives the model's own stage-1 prediction, never gold.
-        p2 = [rz.render(templates["step_2_gloss"], original_script=r["text"], translation=r["translation"],
-                        predicted_transliteration=t) for r, t in zip(rows, translits)]
-        o2 = self.generate(p2, "gloss", budget["gloss"], bs)
+    def predict_rows(self, rows: list[dict], strategy: str, make_prompt, gen_cfg: dict) -> list[dict]:
+        """One greedy call per row; same columns as the zero-shot CSVs of the strategy."""
+        prompts = [make_prompt(r) for r in rows]
+        outs = self.generate(prompts, "all_in_one", gen_cfg["max_new_bytes"], gen_cfg["batch_size"])
         recs = []
-        for g, translit, (raw1, n1, t1), (raw2, n2, t2) in zip(gold, translits, o1, o2):
-            gloss = rz.parse_single(raw2)
-            status = "empty_transliteration" if not translit else ("empty_gloss" if not gloss else "ok")
-            recs.append({**g, "pred_transliteration": translit, "pred_gloss": gloss, "parse_status": status,
-                         "truncated": t1 or t2, "truncated_step1": t1, "truncated_step2": t2,
-                         "raw_output_step1": raw1, "raw_output_step2": raw2,
-                         "n_new_tokens_step1": n1, "n_new_tokens_step2": n2})
+        for r, (raw, n_new, trunc) in zip(rows, outs):
+            translit, gloss, status = PARSERS[strategy](raw)
+            recs.append({**rz._gold(r), "pred_transliteration": translit, "pred_gloss": gloss,
+                         "parse_status": status, "truncated": trunc, "raw_output": raw, "n_new_tokens": n_new})
         return recs
 
 
@@ -424,8 +457,7 @@ class Bolmo:
 
 
 class RunDir:
-    METRIC_FIELDS = ["step", "epoch", "val_loss", "val_loss_transliteration", "val_loss_gloss",
-                     "val_gloss_chrfpp", "val_transliteration_chrfpp", "parse_failure_rate", "truncation_rate",
+    METRIC_FIELDS = ["step", "epoch", "val_loss", "val_gloss_chrfpp", "val_transliteration_chrfpp", "parse_failure_rate", "truncation_rate",
                      "n_dev", "eval_seconds", "chrf_signature"]
     LOG_FIELDS = ["step", "epoch", "train_loss", "learning_rate", "grad_norm", "elapsed_seconds"]
 
@@ -494,25 +526,46 @@ class RunDir:
 # ============================================================================ commands
 
 
-def _rows(split: str, limit: int | None) -> list[dict]:
-    return rz.load_rows(split, limit)
+def _rows(lang: str, split: str, limit: int | None) -> list[dict]:
+    return rz.load_rows(split, limit, lang_info(lang)["manifest_path"])
 
 
-def _encode_all(model: Bolmo, examples: list[dict], max_bytes: int) -> list[dict]:
-    enc = []
-    for ex in examples:
-        e = encode_example(ex["prompt"], ex["target"], bos=model.bos, eos=model.eos, offset=model.offset)
-        if len(e["ids"]) > max_bytes:
-            raise RuntimeError(f"{ex['row_id']} ({ex['kind']}) has {len(e['ids'])} bytes > max_seq_bytes {max_bytes}")
-        enc.append({**e, "kind": ex["kind"], "row_id": ex["row_id"]})
-    return enc
+def prepare_examples(rows: list[dict], strategy: str, make_prompt, max_bytes: int) -> tuple[list[dict], dict]:
+    """Training / validation-loss examples that fit max_bytes, and a report of what was left out and why
+    (nothing is truncated silently)."""
+    examples = build_examples(rows, strategy, make_prompt)
+    kept = [ex for ex in examples if example_bytes(ex) <= max_bytes]
+    report = {
+        "n_rows": len(rows),
+        "n_examples": len(kept),
+        "dropped_empty_field": [r["id"] for r in rows if not usable(r)],
+        "dropped_too_long": [ex["row_id"] for ex in examples if example_bytes(ex) > max_bytes],
+        "max_example_bytes": max((example_bytes(ex) for ex in examples), default=0),
+        "max_seq_bytes": max_bytes,
+    }
+    return kept, report
+
+
+def _encode_all(model: Bolmo, examples: list[dict]) -> list[dict]:
+    return [{**encode_example(ex["prompt"], ex["target"], bos=model.bos, eos=model.eos, offset=model.offset),
+             "kind": ex["kind"], "row_id": ex["row_id"]} for ex in examples]
+
+
+def _print_report(name: str, rep: dict) -> None:
+    print(f"{name}: {rep['n_examples']} examples from {rep['n_rows']} rows; left out "
+          f"{len(rep['dropped_empty_field'])} with an empty script/translation/transliteration/gloss, "
+          f"{len(rep['dropped_too_long'])} longer than {rep['max_seq_bytes']} bytes "
+          f"(longest {rep['max_example_bytes']})")
+    if rep["n_rows"] and len(rep["dropped_too_long"]) > 0.01 * rep["n_rows"]:
+        print(f"  WARNING: more than 1% of {name} rows are too long - raise training.max_seq_bytes")
 
 
 def evaluate_checkpoint(model: Bolmo, run: RunDir, step: int, epoch: float, dev_rows, dev_enc, strategy,
-                        templates, cfg) -> dict:
+                        make_prompt, cfg) -> dict:
+    """Validation loss (teacher-forced, usable dev rows) + chrF++ of generated answers (ALL dev rows)."""
     t0 = time.time()
     losses = model.validation_loss(dev_enc)
-    recs = model.predict_rows(dev_rows, strategy, templates, cfg["generation"])
+    recs = model.predict_rows(dev_rows, strategy, make_prompt, cfg["generation"])
     scores = chrf_scores(recs, cfg["chrf"])
     rz.write_outputs(recs, run.dev_pred / f"step-{step:06d}.csv",
                      {"split": "dev", "step": step, "epoch": epoch, **scores})
@@ -520,8 +573,6 @@ def evaluate_checkpoint(model: Bolmo, run: RunDir, step: int, epoch: float, dev_
     row = {
         "step": step, "epoch": round(epoch, 4),
         "val_loss": round(losses["all"], 6),
-        "val_loss_transliteration": round(losses["transliteration"], 6) if "transliteration" in losses else "",
-        "val_loss_gloss": round(losses["gloss"], 6) if "gloss" in losses else "",
         "val_gloss_chrfpp": scores["gloss_chrfpp"],
         "val_transliteration_chrfpp": scores["transliteration_chrfpp"],
         "parse_failure_rate": round(sum(r["parse_status"] != "ok" for r in recs) / n, 4),
@@ -534,33 +585,39 @@ def evaluate_checkpoint(model: Bolmo, run: RunDir, step: int, epoch: float, dev_
     return row
 
 
+def _zero_shot_prompt(lang: str, strategy: str):
+    return prompt_fn(load_templates(lang), strategy, lang_info(lang)["language_name"])
+
+
 def cmd_train(args, cfg) -> Path:
     import torch
     from peft import set_peft_model_state_dict
     from safetensors.torch import load_file
     from transformers import get_linear_schedule_with_warmup
 
-    s = run_settings(cfg, args.run, args.strategy, args.seed)
+    s = run_settings(cfg, args.run, args.strategy, args.lang, args.seed)
     tr = s["training"]
-    run_id = s["run_id"] + ("_smoke" if args.smoke else "")
-    run = RunDir(Path(args.out_root or default_out_root(cfg)) / run_id)
+    run = RunDir(run_path(args, cfg, s))
+    run_id = run.path.name
     print(f"Run {run_id} -> {run.path}")
 
     seed = tr["seed"]
     random.seed(seed)
     torch.manual_seed(seed)
-    templates = load_templates(cfg)
-    train_rows = _rows("train", 32 if args.smoke else None)
-    dev_rows = _rows("dev", 4 if args.smoke else None)
+    make_prompt = _zero_shot_prompt(args.lang, args.strategy)
+    train_rows = _rows(args.lang, "train", 32 if args.smoke else None)
+    dev_rows = _rows(args.lang, "dev", 4 if args.smoke else None)
+    train_ex, train_rep = prepare_examples(train_rows, args.strategy, make_prompt, tr["max_seq_bytes"])
+    dev_ex, dev_rep = prepare_examples(dev_rows, args.strategy, make_prompt, tr["max_seq_bytes"])
+    _print_report("train", train_rep)
+    _print_report("dev (validation loss; chrF++ uses all dev rows)", dev_rep)
 
     model = Bolmo(cfg, s, trainable=True)
     trainable, total = model.trainable_parameters()
     print(f"LoRA on {len(model.lora_modules)} modules; trainable {trainable:,} / {total:,} parameters; dtype {model.dtype}")
-    train_ex = build_examples(train_rows, args.strategy, templates)
-    dev_ex = build_examples(dev_rows, args.strategy, templates)
     model.check_encoding(train_ex[0]["prompt"], train_ex[0]["target"])
-    train_enc = _encode_all(model, train_ex, tr["max_seq_bytes"])
-    dev_enc = _encode_all(model, dev_ex, tr["max_seq_bytes"])
+    train_enc = _encode_all(model, train_ex)
+    dev_enc = _encode_all(model, dev_ex)
 
     accum = tr["gradient_accumulation_steps"]
     epochs = tr["num_train_epochs"]
@@ -573,13 +630,16 @@ def cmd_train(args, cfg) -> Path:
 
     meta_path = run.path / "run_meta.json"
     if not meta_path.exists():
+        zs, info = load_zs_config(), lang_info(args.lang)
         meta = {
             **s, "run_id": run_id, "smoke": args.smoke, "model": cfg["model"],
-            "dataset_manifest": json.loads(MANIFEST_PATH.read_text(encoding="utf-8")),
-            "prompt_version": cfg["prompt_version"],
-            "prompt_sha256": {k: rz.prompt_sha256(v) for k, v in templates.items()},
+            "language_name": info["language_name"],
+            "dataset_manifest": json.loads(info["manifest_path"].read_text(encoding="utf-8")),
+            "prompt_version": zs["prompt_version"], "prompt_file": zs["prompts"][args.strategy],
+            "prompt_sha256": rz.prompt_sha256(load_templates(args.lang)[args.strategy]),
             "lora_modules": model.lora_modules, "trainable_parameters": trainable, "total_parameters": total,
             "dtype": str(model.dtype), "n_train_examples": len(train_enc), "n_dev_examples": len(dev_enc),
+            "n_dev_rows_generation": len(dev_rows), "train_data": train_rep, "dev_data": dev_rep,
             "effective_batch_size": accum * tr["per_device_train_batch_size"], "total_optimizer_steps": total_steps,
             "checkpoint_steps": ckpt_steps, "generation": cfg["generation"], "chrf": cfg["chrf"],
             "git_sha": rz._git_sha(), "versions": rz._versions(),
@@ -622,7 +682,7 @@ def cmd_train(args, cfg) -> Path:
             print(f"Evaluating checkpoint {st}, which has no metrics yet")
             load_adapter(run.ckpt(st))
             evaluate_checkpoint(model, run, st, load_state(run.ckpt(st))["epoch"], dev_rows, dev_enc,
-                                args.strategy, templates, cfg)
+                                args.strategy, make_prompt, cfg)
     sources = [(st, run.ckpt(st)) for st in run.checkpoints()]
     quick = run.resume_step()
     if quick is not None:
@@ -667,7 +727,7 @@ def cmd_train(args, cfg) -> Path:
                   f"lr {lr_used:.2e}  ({time.time() - t_start:.0f}s)", flush=True)
         if step in ckpt_steps:
             save_state(run.ckpt(step), step, epoch, t_start)  # a checkpoint only counts once it is complete
-            evaluate_checkpoint(model, run, step, epoch, dev_rows, dev_enc, args.strategy, templates, cfg)
+            evaluate_checkpoint(model, run, step, epoch, dev_rows, dev_enc, args.strategy, make_prompt, cfg)
         elif resume_every and step % resume_every == 0:
             # Quick resume point only (not evaluated, not a selection candidate): limits what a disconnect costs.
             save_state(run.resume_dir, step, epoch, t_start)
@@ -681,54 +741,62 @@ def _load_for_checkpoint(cfg, run: RunDir, step: int) -> Bolmo:
 
 def cmd_eval(args, cfg) -> None:
     """Evaluate saved checkpoints that have no metrics row yet (e.g. after a crash)."""
-    s = run_settings(cfg, args.run, args.strategy, args.seed)
-    run = RunDir(Path(args.out_root or default_out_root(cfg)) / (s["run_id"] + ("_smoke" if args.smoke else "")))
-    templates = load_templates(cfg)
-    dev_rows = _rows("dev", 4 if args.smoke else None)
+    s = run_settings(cfg, args.run, args.strategy, args.lang, args.seed)
+    run = RunDir(run_path(args, cfg, s))
+    make_prompt = _zero_shot_prompt(args.lang, args.strategy)
+    dev_rows = _rows(args.lang, "dev", 4 if args.smoke else None)
+    dev_ex, _ = prepare_examples(dev_rows, args.strategy, make_prompt, s["training"]["max_seq_bytes"])
     evaluated = {int(m["step"]) for m in run.metrics()}
     todo = [st for st in run.checkpoints() if st not in evaluated]
     print(f"Checkpoints without metrics: {todo}")
     import torch
     for step in todo:
         model = _load_for_checkpoint(cfg, run, step)
-        dev_enc = _encode_all(model, build_examples(dev_rows, args.strategy, templates), s["training"]["max_seq_bytes"])
         state = torch.load(run.ckpt(step) / "trainer_state.pt", map_location="cpu", weights_only=False)
-        evaluate_checkpoint(model, run, step, state["epoch"], dev_rows, dev_enc, args.strategy, templates, cfg)
+        evaluate_checkpoint(model, run, step, state["epoch"], dev_rows, _encode_all(model, dev_ex),
+                            args.strategy, make_prompt, cfg)
         del model
         torch.cuda.empty_cache() if torch.cuda.is_available() else None
 
 
 def cmd_select(args, cfg) -> dict:
-    s = run_settings(cfg, args.run, args.strategy, args.seed)
-    run = RunDir(Path(args.out_root or default_out_root(cfg)) / (s["run_id"] + ("_smoke" if args.smoke else "")))
+    s = run_settings(cfg, args.run, args.strategy, args.lang, args.seed)
+    run = RunDir(run_path(args, cfg, s))
     sel = select_checkpoints(run.metrics())
     (run.path / "selection.json").write_text(json.dumps(sel, indent=2), encoding="utf-8")
     print(json.dumps(sel, indent=2))
     return sel
 
 
+def prediction_name(run_id: str, label: str, step: int, shots: int, split: str) -> str:
+    """<run_id>_<loss|chrf>-selected_step<N>[_<K>shot]_<split>.csv"""
+    return f"{run_id}_{label}_step{step}{f'_{shots}shot' if shots else ''}_{split}.csv"
+
+
 def cmd_predict(args, cfg) -> list[Path]:
     import torch
 
-    s = run_settings(cfg, args.run, args.strategy, args.seed)
-    run_id = s["run_id"] + ("_smoke" if args.smoke else "")
-    run = RunDir(Path(args.out_root or default_out_root(cfg)) / run_id)
+    s = run_settings(cfg, args.run, args.strategy, args.lang, args.seed)
+    run = RunDir(run_path(args, cfg, s))
+    run_id = run.path.name
     sel_path = run.path / "selection.json"
     sel = json.loads(sel_path.read_text()) if sel_path.exists() else cmd_select(args, cfg)
     if args.step is not None:
         targets = [(f"step{args.step}", args.step)]
     else:
         rules = ["loss", "chrf"] if args.rule == "both" else [args.rule]
-        targets = []
-        for rule in rules:
-            st = int(sel[rule]["step"])
-            targets.append((f"{rule}-selected", st))
-    templates = load_templates(cfg)
-    rows = _rows(args.split, 4 if args.smoke else args.limit)
+        targets = [(f"{rule}-selected", int(sel[rule]["step"])) for rule in rules]
+
+    info = lang_info(args.lang)
+    examples = few_shot_examples(args.lang, args.shots) if args.shots else []
+    if examples:
+        print(f"{args.shots}-shot prompt: train examples {[e['id'] for e in examples]}")
+    make_prompt = prompt_fn(load_templates(args.lang), args.strategy, info["language_name"], examples)
+    rows = _rows(args.lang, args.split, 4 if args.smoke else args.limit)
     written = []
     cache: dict[int, Path] = {}
     for label, step in targets:
-        out_csv = run.pred / f"{run_id}_{label}_step{step}_{args.split}.csv"
+        out_csv = run.pred / prediction_name(run_id, label, step, args.shots, args.split)
         if step in cache:
             shutil.copy(cache[step], out_csv)
             shutil.copy(cache[step].with_suffix(".meta.json"), out_csv.with_suffix(".meta.json"))
@@ -736,11 +804,13 @@ def cmd_predict(args, cfg) -> list[Path]:
             continue
         model = _load_for_checkpoint(cfg, run, step)
         t0 = time.time()
-        recs = model.predict_rows(rows, args.strategy, templates, cfg["generation"])
-        meta = {"run_id": run_id, "strategy": args.strategy, "selection": label, "step": step,
-                "split": args.split, "limit": args.limit, "model": cfg["model"],
+        recs = model.predict_rows(rows, args.strategy, make_prompt, cfg["generation"])
+        meta = {"run_id": run_id, "language": args.lang, "strategy": args.strategy, "selection": label,
+                "step": step, "split": args.split, "limit": args.limit, "model": cfg["model"],
+                "shots": args.shots, "few_shot_examples": [e["id"] for e in examples],
+                "few_shot_seed": load_zs_config()["few_shot"]["seed"] if args.shots else None,
                 "adapter": s["adapter"], "training": s["training"], "generation": cfg["generation"],
-                "prompt_version": cfg["prompt_version"], **chrf_scores(recs, cfg["chrf"]),
+                "prompt_version": load_zs_config()["prompt_version"], **chrf_scores(recs, cfg["chrf"]),
                 "git_sha": rz._git_sha(), "runtime_seconds": round(time.time() - t0, 1), "versions": rz._versions()}
         rz.write_outputs(recs, out_csv, meta)
         cache[step] = out_csv
@@ -752,11 +822,10 @@ def cmd_predict(args, cfg) -> list[Path]:
 
 
 def cmd_export(args, cfg) -> Path:
-    """Copy the small, shareable files of a run into results/lora/<run_id>/ (no adapters)."""
-    s = run_settings(cfg, args.run, args.strategy, args.seed)
-    run_id = s["run_id"] + ("_smoke" if args.smoke else "")
-    src = Path(args.out_root or default_out_root(cfg)) / run_id
-    dst = ROOT / "results" / "lora" / run_id
+    """Copy the small, shareable files of a run into results/lora/<lang>/<run_id>/ (no adapters)."""
+    s = run_settings(cfg, args.run, args.strategy, args.lang, args.seed)
+    src = run_path(args, cfg, s)
+    dst = ROOT / "results" / "lora" / args.lang / src.name
     dst.mkdir(parents=True, exist_ok=True)
     for name in ("run_meta.json", "train_log.csv", "metrics.csv", "selection.json"):
         if (src / name).exists():
@@ -771,6 +840,7 @@ def cmd_export(args, cfg) -> Path:
 def main(argv: list[str] | None = None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("command", choices=["train", "eval", "select", "predict", "export"])
+    ap.add_argument("--lang", required=True, help=f"a key of 'languages' in configs/zero_shot.json: {languages()}")
     ap.add_argument("--strategy", required=True, choices=STRATEGIES)
     ap.add_argument("--run", default="baseline", help="key of 'runs' in configs/lora.json")
     ap.add_argument("--seed", type=int, default=None, help="override the config seed (repeat runs: 43, 44)")
@@ -780,7 +850,13 @@ def main(argv: list[str] | None = None):
     ap.add_argument("--rule", default="both", choices=["loss", "chrf", "both"], help="predict: selected checkpoint(s)")
     ap.add_argument("--step", type=int, default=None, help="predict: a specific checkpoint step instead of --rule")
     ap.add_argument("--limit", type=int, default=None, help="predict: only the first N rows")
+    ap.add_argument("--shots", type=int, default=0,
+                    help="predict: test with the K-shot prompt of run_zero_shot.py (default 0 = zero-shot prompt)")
     args = ap.parse_args(argv)
+    if args.shots < 0:
+        raise SystemExit("--shots must be 0 or more")
+    if args.shots and args.command != "predict":
+        raise SystemExit("--shots is only for predict: training and checkpoint selection use the zero-shot prompt")
     cfg = load_config()
     return {"train": cmd_train, "eval": cmd_eval, "select": cmd_select,
             "predict": cmd_predict, "export": cmd_export}[args.command](args, cfg)
