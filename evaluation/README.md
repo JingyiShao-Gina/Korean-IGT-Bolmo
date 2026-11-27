@@ -6,6 +6,20 @@
 - `evaluate.py`: scores the zero-shot and LoRA prediction files and writes `results/evaluation/` and `results/summary.csv`. Run it with `python evaluation/evaluate.py --lora-dir "<korean-igt-lora Drive folder>"`.
 - **Decision:** reported word and morpheme accuracy follow Ginn et al. (2024), using **positional** comparison (the i-th predicted token against the i-th gold token, with extra tokens ignored). This replaces the hierarchical edit-distance alignment proposed below. Edit distance is still used for WER / MER, computed over the flattened token sequence. Accuracy and MER compare tokens case-insensitively, following the dataset cleaning summary; chrF++ stays case-sensitive. Results and discussion: `results/evaluation/NOTES.md`.
 
+## Prompting results with the loop stop (27 Nov 2026)
+
+`rescore_loop_stop.py` puts every prompting method (zero-shot, 3-shot, segmentation, ICL) of Ainu, Tsez and Jejueo in one table, `results/evaluation/prompting_scores.csv`, under the same stop rule. No GPU; about 20 s for all files. Tests: `python evaluation/test_rescore.py`.
+
+```
+python evaluation/rescore_loop_stop.py               # all languages
+python evaluation/rescore_loop_stop.py --lang jejueo
+```
+
+- **Why.** The ICL runs use `--fast` (`fast_run/`), which stops generation when the output starts looping or reaches 1,000 bytes. The earlier runs generated to the end of their budget, so a looping tail inflates MER and chrF++ there. The script cuts every saved `raw_output` where the fast runner would have stopped (`fast_run/replay_loop_stop.py`, with a three-line completion check for segmentation), parses it again and scores it. Greedy decoding makes this the output a fast run would give.
+- **Rows.** Each file has an `original` row (as generated; equal to the folder's `scores.csv`, which the script checks) and a `loop_stop` row. Extra columns: `stopped_by_loop`, `stopped_by_byte_cap`, `answer_changed`. All test rows are scored; Jejueo suffixes are re-attached as in `score_zero_shot.py`.
+- **What changes.** Accuracy does not change for any file: loops come after the answer's first words. MER and chrF++ change a lot where loops are frequent. Jejueo 3-shot all-in-one: MER 14.02 → 1.38, gloss chrF++ 2.83 → 7.83, transliteration chrF++ 3.29 → 9.43 (53% of rows cut by the loop stop). Ainu 3-shot: MER 2.95 → 1.12, gloss chrF++ 9.57 → 12.15. Zero-shot changes little. The ICL rows are identical under both rules, since they were already generated with the stop.
+- **Use the `loop_stop` rows when comparing methods** and report `stopped_by_loop` as the loop rate; it is a model failure in its own right (Jejueo 3-shot 53%, zero-shot 2–6%).
+
 The original protocol follows.
 
 Freeze these conventions before the main runs. They are project definitions, not a claim of exact reproduction of any published implementation. Align with the team's chosen Ginn et al. (2024) implementation only after checking its precise definitions.
