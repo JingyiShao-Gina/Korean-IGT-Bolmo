@@ -21,3 +21,5 @@ wandb/
 results/**/predictions*.jsonl
 results/**/raw_outputs*.jsonl
 .DS_Store
+# Local LoRA run outputs (Colab writes to Google Drive instead)
+outputs/
