@@ -8,7 +8,8 @@ Inputs
   <lora-dir>/<lang>/<run>/metrics.csv                       (val loss per checkpoint)
   <lora-dir>/<lang>/<run>/predictions/*_test.csv            (selected checkpoints, test; *_<K>shot_test.csv
                                                              = same adapter tested with the K-shot prompt)
-  <lora-dir>/<lang>/<run>/dev_predictions/step-XXXXXX.csv   (every checkpoint, dev)
+  <lora-dir>/<lang>/<run>/dev_predictions/step-XXXXXX.csv   (every checkpoint, dev; optional: without
+                                                             it the dev and selection tables are skipped)
   (runs directly in <lora-dir>/ are the earlier Korean runs and still work)
 
 Outputs (in --out, default results/evaluation/)
@@ -16,6 +17,10 @@ Outputs (in --out, default results/evaluation/)
   dev_checkpoint_scores.csv   one row per (run, checkpoint) on dev
   checkpoint_selection.csv    checkpoint chosen by each criterion, with its test score
   ../summary.csv              filled-in project summary table
+
+If a language's manifest sets "gloss_affixes_detached" (Jejueo: "eat -PST -DECL"), gold and
+predicted glosses are re-joined (metrics.join_detached_affixes) before scoring, as in
+zero_shot/score_zero_shot.py, so the scores match results/zero_shot/<lang>/scores.csv.
 """
 from __future__ import annotations
 
@@ -28,7 +33,7 @@ from pathlib import Path
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).parent))
-from metrics import evaluate  # noqa: E402
+from metrics import evaluate, join_detached_affixes  # noqa: E402
 
 REPO = Path(__file__).resolve().parent.parent
 # "bolmo-1b_ainu_step_by_step_r16_lr2e-4_s42" (per language) or "bolmo-1b_two_stage_r16_lr2e-4_s42" (earlier Korean runs)
@@ -50,6 +55,16 @@ METRIC_COLS = ["gloss_morpheme_accuracy", "gloss_word_accuracy", "gloss_mer",
                "transliteration_word_accuracy"]
 
 
+def affixes_detached(lang: str) -> bool:
+    """True if the language's manifest says its glosses write affixes as separate tokens."""
+    cfg = json.loads((REPO / "configs/zero_shot.json").read_text(encoding="utf-8"))
+    entry = cfg["languages"].get(lang)
+    if entry is None:
+        return False
+    manifest = json.loads((REPO / entry["dataset_manifest"]).read_text(encoding="utf-8"))
+    return bool(manifest.get("gloss_affixes_detached", False))
+
+
 def lora_budgets(generation: dict) -> dict:
     """Byte budget per n_new column, from the LoRA pipeline's generation config."""
     m = generation["max_new_bytes"]
@@ -60,7 +75,7 @@ def lora_budgets(generation: dict) -> dict:
             "n_new_tokens_step2": m["gloss"]}
 
 
-def score_file(path: Path, budgets: dict | None = None) -> dict:
+def score_file(path: Path, budgets: dict | None = None, join_affixes: bool = False) -> dict:
     """Score one prediction CSV.
 
     truncation_rate: for LoRA files (budgets given), a row counts as truncated when
@@ -70,8 +85,12 @@ def score_file(path: Path, budgets: dict | None = None) -> dict:
     as soon as the answer is complete, so reaching the budget means it was cut off.
     Zero-shot generation does not stop early (Bolmo ignores the stopping criteria),
     so reaching the budget says nothing there: zero-shot keeps its own flag.
+    join_affixes: re-attach detached affixes in gold and predicted glosses first (Jejueo).
     """
     df = pd.read_csv(path, dtype=str, keep_default_na=False)
+    if join_affixes:
+        df["gold_gloss"] = df["gold_gloss"].map(join_detached_affixes)
+        df["pred_gloss"] = df["pred_gloss"].map(join_detached_affixes)
     res = evaluate(df["pred_gloss"].tolist(), df["gold_gloss"].tolist(),
                    df["pred_transliteration"].tolist(), df["gold_transliteration"].tolist())
     res["parse_failure_rate"] = (df["parse_status"] != "ok").mean()
@@ -113,12 +132,14 @@ def main():
         lang = "korean" if f.parent == args.zero_shot_dir else f.parent.name
         test_rows.append({"system": f"Zero-shot {strategy}", "language": lang, "run_id": f.stem,
                           "strategy": strategy, "adaptation": "none", "shots": 0, "seed": "",
-                          "selection": "", "step": "", "file": f.name, **score_file(f)})
+                          "selection": "", "step": "", "file": f.name,
+                          **score_file(f, join_affixes=affixes_detached(lang))})
 
     dev_rows = []
     for run_dir, info in lora_runs(args.lora_dir):
         run = run_dir.name
         budgets = lora_budgets(json.loads((run_dir / "run_meta.json").read_text())["generation"])
+        join = affixes_detached(info["lang"])
         for f in sorted((run_dir / "predictions").glob("*_test.csv")):
             m = TEST_RE.search(f.name)
             shots = int(m["shots"] or 0)
@@ -128,7 +149,7 @@ def main():
                               "adaptation": "lora", "shots": shots,
                               "seed": info["seed"], "selection": m["sel"] or "manual",
                               "step": int(m["step"]),
-                              "file": f.name, **score_file(f, budgets)})
+                              "file": f.name, **score_file(f, budgets, join)})
 
         # ------------------------------------------------------------ dev checkpoints
         theo = pd.read_csv(run_dir / "metrics.csv")
@@ -139,18 +160,22 @@ def main():
                              "r": info["r"], "step": step, "epoch": round(t["epoch"], 2),
                              "val_loss": t["val_loss"],
                              "theo_val_gloss_chrfpp": t["val_gloss_chrfpp"],
-                             **score_file(f, budgets)})
+                             **score_file(f, budgets, join)})
 
     test = pd.DataFrame(test_rows)
     dev = pd.DataFrame(dev_rows)
 
-    # sanity check: our chrF++ must reproduce the LoRA pipeline's numbers
-    diff = (dev["gloss_chrfpp"] - dev["theo_val_gloss_chrfpp"]).abs().max()
-    print(f"max |our dev chrF++ - metrics.csv chrF++| = {diff:.4f}")
+    if dev.empty:
+        print("No dev_predictions/ found: skipping the dev checkpoint and selection tables "
+              "(test scores are still written).")
+    else:
+        # sanity check: our chrF++ must reproduce the LoRA pipeline's numbers
+        diff = (dev["gloss_chrfpp"] - dev["theo_val_gloss_chrfpp"]).abs().max()
+        print(f"max |our dev chrF++ - metrics.csv chrF++| = {diff:.4f}")
 
     # ---------------------------------------------------------------- selection
     sel_rows = []
-    for run, g in dev.groupby("run_id", sort=True):
+    for run, g in (dev.groupby("run_id", sort=True) if not dev.empty else []):
         g = g.sort_values("step")  # ties -> earlier step
         for crit, (col, how) in CRITERIA.items():
             best = g.loc[g[col].idxmin() if how == "min" else g[col].idxmax()]
@@ -167,8 +192,9 @@ def main():
     front = ["system", "language", "run_id", "selection", "step"]
     test[front + METRIC_COLS + [c for c in test.columns if c not in front + METRIC_COLS]] \
         .to_csv(args.out / "test_scores.csv", index=False, float_format="%.4f")
-    dev.to_csv(args.out / "dev_checkpoint_scores.csv", index=False, float_format="%.4f")
-    sel.to_csv(args.out / "checkpoint_selection.csv", index=False, float_format="%.4f")
+    if not dev.empty:
+        dev.to_csv(args.out / "dev_checkpoint_scores.csv", index=False, float_format="%.4f")
+        sel.to_csv(args.out / "checkpoint_selection.csv", index=False, float_format="%.4f")
 
     summary = pd.DataFrame({
         "run_id": test["run_id"], "language": test["language"], "model_size": "1b", "strategy": test["strategy"],
@@ -183,6 +209,8 @@ def main():
     print("\nTEST\n", test[["system", "language", "selection", "step", "gloss_morpheme_accuracy",
                             "gloss_word_accuracy", "gloss_mer", "gloss_chrfpp",
                             "transliteration_chrfpp", "parse_failure_rate"]].round(4).to_string())
+    if dev.empty:
+        return
     print("\nDEV\n", dev[["run_id", "step", "val_loss", "gloss_chrfpp", "gloss_mer",
                           "gloss_morpheme_accuracy", "gloss_word_accuracy"]].round(4).to_string())
     print("\nSELECTION\n", sel.round(4).to_string())
