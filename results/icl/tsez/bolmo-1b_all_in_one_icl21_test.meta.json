@@ -1,0 +1,98 @@
+{
+  "language": "tsez",
+  "strategy": "all_in_one",
+  "split": "test",
+  "limit": null,
+  "model_id": "allenai/Bolmo-1B",
+  "model_revision": "452690a8cfab1dd1ec27b74f2667632f17a21b46",
+  "dataset_manifest": {
+    "dataset_id": "lowresource-igt/Tsez_igt_dataset",
+    "dataset_config": "default",
+    "revision": "4a17dc9e0ab7d524504168ebaf45c6d6e3c2cb7f",
+    "language": "Tsez (dido1241)",
+    "license": "not stated upstream",
+    "cleaned": false,
+    "cleaning_note": "Original upstream data (source: GlossLM), not cleaned by the team. Source text is Cyrillic; gold transcription is Latin script. Glosses are unsegmented (is_segmented = no).",
+    "field_mapping": {
+      "source": "text",
+      "transliteration": "transcription",
+      "gloss": "glosses"
+    },
+    "split_mapping": {
+      "train": "train",
+      "validation": "eval",
+      "test": "test"
+    },
+    "split_counts": {
+      "train": 3558,
+      "validation": 445,
+      "test": 445
+    }
+  },
+  "prompt_version": "v5",
+  "language_name": "Tsez",
+  "prompt_files": {
+    "all_in_one": "zero_shot/prompts/all_in_one.txt"
+  },
+  "prompt_sha256": {
+    "all_in_one": "2616c07f73637525fb64e491258afe34101557ecc78bdf1dcf1b11a1fde05408"
+  },
+  "prompt_sha256_filled": {
+    "all_in_one": "f293a1b54bba10f3a4b7f25c35c2fb006ac0f2794627c75fd44545ba133e2572"
+  },
+  "icl": {
+    "method": "word overlap on the original script (NFKC, lower-cased, whitespace tokens), ties: English translation word overlap, shorter text, id; most similar last",
+    "k": 21,
+    "pool_size": 1177,
+    "pool_filters": {
+      "max_text_chars": 60,
+      "max_gloss_chars": 100,
+      "min_text_words": 3
+    }
+  },
+  "prompt_bytes_mean": 7067.9,
+  "prompt_bytes_max": 8295,
+  "generation": {
+    "do_sample": false,
+    "num_beams": 1,
+    "max_new_tokens": 768,
+    "max_new_tokens_unit": "bytes (Bolmo is byte-level)",
+    "stop_rule": "single-answer prompts: first complete line; all-in-one and step-by-step: transliteration line + gloss line",
+    "speedup": {
+      "max_bytes": 1000,
+      "loop_stop": true,
+      "loop_min_span": 60,
+      "loop_min_reps": 3,
+      "loop_max_period": 200,
+      "dtype": "float32"
+    }
+  },
+  "stopping_criteria_used": true,
+  "seed": 42,
+  "git_sha": "05a010ae1863523b4a7178d5eabdacfc7ead145e",
+  "runtime_seconds": 2596.2,
+  "resumed": false,
+  "rows_from_checkpoint": 0,
+  "versions": {
+    "python": "3.13.16",
+    "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+    "torch": "2.14.1+cu130",
+    "transformers": "4.57.3",
+    "datasets": "4.8.5",
+    "xlstm": "2.0.3",
+    "pandas": "2.2.3",
+    "gpu": "NVIDIA L4"
+  },
+  "runner": "icl/run_icl.py",
+  "stop_reason_counts": {
+    "complete": 327,
+    "loop": 117,
+    "max_new_tokens": 1
+  },
+  "n_examples": 445,
+  "parse_status_counts": {
+    "ok": 417,
+    "missing_gloss": 28
+  },
+  "truncation_rate": 0.2651685393258427
+}
