@@ -1,0 +1,184 @@
+Generating train split:   0%|          | 0/6726 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 6726/6726 [00:00<00:00, 150083.46 examples/s]
+Generating test split:   0%|          | 0/750 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 750/750 [00:00<00:00, 167245.89 examples/s]
+Generating eval split:   0%|          | 0/218 [00:00<?, ? examples/s]Generating eval split: 100%|██████████| 218/218 [00:00<00:00, 56792.44 examples/s]
+Loaded 750 ainu test rows; 5388 train rows in the example pool; K = 21
+== all_in_one ==
+  resume: 0/750 rows already in /content/repo/results/icl/ainu/bolmo-1b_all_in_one_icl21_test.partial.jsonl
+`torch_dtype` is deprecated! Use `dtype` instead!
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1795776927.171051     596 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1795776929.529765     596 cudart_stub.cc:31] Could not find cuda drivers on your machine, GPU will not be used.
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:51<00:51, 51.40s/it]Fetching 2 files: 100%|██████████| 2/2 [00:51<00:00, 25.70s/it]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  2.67it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  3.45it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  3.30it/s]
+Model loaded in torch.float32
+/usr/local/lib/python3.13/dist-packages/triton/language/core.py:2625: UserWarning: tl.make_block_ptr is deprecated. Use TensorDescriptor or tl.make_tensor_descriptor instead.
+  warn("tl.make_block_ptr is deprecated. Use TensorDescriptor or tl.make_tensor_descriptor instead.")
+  [1/750] K7803231UP.001: ok
+  [10/750] K7803231UP.010: ok
+  [20/750] K7803231UP.020: ok
+  [30/750] K7803231UP.030: ok
+  [40/750] K7803231UP.040: ok
+  [50/750] K7803231UP.050: ok
+  [60/750] K7803231UP.060: ok
+  [70/750] K7803231UP.070: ok
+  [80/750] K7803231UP.080: ok
+  [90/750] K7803231UP.090: ok
+  [100/750] K7803231UP.100: ok
+  [110/750] K7803231UP.110: ok
+  [120/750] K7803231UP.120: ok
+  [130/750] K7803231UP.130: ok
+  [140/750] K7803231UP.140: ok
+  [150/750] K7803231UP.150: ok
+  [160/750] K7803231UP.160: ok
+  [170/750] K7803231UP.170: ok
+  [180/750] K7803231UP.180: ok
+  [190/750] K7803231UP.190: ok
+  [200/750] K7803231UP.200: ok
+  [210/750] K7803231UP.210: ok
+  [220/750] K7803231UP.220: ok
+  [230/750] K7803231UP.230: ok
+  [240/750] K7803231UP.240: ok
+  [250/750] K7803231UP.250: ok
+  [260/750] K7807151UP.006: ok
+  [270/750] K7807151UP.016: ok
+  [280/750] K7807151UP.026: ok
+  [290/750] K7807151UP.036: ok
+  [300/750] K7807151UP.046: ok
+  [310/750] K7807151UP.056: ok
+  [320/750] K7807151UP.066: ok
+  [330/750] K7807151UP.076: ok
+  [340/750] K7807151UP.086: ok
+  [350/750] K7807151UP.096: ok
+  [360/750] K7807151UP.106: ok
+  [370/750] K7807151UP.116: ok
+  [380/750] K7807151UP.126: ok
+  [390/750] K7807151UP.136: ok
+  [400/750] K7807151UP.146: ok
+  [410/750] K7807151UP.156: ok
+  [420/750] K7807151UP.166: ok
+  [430/750] K7807151UP.176: ok
+  [440/750] K7807151UP.186: ok
+  [450/750] K7807151UP.196: ok
+  [460/750] K7807151UP.206: ok
+  [470/750] K7807151UP.216: ok
+  [480/750] K7807151UP.226: ok
+  [490/750] K7807151UP.236: ok
+  [500/750] K7807151UP.246: ok
+  [510/750] K7807151UP.256: ok
+  [520/750] K7807151UP.266: ok
+  [530/750] K7807151UP.276: missing_gloss
+  [540/750] K7807151UP.286: ok
+  [550/750] K7807151UP.296: ok
+  [560/750] K8106231UP.004: ok
+  [570/750] K8106231UP.014: ok
+  [580/750] OI990317UP.008: ok
+  [590/750] OI990317UP.018: ok
+  [600/750] OI990317UP.028: ok
+  [610/750] OI990317UP.038: ok
+  [620/750] OI990317UP.048: ok
+  [630/750] OI990317UP.058: ok
+  [640/750] OI990317UP.068: ok
+  [650/750] OI990317UP.078: ok
+  [660/750] OI990317UP.088: missing_gloss
+  [670/750] OI990317UP.098: ok
+  [680/750] OI990423KY.002: ok
+  [690/750] OI990423KY.012: ok
+  [700/750] OI990423KY.022: ok
+  [710/750] OI990423KY.032: ok
+  [720/750] OI990423KY.042: ok
+  [730/750] OI990423KY.052: ok
+  [740/750] OI990423KY.062: ok
+  [750/750] OI990423KY.072: ok
+Wrote /content/repo/results/icl/ainu/bolmo-1b_all_in_one_icl21_test.csv (750 rows)
+Loaded 750 ainu test rows; 5388 train rows in the example pool; K = 21
+== step_by_step ==
+  resume: 0/750 rows already in /content/repo/results/icl/ainu/bolmo-1b_step_by_step_icl21_test.partial.jsonl
+`torch_dtype` is deprecated! Use `dtype` instead!
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1795781160.763664     594 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1795781163.827254     594 cudart_stub.cc:31] Could not find cuda drivers on your machine, GPU will not be used.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  2.93it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  5.76it/s]
+Model loaded in torch.float32
+  [1/750] K7803231UP.001: ok
+  [10/750] K7803231UP.010: ok
+  [20/750] K7803231UP.020: ok
+  [30/750] K7803231UP.030: ok
+/usr/local/lib/python3.13/dist-packages/triton/language/core.py:2625: UserWarning: tl.make_block_ptr is deprecated. Use TensorDescriptor or tl.make_tensor_descriptor instead.
+  warn("tl.make_block_ptr is deprecated. Use TensorDescriptor or tl.make_tensor_descriptor instead.")
+  [40/750] K7803231UP.040: ok
+  [50/750] K7803231UP.050: ok
+  [60/750] K7803231UP.060: ok
+  [70/750] K7803231UP.070: ok
+  [80/750] K7803231UP.080: ok
+  [90/750] K7803231UP.090: ok
+  [100/750] K7803231UP.100: ok
+  [110/750] K7803231UP.110: ok
+  [120/750] K7803231UP.120: ok
+  [130/750] K7803231UP.130: ok
+  [140/750] K7803231UP.140: ok
+  [150/750] K7803231UP.150: ok
+  [160/750] K7803231UP.160: ok
+  [170/750] K7803231UP.170: ok
+  [180/750] K7803231UP.180: ok
+  [190/750] K7803231UP.190: ok
+  [200/750] K7803231UP.200: ok
+  [210/750] K7803231UP.210: ok
+  [220/750] K7803231UP.220: ok
+  [230/750] K7803231UP.230: ok
+  [240/750] K7803231UP.240: ok
+  [250/750] K7803231UP.250: ok
+  [260/750] K7807151UP.006: ok
+  [270/750] K7807151UP.016: ok
+  [280/750] K7807151UP.026: ok
+  [290/750] K7807151UP.036: ok
+  [300/750] K7807151UP.046: ok
+  [310/750] K7807151UP.056: ok
+  [320/750] K7807151UP.066: ok
+  [330/750] K7807151UP.076: ok
+  [340/750] K7807151UP.086: ok
+  [350/750] K7807151UP.096: ok
+  [360/750] K7807151UP.106: ok
+  [370/750] K7807151UP.116: ok
+  [380/750] K7807151UP.126: ok
+  [390/750] K7807151UP.136: ok
+  [400/750] K7807151UP.146: ok
+  [410/750] K7807151UP.156: ok
+  [420/750] K7807151UP.166: ok
+  [430/750] K7807151UP.176: ok
+  [440/750] K7807151UP.186: ok
+  [450/750] K7807151UP.196: ok
+  [460/750] K7807151UP.206: ok
+  [470/750] K7807151UP.216: ok
+  [480/750] K7807151UP.226: ok
+  [490/750] K7807151UP.236: ok
+  [500/750] K7807151UP.246: ok
+  [510/750] K7807151UP.256: ok
+  [520/750] K7807151UP.266: ok
+  [530/750] K7807151UP.276: missing_gloss
+  [540/750] K7807151UP.286: ok
+  [550/750] K7807151UP.296: ok
+  [560/750] K8106231UP.004: ok
+  [570/750] K8106231UP.014: ok
+  [580/750] OI990317UP.008: ok
+  [590/750] OI990317UP.018: ok
+  [600/750] OI990317UP.028: missing_gloss
+  [610/750] OI990317UP.038: ok
+  [620/750] OI990317UP.048: ok
+  [630/750] OI990317UP.058: ok
+  [640/750] OI990317UP.068: ok
+  [650/750] OI990317UP.078: ok
+  [660/750] OI990317UP.088: missing_gloss
+  [670/750] OI990317UP.098: ok
+  [680/750] OI990423KY.002: ok
+  [690/750] OI990423KY.012: ok
+  [700/750] OI990423KY.022: ok
+  [710/750] OI990423KY.032: ok
+  [720/750] OI990423KY.042: ok
+  [730/750] OI990423KY.052: ok
+  [740/750] OI990423KY.062: ok
+  [750/750] OI990423KY.072: ok
+Wrote /content/repo/results/icl/ainu/bolmo-1b_step_by_step_icl21_test.csv (750 rows)
