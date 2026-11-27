@@ -4,7 +4,9 @@ Usage:
   python evaluation/evaluate.py --lora-dir "<path to igt-lora>"
 
 Inputs
-  results/zero_shot/[<lang>/]bolmo-1b_<strategy>_test.csv  (zero-shot; files directly in zero_shot/ are Korean)
+  results/zero_shot/[<lang>/]bolmo-1b_<strategy>_test.csv  (zero-shot; files directly in zero_shot/ are Korean.
+                                                             The strategy is read from the file: the Korean v3
+                                                             "step_by_step" file is two calls, so two_stage)
   <lora-dir>/<lang>/<run>/metrics.csv                       (val loss per checkpoint)
   <lora-dir>/<lang>/<run>/predictions/*_test.csv            (selected checkpoints, test; *_<K>shot_test.csv
                                                              = same adapter tested with the K-shot prompt)
@@ -63,6 +65,21 @@ def affixes_detached(lang: str) -> bool:
         return False
     manifest = json.loads((REPO / entry["dataset_manifest"]).read_text(encoding="utf-8"))
     return bool(manifest.get("gloss_affixes_detached", False))
+
+
+def zero_shot_strategy(path: Path) -> tuple[str, str]:
+    """(strategy, prompt_version) of a zero-shot prediction file, from its content, not its name.
+
+    The Korean v3 file results/zero_shot/bolmo-1b_step_by_step_test.csv is named after the old
+    meaning of "step-by-step" (two calls); today that setting is two_stage, and step_by_step is
+    one call. A two-call file has a raw_output_step2 column, so it is labelled two_stage.
+    """
+    name = path.name.removeprefix("bolmo-1b_").removesuffix("_test.csv")
+    columns = pd.read_csv(path, nrows=0).columns
+    strategy = "two_stage" if "raw_output_step2" in columns else name
+    meta = path.with_suffix(".meta.json")
+    version = json.loads(meta.read_text(encoding="utf-8")).get("prompt_version", "") if meta.exists() else ""
+    return strategy, version
 
 
 def lora_budgets(generation: dict) -> dict:
@@ -128,9 +145,10 @@ def main():
     # ---------------------------------------------------------------- test files
     test_rows = []
     for f in sorted([*args.zero_shot_dir.glob("bolmo-1b_*_test.csv"), *args.zero_shot_dir.glob("*/bolmo-1b_*_test.csv")]):
-        strategy = f.name.removeprefix("bolmo-1b_").removesuffix("_test.csv")
+        strategy, version = zero_shot_strategy(f)
         lang = "korean" if f.parent == args.zero_shot_dir else f.parent.name
-        test_rows.append({"system": f"Zero-shot {strategy}", "language": lang, "run_id": f.stem,
+        test_rows.append({"system": f"Zero-shot {strategy} (prompt {version})" if version else f"Zero-shot {strategy}",
+                          "language": lang, "run_id": f.stem, "prompt_version": version,
                           "strategy": strategy, "adaptation": "none", "shots": 0, "seed": "",
                           "selection": "", "step": "", "file": f.name,
                           **score_file(f, join_affixes=affixes_detached(lang))})

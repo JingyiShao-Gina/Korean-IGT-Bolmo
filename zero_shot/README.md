@@ -139,7 +139,7 @@ The examples change the kind of output.
 | `evaluation/metrics.py`, `evaluation/test_metrics.py` | Team metrics by Soyeong, copied unchanged from the `soyeong/evaluation` branch. |
 | `zero_shot/test_parsing.py` | CPU-only checks for prompts, parsing and the stopping logic (`python zero_shot/test_parsing.py`). |
 | `results/zero_shot/bolmo-1b_all_in_one_test.csv` | Korean all-in-one test predictions (263 rows, prompt v3). |
-| `results/zero_shot/bolmo-1b_step_by_step_test.csv` | Korean **two-stage** test predictions (263 rows). The file name is from before the step-by-step definition changed; it is kept because Soyeong's evaluation reads it. |
+| `results/zero_shot/bolmo-1b_step_by_step_test.csv` | Korean **two-stage** test predictions (263 rows). The file name is from before the step-by-step definition changed; it is kept because Soyeong's evaluation reads it; `evaluation/evaluate.py` labels it `two_stage` (prompt v3) because it has two calls (`raw_output_step2`). It is not comparable with the one-call step-by-step runs of the other languages. |
 | `results/zero_shot/<lang>/` | New runs (Ainu, and Korean single-call step-by-step) are written here. |
 | `results/zero_shot/*.meta.json` | Record of each run: language, model/dataset revision, prompt version, files and SHA-256, git commit, package versions, GPU, runtime, parse/truncation counts. |
 | `results/zero_shot/NOTES.md` | Korean run notes: results, model behaviour for error analysis, problems met, notes for evaluation. |
