@@ -71,7 +71,8 @@ PATTERNS = [
      lambda m: f"LoRA r{m['r']} lr{m['lr']}" + (f" + {m['k']}-shot prompt" if m["k"] else "")),
 ]
 COLS = ["language", "method", "strategy", "selection", "checkpoint", "rule", "n", "gloss_morpheme_accuracy", "gloss_word_accuracy",
-        "gloss_mer", "gloss_wer", "gloss_chrfpp", "transliteration_chrfpp", "transliteration_word_accuracy",
+        "gloss_mer", "gloss_wer", "gloss_morpheme_bag_f1", "gloss_chrfpp", "transliteration_chrfpp",
+        "transliteration_word_accuracy",
         "parse_failure_rate", "stopped_by_loop", "stopped_by_byte_cap", "answer_changed"]
 
 

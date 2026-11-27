@@ -122,6 +122,30 @@ def score_level(preds: list[str], golds: list[str], tokenize, casefold: bool = T
     }
 
 
+def bag_scores(preds: list[str], golds: list[str], tokenize, casefold: bool = True) -> dict:
+    """Order-free corpus precision / recall / F1: how many gold tokens the prediction contains,
+    wherever they stand (multiset overlap per sentence, summed over the corpus).
+
+    Positional accuracy counts a token only at its own index, so one missing or extra word
+    early in a sentence makes every later token wrong (gold minus its first word scores
+    about 1% morpheme accuracy). This score shows how much of the content is right
+    regardless of order; report it next to accuracy, not instead of it.
+    """
+    from collections import Counter
+    overlap = n_pred = n_gold = 0
+    for p_text, g_text in zip(preds, golds, strict=True):
+        p, g = tokenize(p_text), tokenize(g_text)
+        if casefold:
+            p, g = [t.casefold() for t in p], [t.casefold() for t in g]
+        overlap += sum((Counter(p) & Counter(g)).values())
+        n_pred += len(p)
+        n_gold += len(g)
+    precision = overlap / n_pred if n_pred else 0.0
+    recall = overlap / n_gold if n_gold else float("nan")
+    f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
+    return {"precision": precision, "recall": recall, "f1": f1}
+
+
 def chrf_pp(preds: list[str], golds: list[str]) -> tuple[float, str]:
     """Corpus chrF++ with the same settings as the LoRA pipeline."""
     from sacrebleu.metrics import CHRF
@@ -139,6 +163,7 @@ def evaluate(pred_gloss, gold_gloss, pred_translit=None, gold_translit=None) -> 
     m = score_level(pred_gloss, gold_gloss, morphemes)
     w_cs = score_level(pred_gloss, gold_gloss, words, casefold=False)
     m_cs = score_level(pred_gloss, gold_gloss, morphemes, casefold=False)
+    m_bag = bag_scores(pred_gloss, gold_gloss, morphemes)
     g_chrf, sig = chrf_pp(pred_gloss, gold_gloss)
     out = {
         "n": len(gold_gloss),
@@ -150,6 +175,9 @@ def evaluate(pred_gloss, gold_gloss, pred_translit=None, gold_translit=None) -> 
         "gloss_morpheme_accuracy_sent_avg": m["avg_sentence_accuracy"],
         "gloss_wer": w["error_rate"],
         "gloss_mer": m["error_rate"],
+        "gloss_morpheme_bag_f1": m_bag["f1"],
+        "gloss_morpheme_bag_precision": m_bag["precision"],
+        "gloss_morpheme_bag_recall": m_bag["recall"],
         "gloss_chrfpp": g_chrf,
         "gold_words": w["total"],
         "gold_morphemes": m["total"],
