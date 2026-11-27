@@ -114,6 +114,24 @@ def test_corpus_micro_average():
     assert r["avg_sentence_accuracy"] == 1 / 2
 
 
+def test_bag_scores_ignore_order():
+    from metrics import bag_scores
+    gold = "guest-NOM two CL wine-ACC drink-PST"
+    # same morphemes in another order: positional accuracy is low, the bag score is perfect
+    shuffled = "wine-ACC guest-NOM drink-PST two CL"
+    r = evaluate([shuffled], [gold])
+    assert r["gloss_morpheme_accuracy"] < 0.5 and abs(r["gloss_morpheme_bag_f1"] - 1) < 1e-9
+    # gold minus its first word: accuracy collapses, the bag score stays high
+    r = evaluate(["two CL wine-ACC drink-PST"], [gold])
+    assert r["gloss_morpheme_accuracy"] == 0
+    assert abs(r["gloss_morpheme_bag_recall"] - 6 / 8) < 1e-9 and r["gloss_morpheme_bag_precision"] == 1
+    # repeated morphemes count only as often as in the gold (multiset), case-insensitive
+    b = bag_scores(["NOM nom NOM"], ["x-NOM"], morphemes)
+    assert abs(b["precision"] - 1 / 3) < 1e-9 and b["recall"] == 1 / 2
+    # empty prediction
+    assert evaluate([""], [gold])["gloss_morpheme_bag_f1"] == 0
+
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):

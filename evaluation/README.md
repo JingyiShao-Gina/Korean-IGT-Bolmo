@@ -22,6 +22,30 @@ python evaluation/rescore_loop_stop.py --lang jejueo
 - **What changes.** Accuracy does not change for any prompting file: loops come after the answer's first words. For LoRA it changes by at most 0.2 points (a few loops start inside the gloss). MER and chrF++ change a lot where loops are frequent. Jejueo 3-shot all-in-one: MER 14.02 → 1.38, gloss chrF++ 2.83 → 7.83, transliteration chrF++ 3.29 → 9.43 (53% of rows cut by the loop stop). Ainu 3-shot: MER 2.95 → 1.12, gloss chrF++ 9.79 → 12.55. Zero-shot changes little. The ICL rows are identical under both rules, since they were already generated with the stop. LoRA loops too, less often: Tsez all-in-one 4.5% of rows, MER 0.95 → 0.83, gloss chrF++ 32.6 → 33.1 (with the 3-shot prompt 31–39% of rows).
 - **Use the `loop_stop` rows when comparing methods** and report `stopped_by_loop` as the loop rate; it is a model failure in its own right (Jejueo 3-shot 53%, zero-shot 2–6%).
 
+## Checkpoint selection, Tsez LoRA (dev, 27 Nov 2026)
+
+`results/evaluation/lora_dev_checkpoints.csv`: the six dev checkpoints of each Tsez LoRA run (Theo's `dev_predictions/`, shared on Drive; not in Git), scored with the loop stop, plus Theo's dev loss. `evaluate.py --lora-dir <folder>` reproduces Theo's dev gloss chrF++ exactly on all 12 checkpoints (max difference 0.0000).
+
+- Dev scores rise fast until epoch 2 and then flatten: steps 555 and 667 differ by at most 0.3 points on morpheme accuracy, bag F1 and gloss chrF++ (all-in-one: 7.6% / 42.2% / 32.6 vs 7.8% / 42.1% / 32.2). Dev loss still falls a little (0.455 → 0.446).
+- Every rule (lowest loss, highest chrF++, highest accuracy, highest bag F1, lowest MER) picks step 555 or 667, which are also within noise on test. Without the loop stop, lowest MER picks step 333 for step-by-step, because loops inflate MER at some checkpoints.
+
+## Order-free morpheme F1, and how our accuracy compares with the shared task's (27 Nov 2026)
+
+**Morpheme bag F1** (`gloss_morpheme_bag_f1`, with `_precision` and `_recall`; in every `scores.csv` and in `unified_test_scores.csv`). Positional accuracy counts a morpheme only at its own index, so one missing word early in a sentence makes every later morpheme wrong: the gold gloss minus its first word scores 0.7–2.2% morpheme accuracy (chrF++ 85–92). The bag F1 counts the gold morphemes the prediction contains anywhere (multiset overlap, case-insensitive), so it shows how much content is right regardless of order. Tsez LoRA: accuracy 7.8%, bag F1 43.9%; Ainu ICL: 24.4% and 54.5%; zero-shot: 6–15%. Report it next to accuracy, not instead of it.
+
+**Our accuracy vs the SIGMORPHON 2023 shared task's** (`python evaluation/check_official_accuracy.py`; [shared task eval](https://github.com/sigmorphon/2023glossingST/blob/main/baseline/src/eval.py), re-implemented). Both compare token i with token i over the whole sentence. The shared task splits morphemes on whitespace and `-` only, keeps empty pieces, and is case-sensitive; we also split on `=`, drop empty pieces, re-join detached affixes (Ainu, Jejueo) and fold case. All-in-one, loop-stopped:
+
+| | Ours | Ours, case-sensitive | Shared task |
+|---|---|---|---|
+| Tsez LoRA | 7.79% | 7.76% | 7.73% |
+| Tsez zero-shot | 1.56% | 1.27% | 1.26% |
+| Ainu ICL-21 | 24.40% | 24.40% | 9.27% |
+| Jejueo 3-shot | 2.43% | 2.31% | 5.84% |
+
+- **Tsez** (no detached affixes, no `=`): the two agree up to case (7.76% vs 7.73%). So our metric is the shared task's metric.
+- **Ainu and Jejueo**: the shared-task split breaks on these datasets' detached affixes. `APASS- do` becomes `APASS`, `""`, `do`, so a prediction `APASS-do` is shifted by one token from there on (Ainu ICL: 9.3% instead of 24.4%), and `4.A= COP` is not split at `=`. Empty pieces also count as matches: 375 of the 502 "correct" Jejueo 3-shot morphemes are empty strings (29% of the gold tokens are empty), which is why that score goes up. Our handling avoids both.
+- Case: folding case changes accuracy by at most 0.5 points (Jejueo zero-shot 1.08% vs 0.54% case-sensitive; elsewhere less). For the paper we can report either; the case-sensitive columns are in every table.
+
 ## How close are the ICL examples to the test sentences? (27 Nov 2026)
 
 `icl_overlap.py --lang <lang>` looks up the 21 retrieved examples of every ICL test row and measures the character similarity (difflib ratio, NFKC) between the test text and its closest example, whether an example has exactly the gold gloss, and whether the prediction copies an example's gloss. It scores each band separately. Output: `results/evaluation/icl_overlap_summary.csv`, per row `icl_overlap_<lang>.csv`.
