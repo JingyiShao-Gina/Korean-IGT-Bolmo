@@ -1,11 +1,14 @@
-"""Rescore every saved prompting result with the loop stop of fast_run/ (no GPU, no model).
+"""Score every saved test result (prompting and LoRA) in one table, under one stop rule.
+
+No GPU, no model: it reads the saved outputs.
 
 Why: the ICL runs use `--fast`, which stops generation when the output starts looping
 (and at 1,000 bytes). The earlier zero-shot, few-shot and segmentation runs generated to
-the end of their budget, and the looping tail inflates MER and chrF++ (Jejueo 3-shot:
-MER 14.0 without the stop, 1.4 with it). To put all prompting methods in one table, this
-script cuts every saved raw_output where the fast runner would have stopped, parses the
-cut output again and scores it. Greedy decoding is deterministic, so a fast run produces
+the end of their budget, and the LoRA runs stop at <eos> or a complete answer but still
+loop in some rows (Tsez: 4-7%). A looping tail inflates MER and chrF++ (Jejueo 3-shot:
+MER 14.0 without the stop, 1.4 with it). To put all methods in one table, this script
+cuts every saved raw_output where the fast runner would have stopped, parses the cut
+output again (with the parsers every runner uses) and scores it. Greedy decoding is deterministic, so a fast run produces
 exactly this prefix (fast_run/README.md: 68 of 70 rows identical on a T4, the other 2
 were looping rows cut early).
 
@@ -18,15 +21,18 @@ Usage (from the repository root; needs pandas and sacrebleu):
     python evaluation/rescore_loop_stop.py                 # all languages and methods
     python evaluation/rescore_loop_stop.py --lang jejueo
 
-Reads (Korean v3 files and dev smoke tests are skipped):
+Reads (Korean files and dev predictions are skipped; checkpoint selection on dev is
+evaluation/evaluate.py's job):
     results/zero_shot/<lang>/bolmo-1b_<strategy>_test.csv
     results/few_shot/<lang>/bolmo-1b_<strategy>_<K>shot_test.csv
     results/segmentation/<lang>/bolmo-1b_three_step_seg_<K>shot_test.csv
     results/icl/<lang>/bolmo-1b_<strategy>_icl<K>_test.csv
+    results/lora/<lang>/<run>/predictions/<run>_<rule>-selected_step<N>[_<K>shot]_test.csv
 
-Writes results/evaluation/prompting_scores.csv: one row per file and rule
+Writes results/evaluation/unified_test_scores.csv: one row per file and rule
 (`original` = as generated, `loop_stop` = cut by the fast_run rule), all test rows. The
-`original` rows reproduce each folder's scores.csv (checked by this script). Extra columns:
+script checks that the `original` rows reproduce each prompting folder's scores.csv, and
+that re-parsing every saved raw_output gives the stored answer. Extra columns:
     stopped_by_loop      share of rows the loop stop cuts
     stopped_by_byte_cap  share of rows the 1,000-byte cap cuts
     answer_changed       share of rows whose parsed (transliteration, gloss) changes
@@ -49,17 +55,22 @@ pd = sz.pd
 rz, fast = seg.rz, replay.f
 LANGS = ("ainu", "tsez", "jejueo")
 
-# folder, file pattern -> method label
+# glob under results/<lang>/..., file pattern -> method label
 PATTERNS = [
-    ("zero_shot", re.compile(r"bolmo-1b_(?P<strategy>all_in_one|step_by_step)_test\.csv$"), lambda m: "zero-shot"),
-    ("few_shot", re.compile(r"bolmo-1b_(?P<strategy>all_in_one|step_by_step)_(?P<k>\d+)shot_test\.csv$"),
+    ("zero_shot/{lang}/*_test.csv", re.compile(r"bolmo-1b_(?P<strategy>all_in_one|step_by_step)_test\.csv$"),
+     lambda m: "zero-shot"),
+    ("few_shot/{lang}/*_test.csv", re.compile(r"bolmo-1b_(?P<strategy>all_in_one|step_by_step)_(?P<k>\d+)shot_test\.csv$"),
      lambda m: f"{m['k']}-shot"),
-    ("segmentation", re.compile(r"bolmo-1b_(?P<strategy>three_step_seg)_(?P<k>\d+)shot_test\.csv$"),
+    ("segmentation/{lang}/*_test.csv", re.compile(r"bolmo-1b_(?P<strategy>three_step_seg)_(?P<k>\d+)shot_test\.csv$"),
      lambda m: f"segmentation {m['k']}-shot"),
-    ("icl", re.compile(r"bolmo-1b_(?P<strategy>all_in_one|step_by_step)_icl(?P<k>\d+)_test\.csv$"),
+    ("icl/{lang}/*_test.csv", re.compile(r"bolmo-1b_(?P<strategy>all_in_one|step_by_step)_icl(?P<k>\d+)_test\.csv$"),
      lambda m: f"ICL-{m['k']}"),
+    ("lora/{lang}/*/predictions/*_test.csv",
+     re.compile(r"bolmo-1b_[a-z]+_(?P<strategy>all_in_one|step_by_step)_r(?P<r>\d+)_lr(?P<lr>[\de.-]+)_s\d+"
+                r"_(?P<sel>loss|chrf)-selected_step(?P<step>\d+)(?:_(?P<k>\d+)shot)?_test\.csv$"),
+     lambda m: f"LoRA r{m['r']} lr{m['lr']}" + (f" + {m['k']}-shot prompt" if m["k"] else "")),
 ]
-COLS = ["language", "method", "strategy", "rule", "n", "gloss_morpheme_accuracy", "gloss_word_accuracy",
+COLS = ["language", "method", "strategy", "selection", "checkpoint", "rule", "n", "gloss_morpheme_accuracy", "gloss_word_accuracy",
         "gloss_mer", "gloss_wer", "gloss_chrfpp", "transliteration_chrfpp", "transliteration_word_accuracy",
         "parse_failure_rate", "stopped_by_loop", "stopped_by_byte_cap", "answer_changed"]
 
@@ -91,12 +102,13 @@ def parse(strategy: str, completion: str) -> tuple[str, str, str]:
 
 
 def files(langs):
-    for folder, pat, label in PATTERNS:
+    for glob, pat, label in PATTERNS:
         for lang in langs:
-            for f in sorted((ROOT / "results" / folder / lang).glob("*_test.csv")):
+            for f in sorted((ROOT / "results").glob(glob.format(lang=lang))):
                 m = pat.search(f.name)
                 if m:
-                    yield lang, label(m), m["strategy"], f
+                    info = m.groupdict()
+                    yield lang, label(m), m["strategy"], info.get("sel") or "", info.get("step") or "", f
 
 
 def rescore(lang: str, strategy: str, f: Path) -> list[dict]:
@@ -109,6 +121,10 @@ def rescore(lang: str, strategy: str, f: Path) -> list[dict]:
     new["pred_gloss"] = [p[1] for p in parsed]
     new["parse_status"] = [p[2] for p in parsed]
     why = pd.Series([w for _, w in cuts])
+    # the runners parse with the same functions, so re-parsing the saved output must give the stored answer
+    reparsed = [parse(strategy, raw) for raw in df.raw_output]
+    bad = sum((p[0], p[1]) != (a, b) for p, a, b in zip(reparsed, df.pred_transliteration, df.pred_gloss))
+    assert bad == 0, f"{f.name}: {bad} rows parse differently from the stored answer"
     changed = ((new.pred_transliteration != df.pred_transliteration) | (new.pred_gloss != df.pred_gloss)).mean()
 
     out = []
@@ -143,15 +159,16 @@ def check_original(row: dict, f: Path) -> None:
 def main(argv=None) -> pd.DataFrame:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--lang", choices=LANGS, default=None, help="default: all three")
-    ap.add_argument("--out", type=Path, default=ROOT / "results/evaluation/prompting_scores.csv")
+    ap.add_argument("--out", type=Path, default=ROOT / "results/evaluation/unified_test_scores.csv")
     args = ap.parse_args(argv)
 
     rows = []
-    for lang, method, strategy, f in files([args.lang] if args.lang else LANGS):
+    for lang, method, strategy, sel, step, f in files([args.lang] if args.lang else LANGS):
         print(f"{lang:7s} {method:22s} {strategy:15s} {f.relative_to(ROOT)}", flush=True)
         for r in rescore(lang, strategy, f):
-            r.update(language=lang, method=method, strategy=strategy, file=str(f.relative_to(ROOT)))
-            if r["rule"] == "original":
+            r.update(language=lang, method=method, strategy=strategy, selection=sel, checkpoint=step,
+                     file=str(f.relative_to(ROOT)))
+            if r["rule"] == "original" and not method.startswith("LoRA"):
                 check_original(r, f)
             rows.append(r)
     out = pd.DataFrame(rows)
@@ -159,10 +176,10 @@ def main(argv=None) -> pd.DataFrame:
     args.out.parent.mkdir(parents=True, exist_ok=True)
     out.to_csv(args.out, index=False, float_format="%.4f")
     pd.set_option("display.width", 250)
-    show = ["language", "method", "strategy", "rule", "gloss_morpheme_accuracy", "gloss_word_accuracy",
+    show = ["language", "method", "strategy", "selection", "rule", "gloss_morpheme_accuracy", "gloss_word_accuracy",
             "gloss_mer", "gloss_chrfpp", "transliteration_chrfpp", "parse_failure_rate", "stopped_by_loop"]
     print(out[show].round(4).to_string(index=False))
-    print("original scores match each folder's scores.csv")
+    print("checked: original scores match each prompting folder's scores.csv; re-parsing reproduces every stored answer")
     print("Wrote", args.out.relative_to(ROOT))
     return out
 
