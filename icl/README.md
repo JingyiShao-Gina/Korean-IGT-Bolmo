@@ -36,3 +36,29 @@ Word accuracy and gloss chrF++ re-join detached Ainu affixes (updated 27 Nov; se
 - Retrieved examples raise every metric by a large margin; the two strategies are now almost equal. The examples share words with the test sentence, so the model can copy their transliteration and gloss; no dev or test text is in the pool.
 - Loop stops: 31 (all-in-one) and 34 (step-by-step) of 750 rows; runtime 70 and 63 minutes. Generation was cut only by the loop stop (no row reached the 1,000-byte cap), so apart from those rows the outputs are what the original runner would produce (checked on the first 70 rows: 68 identical, 2 looping rows cut early).
 - Files: `results/icl/ainu/` (`run_log.txt` is the Colab log).
+
+## Word-by-word answer format (`--format word`, pilot, 27 Nov)
+
+Our models often add or drop a word in the gloss line, so every later gloss is one position off and positional accuracy collapses: Tsez LoRA gets 44% of the gold morphemes (order-free F1) but 7.8% morpheme accuracy, and only 102 of 445 test glosses have the gold word count. Re-scoring the existing LoRA outputs with the words optimally aligned gives at most 27.9% (Ainu ICL: at most 48.4%), so misalignment is the largest single loss.
+
+`--format word` asks for one gloss per transliteration word (`icl/word_format.py`):
+
+```
+Transliteration: Ħusenä salamno teƛno, iduɣor oqno.
+Gloss:
+Ħusenä = Hussein-ERG
+salamno = greeting-TOP
+...
+```
+
+- The 21 examples are retrieved exactly as in the default format and shown in this format. Only word-aligned train rows can be shown, so the pool keeps those: Tsez 1,177 of 1,177, Jejueo 282 of 316 (glosses counted after re-joining detached affixes), Ainu 670 of 5,388. **Use Tsez or Jejueo, not Ainu.**
+- Generation stops after one word line per transliteration word (plus the loop stop with `--fast`). For scoring, the word glosses are joined back into one gloss line, so all scripts and metrics stay the same. `evaluation/rescore_loop_stop.py` picks up the files as "ICL-21, word-by-word".
+- Output files end in `_icl<K>_word_<split>.csv`; the default format and its files are unchanged.
+- Tests: `python icl/test_word_format.py`.
+
+Pilot (Colab, T4): `icl/word_pilot_bolmo.ipynb` runs both formats on the same 50 dev sentences and prints the comparison.
+
+```
+python icl/run_icl.py --lang tsez --split dev --limit 50 --strategy all_in_one --fast --dtype float32 --format line
+python icl/run_icl.py --lang tsez --split dev --limit 50 --strategy all_in_one --fast --dtype float32 --format word
+```

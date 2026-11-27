@@ -21,6 +21,8 @@ Usage (from the repository root, on Colab):
 Output: results/icl/<lang>/bolmo-1b_<strategy>_icl<K>_<split>[_n<limit>].csv; each row
 also has icl_example_ids (most similar last) and icl_overlap (its shared-word count).
 --fast adds the speed-ups of fast_run/run_fast.py (loop stop, byte cap, bf16 on A100/L4).
+--format word glosses word by word (one line per transliteration word; see icl/word_format.py);
+its output files end in _icl<K>_word_<split>.csv. The default (--format line) is unchanged.
 """
 from __future__ import annotations
 
@@ -36,6 +38,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "zero_shot"))
 sys.path.insert(0, str(ROOT / "fast_run"))
 import run_zero_shot as rz  # noqa: E402
+import word_format as wf  # noqa: E402  (also registers the "word" completion check)
 
 STOPWORDS = set("""a an the and or but of to in on at for with from by as is are was were be been being
 i me my you your he him his she her it its we us our they them their this that these those
@@ -99,14 +102,21 @@ class Retriever:
 # ----------------------------------------------------------------------------- run
 
 
-def run(gen, rows, template, strategy, retriever, k, language_name, on_record=None) -> list[dict]:
-    parse = rz.parse_all_in_one if strategy == "all_in_one" else rz.parse_step_by_step
+def run(gen, rows, template, strategy, retriever, k, language_name, on_record=None,
+        fmt: str = "line", join_affixes: bool = False) -> list[dict]:
+    if fmt == "word":
+        parse, kind = wf.parse_word, wf.KIND
+        block = lambda ex: wf.examples_block(ex, language_name, join_affixes)  # noqa: E731
+    else:
+        parse = rz.parse_all_in_one if strategy == "all_in_one" else rz.parse_step_by_step
+        kind = "all_in_one"  # same two-line stop rule
+        block = lambda ex: rz.examples_block(ex, language_name)  # noqa: E731
     out = []
     for i, r in enumerate(rows, 1):
         examples, overlaps = retriever.select(r, k)
-        filled = rz.add_examples(template, rz.examples_block(examples, language_name), language_name)
+        filled = rz.add_examples(template, block(examples), language_name)
         prompt = rz.render(filled, original_script=r["text"], translation=r["translation"])
-        raw, n_new, truncated = gen.complete(prompt, "all_in_one")  # same two-line stop rule
+        raw, n_new, truncated = gen.complete(prompt, kind)
         translit, gloss, status = parse(raw)
         out.append({
             **rz._gold(r),
@@ -138,6 +148,8 @@ def main(argv: list[str] | None = None) -> list[Path]:
     ap.add_argument("--fast", action="store_true", help="use the speed-ups of fast_run/run_fast.py")
     ap.add_argument("--max-bytes", type=int, default=1000, help="with --fast: byte cap")
     ap.add_argument("--dtype", choices=["auto", "float32", "bfloat16"], default="auto", help="with --fast")
+    ap.add_argument("--format", choices=["line", "word"], default="line",
+                    help="answer format: one gloss line (default) or one line per word (icl/word_format.py)")
     args = ap.parse_args(argv)
 
     cfg = json.loads(rz.CONFIG_PATH.read_text(encoding="utf-8"))
@@ -161,6 +173,11 @@ def main(argv: list[str] | None = None) -> list[Path]:
     rows = rz.load_rows(args.split, args.limit, manifest_path)
     eval_texts = [r["text"] for sp in ("dev", "test") for r in rz.load_rows(sp, None, manifest_path)]
     pool = _filtered(rz.load_rows("train", None, manifest_path), eval_texts, few_cfg)
+    join_affixes = bool(json.loads(manifest_path.read_text(encoding="utf-8")).get("gloss_affixes_detached", False))
+    if args.format == "word":  # only word-aligned rows can be shown word by word
+        n_all = len(pool)
+        pool = [r for r in pool if wf.aligned(r, join_affixes)]
+        print(f"--format word: {len(pool)} of {n_all} pool rows are word-aligned", flush=True)
     retriever = Retriever(pool)
     print(f"Loaded {len(rows)} {args.lang} {args.split} rows; {len(pool)} train rows in the example pool; "
           f"K = {args.k}", flush=True)
@@ -168,17 +185,23 @@ def main(argv: list[str] | None = None) -> list[Path]:
     strategies = ("all_in_one", "step_by_step") if args.strategy == "both" else (args.strategy,)
     out_dir = Path(args.out_dir) if args.out_dir else ROOT / "results" / "icl" / args.lang
     suffix = f"_n{args.limit}" if args.limit else ""
+    fmt_tag = "_word" if args.format == "word" else ""
     tag = f"bolmo-{model_cfg['size'].lower()}"
     selection = {"method": "word overlap on the original script (NFKC, lower-cased, whitespace tokens), "
                            "ties: English translation word overlap, shorter text, id; most similar last",
                  "k": args.k, "pool_size": len(pool),
-                 "pool_filters": {k: few_cfg[k] for k in ("max_text_chars", "max_gloss_chars", "min_text_words")}}
+                 "pool_filters": {k: few_cfg[k] for k in ("max_text_chars", "max_gloss_chars", "min_text_words")},
+                 "answer_format": args.format}
+    if args.format == "word":
+        selection["pool_filters"]["word_aligned"] = True
     gen, written = None, []
     for strategy in strategies:
         print(f"== {strategy} ==", flush=True)
         generic = rz.load_prompt(cfg["prompts"][strategy])
         template = rz.fill_language(generic, language_name)
-        out_csv = out_dir / f"{tag}_{strategy}_icl{args.k}_{args.split}{suffix}.csv"
+        if args.format == "word":
+            template = wf.word_instructions(template)
+        out_csv = out_dir / f"{tag}_{strategy}_icl{args.k}{fmt_tag}_{args.split}{suffix}.csv"
         signature = {"language": args.lang, "strategy": strategy, "split": args.split, "limit": args.limit,
                      "icl": selection, "model_revision": model_cfg["revision"], "generation": gen_cfg,
                      "prompt_sha256_filled": {strategy: rz.prompt_sha256(template)}}
@@ -196,7 +219,8 @@ def main(argv: list[str] | None = None) -> list[Path]:
             if gen is None:
                 gen = Gen(model_cfg["model_id"], model_cfg["revision"], gen_cfg["max_new_tokens"])
             on_record = (lambda rec: rz.append_checkpoint(fh, rec)) if fh else None
-            new = run(gen, todo, template, strategy, retriever, args.k, language_name, on_record)
+            new = run(gen, todo, template, strategy, retriever, args.k, language_name, on_record,
+                      fmt=args.format, join_affixes=join_affixes)
         if fh:
             fh.close()
         by_id = {**done, **{r["id"]: r for r in new}}
@@ -223,7 +247,8 @@ def main(argv: list[str] | None = None) -> list[Path]:
         if args.fast:
             counts: dict[str, int] = {}
             for r in recs:
-                r["stop_reason"] = fast.stop_reason("all_in_one", r["raw_output"], int(r["n_new_tokens"]),
+                r["stop_reason"] = fast.stop_reason(wf.KIND if args.format == "word" else "all_in_one",
+                                                    r["raw_output"], int(r["n_new_tokens"]),
                                                     gen_cfg["max_new_tokens"])
                 counts[r["stop_reason"]] = counts.get(r["stop_reason"], 0) + 1
             meta["stop_reason_counts"] = counts
