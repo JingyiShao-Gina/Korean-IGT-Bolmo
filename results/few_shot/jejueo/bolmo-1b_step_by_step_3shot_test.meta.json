@@ -1,0 +1,99 @@
+{
+  "language": "jejueo",
+  "strategy": "step_by_step",
+  "split": "test",
+  "limit": null,
+  "model_id": "allenai/Bolmo-1B",
+  "model_revision": "452690a8cfab1dd1ec27b74f2667632f17a21b46",
+  "dataset_manifest": {
+    "dataset_id": "lowresource-igt/Jejueo_igt_dataset",
+    "dataset_config": "default",
+    "revision": "c90ef54b75d2d32d2aa73e344e3229290055d1bf",
+    "language": "Jejueo (jeju1234)",
+    "license": "not stated upstream",
+    "cleaned": false,
+    "cleaning_note": "Original upstream data (source: wav2gloss / DoReCo spoken corpus), not cleaned by the team. Known issues: (1) glosses write suffixes as separate tokens ('eat -PST -POL -DECL'), see gloss_affixes_detached; (2) the gold transcription is IPA ('məkəsʰuta'), not a romanization, so transliteration scores are expected to be near zero; (3) spoken data with hesitations and false starts ('찾-'); (4) 113/712 test texts contain archaic Hangul jamo; (5) 25 test texts also appear in train (irrelevant for zero-shot); (6) at least one dev row has the empty placeholder text '[ ]' (no test rows do).",
+    "gloss_affixes_detached": true,
+    "gloss_affixes_note": "Scoring re-attaches tokens that start with '-' or '=' to the previous token (and tokens ending in '-' or '=' to the next one) before word-level metrics; morphemes are unchanged. After joining, 648/712 test rows (91%) have the same number of words in transcription and gloss (14% before).",
+    "field_mapping": {
+      "source": "text",
+      "transliteration": "transcription",
+      "gloss": "glosses"
+    },
+    "split_mapping": {
+      "train": "train",
+      "validation": "eval",
+      "test": "test"
+    },
+    "split_counts": {
+      "train": 704,
+      "validation": 211,
+      "test": 712
+    }
+  },
+  "prompt_version": "v5",
+  "language_name": "Jejueo",
+  "prompt_files": {
+    "step_by_step": "zero_shot/prompts/step_by_step.txt"
+  },
+  "prompt_sha256": {
+    "step_by_step": "95c996272e199a4da2532b323d9fc855d890bbb0b255904abd89c97966b2c58d"
+  },
+  "prompt_sha256_filled": {
+    "step_by_step": "43ab3baeb3ac11d9dbd88103ca7803e30ad5a206eb0c480ca940d7a90081b433"
+  },
+  "shots": 3,
+  "few_shot_seed": 42,
+  "few_shot_examples": [
+    {
+      "id": "DoReCo_doreco_jeju1234_jeju0060-05_0125",
+      "text": "## 저거 먹어 본 적 잇어?",
+      "translation": "Have you ever eaten that?",
+      "transcription": "t͡ɕəkə məkə pon t͡ɕək isʰə",
+      "glosses": "DEM.MED eat -CVB see -ADN ALREADY EXIST"
+    },
+    {
+      "id": "DoReCo_doreco_jeju1234_jeju0060-05_0031",
+      "text": "응 양 제법 끗엉 오랏저",
+      "translation": "Yeah he's doing that well.",
+      "transcription": "jaŋ t͡ɕepʲəp k͈ɨsʰən olasʰt͡ɕə",
+      "glosses": "yeah goat fairly_aptly pull_along -CVB.SEQ.REAL come -PST -DECL"
+    },
+    {
+      "id": "DoReCo_doreco_jeju1234_jeju0063-01-02_0221",
+      "text": "끗어 앚언 감셰",
+      "translation": "Look he's carrying it away.",
+      "transcription": "k͈ɨsʰə at͡ɕən kamsʰie",
+      "glosses": "pull_along -CVB take -CVB.SEQ.REAL go -PROG -CG"
+    }
+  ],
+  "generation": {
+    "do_sample": false,
+    "num_beams": 1,
+    "max_new_tokens": 768,
+    "max_new_tokens_unit": "bytes (Bolmo is byte-level)",
+    "stop_rule": "single-answer prompts: first complete line; all-in-one and step-by-step: transliteration line + gloss line"
+  },
+  "stopping_criteria_used": true,
+  "seed": 42,
+  "git_sha": "a65a7f9632e796d0423564fe68493917b5f01d72",
+  "runtime_seconds": 18691.7,
+  "resumed": false,
+  "rows_from_checkpoint": 0,
+  "versions": {
+    "python": "3.13.16",
+    "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+    "torch": "2.14.1+cu130",
+    "transformers": "4.57.3",
+    "datasets": "4.8.5",
+    "xlstm": "2.0.3",
+    "pandas": "2.2.3",
+    "gpu": "Tesla T4"
+  },
+  "n_examples": 712,
+  "parse_status_counts": {
+    "ok": 543,
+    "missing_gloss": 169
+  },
+  "truncation_rate": 0.5154494382022472
+}

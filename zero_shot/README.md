@@ -17,7 +17,7 @@ Input: original script (`text`) + English translation (`translation`). Output: t
 | Korean | `Soyyeongg/Korean_igt_cleaned` (`data/manifest.json`, cleaned by Soyeong) | 263 | all-in-one and two-stage done (`results/zero_shot/`); single-call step-by-step to run |
 | Ainu | `lowresource-igt/Ainu_igt_dataset` (`data/manifest_ainu.json`, **not cleaned**) | 750 | zero-shot only (no LoRA). **Done** (prompt v5): `results/zero_shot/ainu/bolmo-1b_{all_in_one,step_by_step}_test.csv`; scores in `results/zero_shot/ainu/scores.csv`. 3-shot **done**: `results/few_shot/ainu/` (scores below) |
 | Tsez (ddo) | `lowresource-igt/Tsez_igt_dataset` (`data/manifest_tsez.json`, **not cleaned**) | 445 | zero-shot only. **Done** (prompt v5, Theo): `results/zero_shot/tsez/bolmo-1b_{all_in_one,step_by_step}_test.csv`; scores in `results/zero_shot/tsez/scores.csv` |
-| Jejueo | `lowresource-igt/Jejueo_igt_dataset` (`data/manifest_jejueo.json`, **not cleaned**) | 712 | zero-shot only. **Done** (prompt v5, Soyeong): `results/zero_shot/jejueo/bolmo-1b_{all_in_one,step_by_step}_test.csv`; scores in `results/zero_shot/jejueo/scores.csv`. Glosses write suffixes as separate tokens (`eat -PST -POL -DECL`); scoring re-attaches them before word-level metrics. Gold transcription is IPA. |
+| Jejueo | `lowresource-igt/Jejueo_igt_dataset` (`data/manifest_jejueo.json`, **not cleaned**) | 712 | zero-shot only. **Done** (prompt v5, Soyeong): `results/zero_shot/jejueo/bolmo-1b_{all_in_one,step_by_step}_test.csv`; scores in `results/zero_shot/jejueo/scores.csv`. 3-shot **done**: `results/few_shot/jejueo/` (scores below). Glosses write suffixes as separate tokens (`eat -PST -POL -DECL`); scoring re-attaches them before word-level metrics. Gold transcription is IPA. |
 
 ### Ainu zero-shot scores (test, 750 rows)
 
@@ -95,7 +95,7 @@ On Colab, use `zero_shot/few_shot_bolmo.ipynb` (set `LANG` and `SHOTS`).
   Because dev and test texts are both excluded, the dev smoke test and the test run use the same examples. Prompt layout: the template's header and instructions come first, then the K examples (`Original … script:`, `English translation:`, `Transliteration:`, `Gloss:`, with gold values), then the sentence to annotate in the same format, ending at `Transliteration:`. A first version put the instructions between the sentence and the answer label, and on 2 Jejueo dev rows Bolmo copied example 1 word for word. That is why the sentence now comes right before the label. Example glosses are copied from the dataset as they are, so Jejueo examples keep detached suffixes (`eat -PST -DECL`).
 - **Output.** Results are written to `results/few_shot/<lang>/bolmo-1b_<strategy>_<K>shot_<split>.csv`. The `.meta.json` file records `shots`, the seed and the full examples (`few_shot_examples`). There is no separate few-shot prompt file. The runner builds the prompt from the zero-shot templates (`add_examples` in `run_zero_shot.py`). To read the Ainu 3-shot prompts in full, see `few_shot/prompts/ainu/`.
 - **Interruptions (`--resume`).** With `--resume`, each finished row is appended right away to `<output>.partial.jsonl` (flushed to disk). Rerunning the same command skips the rows already there and continues, and the final CSV is the same as an uninterrupted run (greedy decoding; checked in `test_parsing.py`). The file's first line stores the run settings (language, strategy, split, shots, example ids, model revision, generation settings, prompt hashes), and a run with other settings refuses to reuse it. The meta records `resumed` and `rows_from_checkpoint`. Never start two processes on the same file. In Colab, use the **Resumable test run** section at the top of `few_shot_bolmo.ipynb`: it runs both settings as background processes and writes to Google Drive (`MyDrive/korean-igt-few-shot/<lang>/`), so a closed browser or a lost runtime does not lose the finished rows.
-- **Prompt length.** With 3 shots, test prompts are about 1.2–1.6 KB on average (Jejueo 1.2, Ainu 1.3, Tsez 1.6), compared with about 0.5–0.7 KB for zero-shot. On a T4 the 10-row Jejueo dev smoke test took 145 s (all-in-one) and 160 s (step-by-step), about 3× zero-shot (45 s). Most of that is repetition loops (3/10 truncated in each setting). Expect roughly 2 hours per setting on test. The notebook therefore runs the two settings in separate cells (section 5: all-in-one, section 6: step-by-step), each followed by its own download.
+- **Prompt length.** With 3 shots, test prompts are about 1.2–1.6 KB on average (Jejueo 1.2, Ainu 1.3, Tsez 1.6), compared with about 0.5–0.7 KB for zero-shot. On a T4 the 10-row Jejueo dev smoke test took 145 s (all-in-one) and 160 s (step-by-step), about 3× zero-shot (45 s). Most of that is repetition loops (3/10 truncated in each setting). On the test split each setting took about 2.4–2.5 h for Ainu and about 5.1–5.2 h for Jejueo (an earlier estimate of 2 h was too low; Jejueo loops more, see below). The notebook therefore runs the two settings in separate cells (section 5: all-in-one, section 6: step-by-step), each followed by its own download.
 - **Selected train ids (3 shots).**
   - Jejueo: `…jeju0060-05_0125`, `…jeju0060-05_0031`, `…jeju0063-01-02_0221`
   - Ainu: `OI990508KY.094`, `K7807151KY.122`, `K7708242UP.102`
@@ -121,6 +121,27 @@ The examples change the kind of output.
 - **Accuracy.** Gloss accuracy still stays below 2%, because the tags and stems rarely land on the right word. Many tags are copied from the examples (`INFR.EV COP then`).
 - **Gloss chrF++.** It barely changes. With MER/WER around 3, the glosses are much longer than the gold, often because the model repeats itself until it runs out of budget.
 - **Settings.** As in zero-shot, step-by-step and all-in-one are too close to tell apart.
+
+### Jejueo 3-shot scores (test, 712 rows)
+
+Results: `results/few_shot/jejueo/bolmo-1b_{all_in_one,step_by_step}_3shot_test.csv`. Scores: `results/few_shot/jejueo/scores.csv`, from `zero_shot/score_zero_shot.py --lang jejueo --shots 3` (detached suffixes re-attached before word-level metrics, as in zero-shot). Run on a Colab T4 from notebook sections 5 and 6 (git `a65a7f9`, not resumed); runtime about 5.1 h (all-in-one) and 5.2 h (step-by-step). Zero-shot is shown in brackets.
+
+| | All-in-one | Step-by-step |
+|---|---|---|
+| Gloss morpheme accuracy | 2.43% (1.08%) | 2.18% (1.08%) |
+| Gloss word accuracy | 1.38% (1.21%) | 1.21% (1.18%) |
+| Gloss MER / WER | 14.02 / 7.47 (1.06 / 1.50) | 13.87 / 6.87 (1.22 / 1.82) |
+| Gloss chrF++ | 2.83 (8.71) | 2.73 (9.08) |
+| Transliteration chrF++ | 3.29 (0.30) | 3.20 (0.18) |
+| Transliteration word accuracy | 1.70% (0.00%) | 1.76% (0.00%) |
+| Parse failure (`missing_gloss`) / truncation | 24.0% / 52.8% | 23.7% / 51.5% |
+
+The examples change the kind of output, as for Ainu, but repetition loops dominate the scores.
+- **Transliteration.** It is now romanized/IPA-like in 711 of 712 rows (zero-shot copied the Hangul in most rows), so transliteration chrF++ rises from about 0.3 to about 3. It is still far from the gold IPA.
+- **Gloss.** 462 of the 541 parsed all-in-one glosses contain gloss tags (`-CVB`, `-PST`, `-DECL`), against 0 in zero-shot. Copies of the English translation fall from 501 to 23. Morpheme accuracy doubles, but stays below 3%.
+- **Loops.** About half of the rows hit the generation budget. In 205 all-in-one rows (197 step-by-step) the gloss repeats a pattern until the budget runs out (`do -CG do -CG do -CG …`); these rows hold 97% of all predicted gloss words. This is why MER is about 14 and gloss chrF++ falls from about 9 to about 3. In another 171 rows the transliteration line itself loops (`aɪ aɪ aɪ …`), so no `Gloss:` line is reached (`missing_gloss`). The median gloss length is 7 words, the same as the gold, so a loop stop or a lower byte cap (`fast_run/`) would mainly change MER and chrF++, not accuracy.
+- **Settings.** All-in-one and step-by-step are again too close to tell apart.
+- **Examples.** The 3 fixed examples are short spoken-corpus turns (`DEM.MED eat -CVB see -ADN ALREADY EXIST`, …). 13 all-in-one glosses copy one of them exactly.
 
 ## What each file does
 
