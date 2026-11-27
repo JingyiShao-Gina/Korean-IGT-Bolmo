@@ -45,11 +45,12 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-for sub in ("zero_shot", "fast_run", "segmentation"):
+for sub in ("zero_shot", "fast_run", "segmentation", "icl"):
     sys.path.insert(0, str(ROOT / sub))
 import score_zero_shot as sz  # noqa: E402
 import replay_loop_stop as replay  # noqa: E402
 import run_segmentation as seg  # noqa: E402  (also registers the "three_step" completion check)
+import word_format as wf  # noqa: E402  (registers the "word" completion check of --format word)
 
 pd = sz.pd
 rz, fast = seg.rz, replay.f
@@ -63,8 +64,9 @@ PATTERNS = [
      lambda m: f"{m['k']}-shot"),
     ("segmentation/{lang}/*_test.csv", re.compile(r"bolmo-1b_(?P<strategy>three_step_seg)_(?P<k>\d+)shot_test\.csv$"),
      lambda m: f"segmentation {m['k']}-shot"),
-    ("icl/{lang}/*_test.csv", re.compile(r"bolmo-1b_(?P<strategy>all_in_one|step_by_step)_icl(?P<k>\d+)_test\.csv$"),
-     lambda m: f"ICL-{m['k']}"),
+    ("icl/{lang}/*_test.csv",
+     re.compile(r"bolmo-1b_(?P<strategy>all_in_one|step_by_step)_icl(?P<k>\d+)(?P<word>_word)?_test\.csv$"),
+     lambda m: f"ICL-{m['k']}" + (", word-by-word" if m["word"] else "")),
     ("lora/{lang}/*/predictions/*_test.csv",
      re.compile(r"bolmo-1b_[a-z]+_(?P<strategy>all_in_one|step_by_step)_r(?P<r>\d+)_lr(?P<lr>[\de.-]+)_s\d+"
                 r"_(?P<sel>loss|chrf)-selected_step(?P<step>\d+)(?:_(?P<k>\d+)shot)?_test\.csv$"),
@@ -92,8 +94,15 @@ def cut(raw: str, kind: str) -> tuple[str, str]:
     return raw, "end_of_saved_output"
 
 
-def parse(strategy: str, completion: str) -> tuple[str, str, str]:
+def answer_format(path: Path) -> str:
+    """'word' for ICL runs with --format word (file name ..._icl<K>_word_test.csv), else 'line'."""
+    return "word" if re.search(r"_icl\d+_word_", path.name) else "line"
+
+
+def parse(strategy: str, completion: str, fmt: str = "line") -> tuple[str, str, str]:
     """(pred_transliteration, pred_gloss, parse_status), as the runner stores them."""
+    if fmt == "word":
+        return wf.parse_word(completion)
     if strategy == "all_in_one":
         return rz.parse_all_in_one(completion)
     if strategy == "step_by_step":
@@ -114,16 +123,17 @@ def files(langs):
 
 def rescore(lang: str, strategy: str, f: Path) -> list[dict]:
     df = pd.read_csv(f, dtype=str, keep_default_na=False)
-    kind = "three_step" if strategy == "three_step_seg" else "all_in_one"
+    fmt = answer_format(f)
+    kind = "three_step" if strategy == "three_step_seg" else (wf.KIND if fmt == "word" else "all_in_one")
     cuts = [cut(raw, kind) for raw in df.raw_output]
     new = df.copy()
-    parsed = [parse(strategy, t) for t, _ in cuts]
+    parsed = [parse(strategy, t, fmt) for t, _ in cuts]
     new["pred_transliteration"] = [p[0] for p in parsed]
     new["pred_gloss"] = [p[1] for p in parsed]
     new["parse_status"] = [p[2] for p in parsed]
     why = pd.Series([w for _, w in cuts])
     # the runners parse with the same functions, so re-parsing the saved output must give the stored answer
-    reparsed = [parse(strategy, raw) for raw in df.raw_output]
+    reparsed = [parse(strategy, raw, fmt) for raw in df.raw_output]
     bad = sum((p[0], p[1]) != (a, b) for p, a, b in zip(reparsed, df.pred_transliteration, df.pred_gloss))
     assert bad == 0, f"{f.name}: {bad} rows parse differently from the stored answer"
     changed = ((new.pred_transliteration != df.pred_transliteration) | (new.pred_gloss != df.pred_gloss)).mean()
