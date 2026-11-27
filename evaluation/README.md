@@ -16,8 +16,8 @@ python evaluation/rescore_loop_stop.py --lang jejueo
 ```
 
 - **Why.** The ICL runs use `--fast` (`fast_run/`), which stops generation when the output starts looping or reaches 1,000 bytes. The earlier runs generated to the end of their budget, so a looping tail inflates MER and chrF++ there. The script cuts every saved `raw_output` where the fast runner would have stopped (`fast_run/replay_loop_stop.py`, with a three-line completion check for segmentation), parses it again and scores it. Greedy decoding makes this the output a fast run would give.
-- **Rows.** Each file has an `original` row (as generated; equal to the folder's `scores.csv`, which the script checks) and a `loop_stop` row. Extra columns: `stopped_by_loop`, `stopped_by_byte_cap`, `answer_changed`. All test rows are scored; Jejueo suffixes are re-attached as in `score_zero_shot.py`.
-- **What changes.** Accuracy does not change for any file: loops come after the answer's first words. MER and chrF++ change a lot where loops are frequent. Jejueo 3-shot all-in-one: MER 14.02 → 1.38, gloss chrF++ 2.83 → 7.83, transliteration chrF++ 3.29 → 9.43 (53% of rows cut by the loop stop). Ainu 3-shot: MER 2.95 → 1.12, gloss chrF++ 9.57 → 12.15. Zero-shot changes little. The ICL rows are identical under both rules, since they were already generated with the stop.
+- **Rows.** Each file has an `original` row (as generated; equal to the folder's `scores.csv`, which the script checks) and a `loop_stop` row. Extra columns: `stopped_by_loop`, `stopped_by_byte_cap`, `answer_changed`. All test rows are scored; Jejueo and Ainu affixes are re-attached as in `score_zero_shot.py` (the manifests set `gloss_affixes_detached`; Ainu since 27 Nov).
+- **What changes.** Accuracy does not change for any file: loops come after the answer's first words. MER and chrF++ change a lot where loops are frequent. Jejueo 3-shot all-in-one: MER 14.02 → 1.38, gloss chrF++ 2.83 → 7.83, transliteration chrF++ 3.29 → 9.43 (53% of rows cut by the loop stop). Ainu 3-shot: MER 2.95 → 1.12, gloss chrF++ 9.79 → 12.55. Zero-shot changes little. The ICL rows are identical under both rules, since they were already generated with the stop.
 - **Use the `loop_stop` rows when comparing methods** and report `stopped_by_loop` as the loop rate; it is a model failure in its own right (Jejueo 3-shot 53%, zero-shot 2–6%).
 
 ## How close are the ICL examples to the test sentences? (27 Nov 2026)
@@ -29,13 +29,13 @@ Ainu, all-in-one (step-by-step is almost the same):
 | Closest example | Rows | Morpheme acc | Gloss chrF++ | Prediction = an example's gloss |
 |---|---|---|---|---|
 | identical text | 0 (0%) | – | – | – |
-| similarity 0.9–1 | 99 (13%) | 87.3% | 83.9 | 90% |
-| similarity 0.8–0.9 | 50 (7%) | 40.4% | 62.3 | 46% |
-| similarity < 0.8 | 601 (80%) | 13.7% | 34.7 | 7% |
-| all | 750 | 24.4% | 42.1 | 21% |
+| similarity 0.9–1 | 99 (13%) | 87.3% | 94.8 | 90% |
+| similarity 0.8–0.9 | 50 (7%) | 40.4% | 70.8 | 46% |
+| similarity < 0.8 | 601 (80%) | 13.7% | 38.2 | 7% |
+| all | 750 | 24.4% | 47.0 | 21% |
 
 - No test text appears in the pool, but 13% of the test sentences have a near-identical example (spoken corpora repeat phrases), and on those the model mostly copies the example's gloss. 9 test rows (1.2%) have an example with exactly the gold gloss.
-- Without the near-duplicates (similarity < 0.8, 80% of rows), ICL still reaches 13.7% morpheme accuracy and 34.7 gloss chrF++, against 1.5% and 12.1 for 3 fixed examples (loop-stopped). So retrieval helps beyond copying, but much of the overall score comes from the 20% of rows with a close example: overall morpheme accuracy is 24.4%, 13.7% on the other rows. Report both numbers.
+- Without the near-duplicates (similarity < 0.8, 80% of rows), ICL still reaches 13.7% morpheme accuracy and 38.2 gloss chrF++, against 1.5% and 12.6 for 3 fixed examples (loop-stopped). So retrieval helps beyond copying, but much of the overall score comes from the 20% of rows with a close example: overall morpheme accuracy is 24.4%, 13.7% on the other rows. Report both numbers.
 
 The original protocol follows.
 

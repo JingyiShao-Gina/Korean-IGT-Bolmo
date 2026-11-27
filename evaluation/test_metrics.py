@@ -89,6 +89,10 @@ def test_join_detached_affixes():
     g = "go -IRR -POL -DECL DEM.DIST.be -CVB.but approximately six hour.CLF -CVB.CND"
     assert morphemes(join_detached_affixes(g)) == morphemes(g)
     assert len(words(join_detached_affixes(g))) == 5
+    # a lone "-" (Ainu: a pause, "..." in the transcription) stays a word of its own
+    assert join_detached_affixes("various bird -DIM - various bird") == "various bird-DIM - various bird"
+    assert join_detached_affixes("then - then 4.A= have") == "then - then 4.A=have"
+    assert join_detached_affixes("outside -COP - 4.A= have") == "outside-COP - 4.A=have"
 
 
 def test_empty_and_malformed_prediction():

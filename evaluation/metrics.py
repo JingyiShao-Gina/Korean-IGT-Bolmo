@@ -58,15 +58,20 @@ def join_detached_affixes(text) -> str:
     "-" or "=" is joined to the previous token, and a token that ends with "-" or
     "=" is joined to the next one. Morphemes are unchanged; only the word
     boundaries are restored, so that word accuracy compares whole words.
+
+    A token made only of "-" / "=" is a word of its own and is never joined: Ainu
+    glosses use a lone "-" for a pause ("..." in the transcription), as in
+    "various bird -DIM - various bird" -> "various bird-DIM - various bird".
     """
     out: list[str] = []
     glue = False
     for tok in words(text):
-        if out and (glue or tok[0] in "-="):
+        lone = tok.strip("-=") == ""
+        if out and not lone and (glue or tok[0] in "-="):
             out[-1] += tok
         else:
             out.append(tok)
-        glue = tok[-1] in "-="
+        glue = not lone and tok[-1] in "-="
     return " ".join(out)
 
 

@@ -26,15 +26,17 @@ Scored with `zero_shot/score_zero_shot.py --lang ainu`, which uses the team metr
 | | All-in-one | Step-by-step |
 |---|---|---|
 | Gloss morpheme accuracy | 0.85% | 0.95% |
-| Gloss word accuracy | 0.87% | 0.95% |
-| Gloss MER / WER | 1.15 / 1.17 | 1.25 / 1.25 |
-| Gloss chrF++ | 9.79 | 10.31 |
+| Gloss word accuracy | 1.04% | 1.11% |
+| Gloss MER / WER | 1.15 / 1.38 | 1.25 / 1.49 |
+| Gloss chrF++ | 9.92 | 10.46 |
 | Transliteration chrF++ | 5.11 | 5.77 |
 | Parse failure / truncation | 8.7% / 10.8% | 5.3% / 7.3% |
 
-Both settings fail: Bolmo 1B copies the katakana source as "transliteration" and the English translation as "gloss", and it never produces a gloss tag. The few matches are English words that happen to sit at the same position as in the gold gloss (`and` 13×, `then` 11×, `father`, `village`, …). The step-by-step vs all-in-one difference (0.95% vs 0.85%) is too small to mean anything. On the 180 rows whose gold transcription and gloss have the same word count, the results are the same (`aligned_word_count` rows in `scores.csv`). MER/WER above 1 means that the model writes more tokens than the gold gloss has, and each extra token counts as an insertion.
+Both settings fail: Bolmo 1B copies the katakana source as "transliteration" and the English translation as "gloss", and it never produces a gloss tag. The few matches are English words that happen to sit at the same position as in the gold gloss (`and` 13×, `then` 11×, `father`, `village`, …). The step-by-step vs all-in-one difference (0.95% vs 0.85%) is too small to mean anything. On the 255 rows whose gold transcription and (re-joined) gloss have the same word count, the results are the same (`aligned_word_count` rows in `scores.csv`). MER/WER above 1 means that the model writes more tokens than the gold gloss has, and each extra token counts as an insertion.
 
-Ainu dev = the dataset's `eval` split (218 rows). The Ainu source is in katakana, and the gold transcription is Latin script. Known data issues are listed in `data/manifest_ainu.json`; for example, only 180/750 test rows have the same number of words in transcription and gloss, which matters for word-level accuracy.
+Ainu dev = the dataset's `eval` split (218 rows). The Ainu source is in katakana, and the gold transcription is Latin script. Known data issues are listed in `data/manifest_ainu.json`; for example, only 255/750 test rows have the same number of words in transcription and gloss (180 before the detached affixes are re-joined), which matters for word-level accuracy.
+
+**Update 27 Nov (Soyeong):** like Jejueo, the Ainu glosses write many affixes and clitics as separate tokens (`APASS- do`, `4.A= COP`; 550/750 test rows). Since 27 Nov, `data/manifest_ainu.json` sets `gloss_affixes_detached`, so scoring re-joins them before word-level metrics (a lone `-`, which glosses a pause, stays a word). This raises Ainu word accuracy and changes WER and chrF++ (chrF++ uses word bigrams); morpheme accuracy and MER do not change. All Ainu tables in this repo show the re-joined scores.
 
 ### Tsez zero-shot scores (test, 445 rows)
 
@@ -61,7 +63,7 @@ Scored with `zero_shot/score_zero_shot.py --lang jejueo` (same metrics as Ainu a
 | | All-in-one | Step-by-step |
 |---|---|---|
 | Gloss morpheme accuracy | 1.08% | 1.08% |
-| Gloss word accuracy | 1.21% | 1.18% |
+| Gloss word accuracy | 1.18% | 1.16% |
 | Gloss MER / WER | 1.06 / 1.50 | 1.22 / 1.82 |
 | Gloss chrF++ | 8.71 | 9.08 |
 | Transliteration chrF++ | 0.30 | 0.18 |
@@ -108,9 +110,9 @@ Results: `results/few_shot/ainu/bolmo-1b_{all_in_one,step_by_step}_3shot_test.cs
 | | All-in-one | Step-by-step |
 |---|---|---|
 | Gloss morpheme accuracy | 1.47% (0.85%) | 1.61% (0.95%) |
-| Gloss word accuracy | 1.33% (0.87%) | 1.49% (0.95%) |
-| Gloss MER / WER | 2.95 / 2.83 | 3.39 / 3.33 |
-| Gloss chrF++ | 9.57 (9.79) | 9.01 (10.31) |
+| Gloss word accuracy | 1.86% (1.04%) | 1.74% (1.11%) |
+| Gloss MER / WER | 2.95 / 3.71 | 3.39 / 4.42 |
+| Gloss chrF++ | 9.79 (9.92) | 9.16 (10.46) |
 | Transliteration chrF++ | 18.84 (5.11) | 18.40 (5.77) |
 | Transliteration word accuracy | 8.15% (0.55%) | 8.61% (0.57%) |
 | Parse failure (`missing_gloss`) / truncation | 6.4% / 11.1% | 6.5% / 12.4% |
@@ -129,8 +131,8 @@ Results: `results/few_shot/jejueo/bolmo-1b_{all_in_one,step_by_step}_3shot_test.
 | | All-in-one | Step-by-step |
 |---|---|---|
 | Gloss morpheme accuracy | 2.43% (1.08%) | 2.18% (1.08%) |
-| Gloss word accuracy | 1.38% (1.21%) | 1.21% (1.18%) |
-| Gloss MER / WER | 14.02 / 7.47 (1.06 / 1.50) | 13.87 / 6.87 (1.22 / 1.82) |
+| Gloss word accuracy | 1.38% (1.18%) | 1.21% (1.16%) |
+| Gloss MER / WER | 14.02 / 7.47 (1.06 / 1.50) | 13.87 / 6.88 (1.22 / 1.82) |
 | Gloss chrF++ | 2.83 (8.71) | 2.73 (9.08) |
 | Transliteration chrF++ | 3.29 (0.30) | 3.20 (0.18) |
 | Transliteration word accuracy | 1.70% (0.00%) | 1.76% (0.00%) |

@@ -1,15 +1,15 @@
 language,strategy,subset,n,share,gloss_morpheme_accuracy,gloss_word_accuracy,gloss_mer,gloss_chrfpp,transliteration_chrfpp,pred_copies_example
-ainu,all_in_one,all,750,1.0000,0.2440,0.0916,0.7110,42.1484,65.3881,0.2080
+ainu,all_in_one,all,750,1.0000,0.2440,0.2320,0.7110,47.0480,65.3881,0.2080
 ainu,all_in_one,identical text,0,0.0000,,,,,,
-ainu,all_in_one,similarity 0.9-1,99,0.1320,0.8734,0.1937,0.0422,83.9217,95.8830,0.8990
-ainu,all_in_one,similarity 0.8-0.9,50,0.0667,0.4042,0.1589,0.3785,62.2978,83.2007,0.4600
-ainu,all_in_one,similarity < 0.8,601,0.8013,0.1365,0.0710,0.8368,34.6821,59.5902,0.0732
+ainu,all_in_one,similarity 0.9-1,99,0.1320,0.8734,0.6752,0.0422,94.8144,95.8830,0.8990
+ainu,all_in_one,similarity 0.8-0.9,50,0.0667,0.4042,0.3980,0.3785,70.8280,83.2007,0.4600
+ainu,all_in_one,similarity < 0.8,601,0.8013,0.1365,0.1450,0.8368,38.2319,59.5902,0.0732
 ainu,all_in_one,gold gloss in examples,9,0.0120,1.0000,1.0000,0.0000,100.0000,94.2228,1.0000
-ainu,all_in_one,gold gloss not in examples,741,0.9880,0.2385,0.0852,0.7161,41.7955,65.1626,0.1984
-ainu,step_by_step,all,750,1.0000,0.2455,0.0922,0.7048,42.3230,65.4621,0.2120
+ainu,all_in_one,gold gloss not in examples,741,0.9880,0.2385,0.2244,0.7161,46.6670,65.1626,0.1984
+ainu,step_by_step,all,750,1.0000,0.2455,0.2326,0.7048,47.2473,65.4621,0.2120
 ainu,step_by_step,identical text,0,0.0000,,,,,,
-ainu,step_by_step,similarity 0.9-1,99,0.1320,0.8734,0.1937,0.0400,84.3389,96.0189,0.8990
-ainu,step_by_step,similarity 0.8-0.9,50,0.0667,0.4276,0.1612,0.3762,61.4290,83.7185,0.4800
-ainu,step_by_step,similarity < 0.8,601,0.8013,0.1366,0.0715,0.8296,34.8743,59.6218,0.0765
+ainu,step_by_step,similarity 0.9-1,99,0.1320,0.8734,0.6779,0.0400,95.1836,96.0189,0.8990
+ainu,step_by_step,similarity 0.8-0.9,50,0.0667,0.4276,0.3980,0.3762,69.7085,83.7185,0.4800
+ainu,step_by_step,similarity < 0.8,601,0.8013,0.1366,0.1452,0.8296,38.4746,59.6218,0.0765
 ainu,step_by_step,gold gloss in examples,9,0.0120,1.0000,1.0000,0.0000,100.0000,93.8482,1.0000
-ainu,step_by_step,gold gloss not in examples,741,0.9880,0.2400,0.0857,0.7099,41.9709,65.2393,0.2024
+ainu,step_by_step,gold gloss not in examples,741,0.9880,0.2400,0.2249,0.7099,46.8673,65.2393,0.2024
