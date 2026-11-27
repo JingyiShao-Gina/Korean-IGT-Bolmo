@@ -20,6 +20,23 @@ python evaluation/rescore_loop_stop.py --lang jejueo
 - **What changes.** Accuracy does not change for any file: loops come after the answer's first words. MER and chrF++ change a lot where loops are frequent. Jejueo 3-shot all-in-one: MER 14.02 → 1.38, gloss chrF++ 2.83 → 7.83, transliteration chrF++ 3.29 → 9.43 (53% of rows cut by the loop stop). Ainu 3-shot: MER 2.95 → 1.12, gloss chrF++ 9.57 → 12.15. Zero-shot changes little. The ICL rows are identical under both rules, since they were already generated with the stop.
 - **Use the `loop_stop` rows when comparing methods** and report `stopped_by_loop` as the loop rate; it is a model failure in its own right (Jejueo 3-shot 53%, zero-shot 2–6%).
 
+## How close are the ICL examples to the test sentences? (27 Nov 2026)
+
+`icl_overlap.py --lang <lang>` looks up the 21 retrieved examples of every ICL test row and measures the character similarity (difflib ratio, NFKC) between the test text and its closest example, whether an example has exactly the gold gloss, and whether the prediction copies an example's gloss. It scores each band separately. Output: `results/evaluation/icl_overlap_summary.csv`, per row `icl_overlap_<lang>.csv`.
+
+Ainu, all-in-one (step-by-step is almost the same):
+
+| Closest example | Rows | Morpheme acc | Gloss chrF++ | Prediction = an example's gloss |
+|---|---|---|---|---|
+| identical text | 0 (0%) | – | – | – |
+| similarity 0.9–1 | 99 (13%) | 87.3% | 83.9 | 90% |
+| similarity 0.8–0.9 | 50 (7%) | 40.4% | 62.3 | 46% |
+| similarity < 0.8 | 601 (80%) | 13.7% | 34.7 | 7% |
+| all | 750 | 24.4% | 42.1 | 21% |
+
+- No test text appears in the pool, but 13% of the test sentences have a near-identical example (spoken corpora repeat phrases), and on those the model mostly copies the example's gloss. 9 test rows (1.2%) have an example with exactly the gold gloss.
+- Without the near-duplicates (similarity < 0.8, 80% of rows), ICL still reaches 13.7% morpheme accuracy and 34.7 gloss chrF++, against 1.5% and 12.1 for 3 fixed examples (loop-stopped). So retrieval helps beyond copying, but much of the overall score comes from the 20% of rows with a close example: overall morpheme accuracy is 24.4%, 13.7% on the other rows. Report both numbers.
+
 The original protocol follows.
 
 Freeze these conventions before the main runs. They are project definitions, not a claim of exact reproduction of any published implementation. Align with the team's chosen Ginn et al. (2024) implementation only after checking its precise definitions.
