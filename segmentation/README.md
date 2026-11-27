@@ -25,11 +25,13 @@ Output: `results/segmentation/<lang>/bolmo-1b_three_step_seg_3shot_test.csv` (+ 
 
 ## Ainu 3-shot result (test, 750 rows, T4, 26 Nov)
 
+Word accuracy and gloss chrF++ re-join detached Ainu affixes (updated 27 Nov; see `data/manifest_ainu.json`).
+
 | Metric | 3-shot all-in-one | 3-shot step-by-step | Segmentation (3 steps) |
 |---|---|---|---|
 | Gloss morpheme accuracy | 1.47% | 1.61% | 1.77% |
-| Gloss word accuracy | 1.33% | 1.49% | 1.57% |
-| Gloss chrF++ | 9.57 | 9.01 | 8.36 |
+| Gloss word accuracy | 1.86% | 1.74% | 1.93% |
+| Gloss chrF++ | 9.79 | 9.16 | 8.48 |
 | Gloss MER | 2.95 | 3.39 | 4.02 |
 | Transliteration chrF++ | 18.84 | 18.40 | 25.97 |
 | Transliteration word accuracy | 8.15% | 8.61% | 7.28% |

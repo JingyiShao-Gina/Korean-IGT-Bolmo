@@ -6,6 +6,8 @@
   "license": "not stated upstream",
   "cleaned": false,
   "cleaning_note": "Original upstream data, not cleaned by the team. Known issues: inconsistent gloss labels (1SG / 1s / 1sA), extra spaces, half-width katakana, some broken glosses; only 180/750 test rows have equal word counts in transcription and gloss.",
+  "gloss_affixes_detached": true,
+  "gloss_affixes_note": "Like Jejueo, the glosses often write affixes and clitics as separate tokens ('APASS- do', '4.A= COP', 'place -POSS'; 550/750 test rows). Scoring re-attaches tokens that start with '-' or '=' to the previous token (and tokens ending in '-' or '=' to the next one) before word-level metrics; a lone '-' (a pause, '...' in the transcription; 110 tokens in 70 test rows) stays a word of its own. Morphemes are unchanged. Added 27 Nov 2026 (Soyeong); earlier Ainu word accuracy, WER and chrF++ were computed without re-joining. The transcription also writes clitics apart ('a= kor'); it is scored as it is.",
   "field_mapping": {
     "source": "text",
     "transliteration": "transcription",
