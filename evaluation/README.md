@@ -22,6 +22,14 @@ python evaluation/rescore_loop_stop.py --lang jejueo
 - **What changes.** Accuracy does not change for any prompting file: loops come after the answer's first words. For LoRA it changes by at most 0.2 points (a few loops start inside the gloss). MER and chrF++ change a lot where loops are frequent. Jejueo 3-shot all-in-one: MER 14.02 → 1.38, gloss chrF++ 2.83 → 7.83, transliteration chrF++ 3.29 → 9.43 (53% of rows cut by the loop stop). Ainu 3-shot: MER 2.95 → 1.12, gloss chrF++ 9.79 → 12.55. Zero-shot changes little. The ICL rows are identical under both rules, since they were already generated with the stop. LoRA loops too, less often: Tsez all-in-one 4.5% of rows, MER 0.95 → 0.83, gloss chrF++ 32.6 → 33.1 (with the 3-shot prompt 31–39% of rows).
 - **Use the `loop_stop` rows when comparing methods** and report `stopped_by_loop` as the loop rate; it is a model failure in its own right (Jejueo 3-shot 53%, zero-shot 2–6%).
 
+## Paired bootstrap confidence intervals (27 Nov 2026)
+
+`python evaluation/bootstrap_ci.py` → `results/evaluation/bootstrap_ci.csv`. For each comparison we report, the test sentences are resampled 10,000 times (seed 42), both systems are scored on the same draw (loop-stopped, affixes re-joined, as in the unified table), and the 2.5th–97.5th percentiles of the difference give a 95% interval, for morpheme accuracy and morpheme bag F1. This covers sentence sampling only, not training-seed variance.
+
+- Clearly real: Ainu ICL-21 vs 3-shot (+22.9 points, 95% CI +20.6 to +25.4); Tsez LoRA vs zero-shot (+6.2, +5.4 to +7.1).
+- Real but small: 3-shot vs zero-shot (Ainu +0.6, Jejueo +1.3).
+- Not distinguishable from 0: segmentation vs 3-shot step-by-step (Ainu), LoRA checkpoint 555 vs 667, and step-by-step vs all-in-one in 6 of 7 comparisons (the exception, Ainu zero-shot, is +0.09 points).
+
 ## Checkpoint selection, Tsez LoRA (dev, 27 Nov 2026)
 
 `results/evaluation/lora_dev_checkpoints.csv`: the six dev checkpoints of each Tsez LoRA run (Theo's `dev_predictions/`, shared on Drive; not in Git), scored with the loop stop, plus Theo's dev loss. `evaluate.py --lora-dir <folder>` reproduces Theo's dev gloss chrF++ exactly on all 12 checkpoints (max difference 0.0000).
