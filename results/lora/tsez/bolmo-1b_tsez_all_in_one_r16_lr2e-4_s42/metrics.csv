@@ -1,0 +1,7 @@
+step,epoch,val_loss,val_gloss_chrfpp,val_transliteration_chrfpp,parse_failure_rate,truncation_rate,n_dev,eval_seconds,chrf_signature
+111,0.4996,0.702705,20.3557,54.8566,0.0247,0.0966,445,1254.3,nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.6.0
+222,0.9992,0.557639,25.1411,69.5993,0.0112,0.1438,445,1555.8,nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.6.0
+333,1.4987,0.50191,28.6103,76.3901,0.009,0.0494,445,903.2,nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.6.0
+444,1.9983,0.470229,30.7228,78.5179,0.009,0.0584,445,983.2,nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.6.0
+555,2.4979,0.454789,31.3425,80.7011,0.009,0.0539,445,971.7,nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.6.0
+667,3.0,0.446236,31.4477,79.5536,0.018,0.0494,445,955.5,nrefs:1|case:mixed|eff:yes|nc:6|nw:2|space:no|version:2.6.0
